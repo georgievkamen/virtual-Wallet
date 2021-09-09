@@ -3,11 +3,12 @@ package com.team9.virtualwallet.services;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.models.Role;
 import com.team9.virtualwallet.repositories.contracts.RoleRepository;
+import com.team9.virtualwallet.services.contracts.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RoleServiceImpl implements com.team9.virtualwallet.services.contracts.RoleService {
+public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository repository;
 
@@ -23,4 +24,5 @@ public class RoleServiceImpl implements com.team9.virtualwallet.services.contrac
         }
         repository.create(role);
     }
+
 }

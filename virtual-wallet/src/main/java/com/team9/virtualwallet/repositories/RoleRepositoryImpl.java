@@ -24,7 +24,7 @@ public class RoleRepositoryImpl extends BaseRepositoryImpl<Role> implements Role
     @Override
     public boolean isDuplicate(String name) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Role> query = session.createQuery("from Role where role.role_name = :name", Role.class);
+            Query<Role> query = session.createQuery("from Role where name = :name", Role.class);
             query.setParameter("name", name);
             List<Role> result = query.list();
             return result.size() > 0;
