@@ -1,6 +1,12 @@
 package com.team9.virtualwallet.repositories;
 
+import com.team9.virtualwallet.repositories.contracts.BaseRepository;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 public class BaseRepositoryImpl<E> implements BaseRepository<E> {
 
