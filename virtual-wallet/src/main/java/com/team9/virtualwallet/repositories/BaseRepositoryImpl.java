@@ -2,6 +2,7 @@ package com.team9.virtualwallet.repositories;
 
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.repositories.contracts.BaseRepository;
+import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
