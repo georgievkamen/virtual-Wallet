@@ -1,4 +1,7 @@
 package com.team9.virtualwallet.repositories.contracts;
 
-public interface RoleRepository {
+import com.team9.virtualwallet.models.Role;
+import com.team9.virtualwallet.models.Wallet;
+
+public interface RoleRepository extends BaseRepository<Role> {
 }
