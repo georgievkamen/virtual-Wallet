@@ -123,4 +123,11 @@ public class User {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
+
+    public boolean isEmployee(User user) {
+        return user
+                .getRoles()
+                .stream()
+                .anyMatch(role -> role.getName().equalsIgnoreCase("employee"));
+    }
 }
