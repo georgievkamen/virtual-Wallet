@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.services;
 
+import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
@@ -33,19 +34,29 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void update(User user, Wallet wallet) {
-        if (wallet.getUser().getId() != user.getId()) {
-            throw new UnauthorizedOperationException("You can only edit your own wallets!");
-        }
+        verifyOwnership(user, wallet);
+        verifyNotDuplicate(user, wallet);
         repository.update(wallet);
     }
 
     @Override
     public void delete(User user, int id) {
         Wallet wallet = repository.getById(id);
+        verifyOwnership(user, wallet);
+        repository.delete(wallet);
+    }
+
+    private void verifyNotDuplicate(User user, Wallet wallet) {
+        if (!repository.getByFieldList("name", wallet.getName()).isEmpty()
+                && repository.getByField("name", wallet.getName()).getUser().getId() != user.getId()) {
+            throw new DuplicateEntityException("You already have a wallet with the same name!");
+        }
+    }
+
+    private void verifyOwnership(User user, Wallet wallet) {
         if (wallet.getUser().getId() != user.getId()) {
             throw new UnauthorizedOperationException("You can only edit your own wallets!");
         }
-        repository.delete(wallet);
     }
 
 }
