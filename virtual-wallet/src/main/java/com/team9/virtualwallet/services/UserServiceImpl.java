@@ -88,17 +88,17 @@ public class UserServiceImpl implements UserService {
     }
 
     public void verifyNotDuplicate(User user) {
-        List<User> usersByUserName = repository.getByUserName(user.getUsername());
-        List<User> usersByEmail = repository.getByUserName(user.getUsername());
-        List<User> usersByPhoneNumber = repository.getByUserName(user.getUsername());
+        List<User> usersByUserName = repository.getByFieldList("username", user.getUsername());
+        List<User> usersByEmail = repository.getByFieldList("email", user.getEmail());
+        List<User> usersByPhoneNumber = repository.getByFieldList("phoneNumber", user.getPhoneNumber());
 
         if (!usersByUserName.isEmpty() && usersByUserName.get(0).getId() != user.getId()) {
             throw new DuplicateEntityException("User", "username", user.getUsername());
-
-        } else if (!usersByEmail.isEmpty() && usersByEmail.get(0).getId() != user.getId()) {
+        }
+        if (!usersByEmail.isEmpty() && usersByEmail.get(0).getId() != user.getId()) {
             throw new DuplicateEntityException("User", "email", user.getEmail());
-
-        } else if (!usersByPhoneNumber.isEmpty() && usersByPhoneNumber.get(0).getId() != user.getId()) {
+        }
+        if (!usersByPhoneNumber.isEmpty() && usersByPhoneNumber.get(0).getId() != user.getId()) {
             throw new DuplicateEntityException("User", "phoneNumber", user.getEmail());
         }
     }

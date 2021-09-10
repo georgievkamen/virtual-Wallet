@@ -24,21 +24,6 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
-    public List<User> getByUserName(String userName) {
-        return getByFieldList("userName", userName);
-    }
-
-    @Override
-    public List<User> getByEmail(String email) {
-        return getByFieldList("email", email);
-    }
-
-    @Override
-    public List<User> getByPhoneNumber(String phoneNumber) {
-        return getByFieldList("phoneNumber", phoneNumber);
-    }
-
-    @Override
     public List<User> filter(Optional<String> userName,
                              Optional<String> phoneNumber,
                              Optional<String> email) {
