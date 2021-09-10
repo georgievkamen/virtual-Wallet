@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getByUsername(String username) {
+        return repository.getByField("username", username);
+    }
+
+    @Override
     public void create(User user) {
         verifyNotDuplicate(user);
 

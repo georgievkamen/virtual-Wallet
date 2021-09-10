@@ -10,6 +10,8 @@ public interface UserService {
 
     public List<User> getAll(User user);
 
+    User getByUsername(String username);
+
     void create(User user);
 
     void update(User userExecuting, User user, int id);
