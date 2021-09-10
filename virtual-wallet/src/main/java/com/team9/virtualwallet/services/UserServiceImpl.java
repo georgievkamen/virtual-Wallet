@@ -3,7 +3,6 @@ package com.team9.virtualwallet.services;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.User;
-import com.team9.virtualwallet.repositories.contracts.RoleRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,10 @@ import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZ
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
-    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.repository = userRepository;
-        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -45,12 +42,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void create(User user) {
-        repository.verifyNotDuplicate(user);
+        verifyNotDuplicate(user);
 
         repository.create(user);
     }
 
-    //TODO SHOULD WE CHECK FOR BLOCKED AND APPROVED ?
+
     @Override
     public void update(User userExecuting, User user, int id) {
         if (!userExecuting.isEmployee() && userExecuting.getId() != id) {
@@ -60,18 +57,8 @@ public class UserServiceImpl implements UserService {
 
         if (!userToUpdate.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("You cannot modify username");
-
-        } else if (!repository.getByFieldList("phoneNumber", user.getPhoneNumber()).isEmpty()
-                && repository.getByField("phoneNumber", user.getPhoneNumber()).getId() != id) {
-
-            throw new DuplicateEntityException("User", "phone number", user.getPhoneNumber());
-
-        } else if (!repository.getByFieldList("email", user.getEmail()).isEmpty()
-                && repository.getByField("email", user.getEmail()).getId() != id) {
-
-            throw new DuplicateEntityException("User", "email", user.getEmail());
         }
-
+        verifyNotDuplicate(user);
         repository.update(user);
     }
 
@@ -100,4 +87,21 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    public void verifyNotDuplicate(User user) {
+        List<User> usersByUserName = repository.getByUserName(user.getUsername());
+        List<User> usersByEmail = repository.getByUserName(user.getUsername());
+        List<User> usersByPhoneNumber = repository.getByUserName(user.getUsername());
+
+        if (!usersByUserName.isEmpty() && usersByUserName.get(0).getId() != user.getId()) {
+            throw new DuplicateEntityException("User", "username", user.getUsername());
+
+        } else if (!usersByEmail.isEmpty() && usersByEmail.get(0).getId() != user.getId()) {
+            throw new DuplicateEntityException("User", "email", user.getEmail());
+
+        } else if (!usersByPhoneNumber.isEmpty() && usersByPhoneNumber.get(0).getId() != user.getId()) {
+            throw new DuplicateEntityException("User", "phoneNumber", user.getEmail());
+        }
+    }
+
 }
+

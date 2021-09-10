@@ -7,7 +7,11 @@ import java.util.Optional;
 
 public interface UserRepository extends BaseRepository<User> {
 
-    void verifyNotDuplicate(User user);
+    List<User> getByUserName(String userName);
+
+    List<User> getByEmail(String email);
+
+    List<User> getByPhoneNumber(String phoneNumber);
 
     public List<User> filter(Optional<String> userName, Optional<String> phoneNumber, Optional<String> email);
 
