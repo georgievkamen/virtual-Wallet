@@ -33,6 +33,10 @@ public class User {
     @Column(name = "user_photo")
     private String userPhoto;
 
+    @OneToOne
+    @JoinColumn(name = "default_wallet_id")
+    private Wallet defaultWallet;
+
     @ManyToMany
     @JoinTable(
             name = "users_roles",
@@ -129,5 +133,13 @@ public class User {
                 .getRoles()
                 .stream()
                 .anyMatch(role -> role.getName().equalsIgnoreCase("employee"));
+    }
+
+    public Wallet getDefaultWallet() {
+        return defaultWallet;
+    }
+
+    public void setDefaultWallet(Wallet defaultWallet) {
+        this.defaultWallet = defaultWallet;
     }
 }

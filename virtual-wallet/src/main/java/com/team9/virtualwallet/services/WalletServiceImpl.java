@@ -9,6 +9,7 @@ import com.team9.virtualwallet.services.contracts.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -29,6 +30,8 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public void create(User user, Wallet wallet) {
         verifyNotDuplicate(user, wallet);
+        setDefaultIfNotExists(user, wallet);
+
         repository.create(wallet);
     }
 
@@ -43,7 +46,13 @@ public class WalletServiceImpl implements WalletService {
     public void delete(User user, int id) {
         Wallet wallet = repository.getById(id);
         verifyOwnership(user, wallet);
-        repository.delete(wallet);
+
+        if (wallet.getBalance().compareTo(BigDecimal.valueOf(0)) == 0) {
+            repository.delete(wallet);
+        } else {
+            throw new IllegalArgumentException("You can only delete a wallet that doesn't have money pending!");
+        }
+
     }
 
     private void verifyNotDuplicate(User user, Wallet wallet) {
@@ -56,6 +65,12 @@ public class WalletServiceImpl implements WalletService {
     private void verifyOwnership(User user, Wallet wallet) {
         if (wallet.getUser().getId() != user.getId()) {
             throw new UnauthorizedOperationException("You can only edit your own wallets!");
+        }
+    }
+
+    private void setDefaultIfNotExists(User user, Wallet wallet) {
+        if (repository.getAll(user).isEmpty()) {
+            user.setDefaultWallet(wallet);
         }
     }
 

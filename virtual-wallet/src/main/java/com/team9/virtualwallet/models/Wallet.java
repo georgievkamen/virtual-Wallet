@@ -49,6 +49,14 @@ public class Wallet {
         this.balance = balance;
     }
 
+    public void withdrawBalance(BigDecimal balance) {
+        this.balance = this.balance.subtract(balance);
+    }
+
+    public void depositBalance(BigDecimal balance) {
+        this.balance = this.balance.add(balance);
+    }
+
     public User getUser() {
         return user;
     }
