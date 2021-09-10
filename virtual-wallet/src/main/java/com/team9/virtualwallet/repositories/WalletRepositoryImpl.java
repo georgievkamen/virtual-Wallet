@@ -30,4 +30,14 @@ public class WalletRepositoryImpl extends BaseRepositoryImpl<Wallet> implements 
             return query.list();
         }
     }
+
+    public boolean isDuplicate(User user, Wallet wallet) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Wallet> query = session.createQuery("from Wallet where name = :name and user.id = :user", Wallet.class);
+            query.setParameter("user", user.getId());
+            query.setParameter("name", wallet.getName());
+            List<Wallet> result = query.list();
+            return result.size() > 0;
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.team9.virtualwallet.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -18,6 +20,7 @@ public class Wallet {
     @Column(name = "balance")
     private BigDecimal balance;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

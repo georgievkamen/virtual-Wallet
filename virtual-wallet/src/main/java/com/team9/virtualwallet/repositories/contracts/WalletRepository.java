@@ -8,4 +8,6 @@ import java.util.List;
 public interface WalletRepository extends BaseRepository<Wallet> {
 
     List<Wallet> getAll(User user);
+
+    boolean isDuplicate(User user, Wallet wallet);
 }

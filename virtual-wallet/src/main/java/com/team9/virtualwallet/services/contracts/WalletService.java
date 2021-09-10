@@ -6,7 +6,10 @@ import com.team9.virtualwallet.models.Wallet;
 import java.util.List;
 
 public interface WalletService {
+
     List<Wallet> getAll(User user);
+
+    Wallet getById(User user, int id);
 
     void create(User user, Wallet wallet);
 

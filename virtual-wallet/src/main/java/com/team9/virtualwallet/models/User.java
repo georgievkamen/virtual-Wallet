@@ -33,7 +33,7 @@ public class User {
     @Column(name = "user_photo")
     private String userPhoto;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "default_wallet_id")
     private Wallet defaultWallet;
 
