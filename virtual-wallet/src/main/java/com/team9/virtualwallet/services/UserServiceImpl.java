@@ -78,11 +78,13 @@ public class UserServiceImpl implements UserService {
     //TODO HANDLE SQL EXCEPTIONS
     @Override
     public void delete(User userExecuting, int id) {
+        User userToDelete = repository.getById(id);
+
         if (!userExecuting.isEmployee()) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "delete", "users"));
         }
 
-        repository.delete(id);
+        repository.delete(userToDelete);
     }
 
     @Override

@@ -83,8 +83,7 @@ public class BaseRepositoryImpl<E> implements BaseRepository<E> {
     }
 
     @Override
-    public void delete(int id) {
-        E obj = getById(id);
+    public void delete(E obj) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.delete(obj);

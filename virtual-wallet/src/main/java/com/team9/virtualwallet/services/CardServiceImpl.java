@@ -61,11 +61,12 @@ public class CardServiceImpl implements CardService {
     //TODO HANDLE SQL EXCEPTIONS
     @Override
     public void delete(User userExecuting, int id) {
-        if (repository.getById(id).getUser().getId() != userExecuting.getId()) {
+        Card card = repository.getById(id);
+        if (card.getUser().getId() != userExecuting.getId()) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "users", "delete", "their own cards"));
         }
 
-        repository.delete(id);
+        repository.delete(card);
     }
 
 }

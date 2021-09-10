@@ -17,5 +17,5 @@ public interface BaseRepository<E> {
 
     void update(E obj);
 
-    void delete(int id);
+    void delete(E obj);
 }
