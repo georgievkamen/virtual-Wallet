@@ -6,8 +6,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-
 @Repository
 public class CardRepositoryImpl extends BaseRepositoryImpl<Card> implements CardRepository {
 
@@ -18,5 +16,6 @@ public class CardRepositoryImpl extends BaseRepositoryImpl<Card> implements Card
         super(sessionFactory, Card.class);
         this.sessionFactory = sessionFactory;
     }
+
 
 }

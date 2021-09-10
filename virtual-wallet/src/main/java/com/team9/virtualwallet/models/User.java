@@ -124,8 +124,8 @@ public class User {
         this.roles.remove(role);
     }
 
-    public boolean isEmployee(User user) {
-        return user
+    public boolean isEmployee() {
+        return this
                 .getRoles()
                 .stream()
                 .anyMatch(role -> role.getName().equalsIgnoreCase("employee"));
