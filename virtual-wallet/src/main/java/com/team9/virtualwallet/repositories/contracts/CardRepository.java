@@ -8,4 +8,6 @@ import java.util.List;
 public interface CardRepository extends BaseRepository<Card> {
 
     List<Card> getAll(User user);
+
+    boolean isDuplicate(Card card);
 }

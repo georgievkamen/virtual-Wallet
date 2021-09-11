@@ -1,7 +1,9 @@
 package com.team9.virtualwallet.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "cards")
@@ -13,16 +15,17 @@ public class Card {
     private int id;
 
     @Column(name = "card_number")
-    private int cardNumber;
+    private String cardNumber;
 
+    @JsonFormat(pattern = "MM/yy")
     @Column(name = "expiration_date")
-    private Date expirationDate;
+    private LocalDate expirationDate;
 
     @Column(name = "card_holder")
     private String cardHolder;
 
     @Column(name = "cvv")
-    private int cvv;
+    private String cvv;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -39,19 +42,19 @@ public class Card {
         this.id = id;
     }
 
-    public int getCardNumber() {
+    public String getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(int cardNumber) {
+    public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
 
-    public Date getExpirationDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -63,11 +66,30 @@ public class Card {
         this.cardHolder = cardHolder;
     }
 
-    public int getCvv() {
+    private String getMaskedCardNumber() {
+        StringBuilder maskedNumber = new StringBuilder();
+        String mask = "xxxx-xxxx-xxxx-####";
+        int index = 0;
+        for (int i = 0; i < mask.length(); i++) {
+            char c = mask.charAt(i);
+            if (c == '#') {
+                maskedNumber.append(cardNumber.charAt(index));
+                index++;
+            } else if (c == 'x') {
+                maskedNumber.append(c);
+                index++;
+            } else {
+                maskedNumber.append(c);
+            }
+        }
+        return maskedNumber.toString();
+    }
+
+    public String getCvv() {
         return cvv;
     }
 
-    public void setCvv(int cvv) {
+    public void setCvv(String cvv) {
         this.cvv = cvv;
     }
 

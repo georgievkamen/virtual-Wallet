@@ -9,7 +9,9 @@ import com.team9.virtualwallet.services.contracts.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZED_ACTION;
 
@@ -38,10 +40,9 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void create(User user, Card card) {
-        if (!repository.getByFieldList("cardNumber", card.getCardNumber()).isEmpty()) {
-            throw new DuplicateEntityException("Card", "number", String.valueOf(card.getCardNumber()));
-        }
+    public void create(Card card) {
+        verifyUnique(card);
+        validateCardExpiryDate(card);
         repository.create(card);
     }
 
@@ -51,9 +52,8 @@ public class CardServiceImpl implements CardService {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "users", "update", "their own cards"));
         }
 
-        if (!repository.getByFieldList("cardNumber", card.getCardNumber()).isEmpty()) {
-            throw new DuplicateEntityException("Card", "number", String.valueOf(card.getCardNumber()));
-        }
+        verifyUniqueUpdate(card);
+        validateCardExpiryDate(card);
 
         repository.update(card);
     }
@@ -67,6 +67,26 @@ public class CardServiceImpl implements CardService {
         }
 
         repository.delete(card);
+    }
+
+    private void verifyUnique(Card card) {
+        if (repository.isDuplicate(card)) {
+            throw new DuplicateEntityException("Card with same card number already exists!");
+        }
+    }
+
+    private void verifyUniqueUpdate(Card card) {
+        Card cardToEdit = repository.getById(card.getId());
+
+        if (repository.isDuplicate(card) && !Objects.equals(card.getCardNumber(), cardToEdit.getCardNumber())) {
+            throw new DuplicateEntityException("Card with same card number already exists!");
+        }
+    }
+
+    private void validateCardExpiryDate(Card card) {
+        if (card.getExpirationDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Card is expired!");
+        }
     }
 
 }

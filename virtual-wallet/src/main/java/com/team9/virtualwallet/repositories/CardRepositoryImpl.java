@@ -30,4 +30,13 @@ public class CardRepositoryImpl extends BaseRepositoryImpl<Card> implements Card
             return query.list();
         }
     }
+
+    public boolean isDuplicate(Card card) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Card> query = session.createQuery("from Card where cardNumber = :cardNumber", Card.class);
+            query.setParameter("cardNumber", card.getCardNumber());
+            List<Card> result = query.list();
+            return result.size() > 0;
+        }
+    }
 }

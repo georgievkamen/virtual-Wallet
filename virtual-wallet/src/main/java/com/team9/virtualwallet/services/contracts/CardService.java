@@ -10,7 +10,7 @@ public interface CardService {
 
     Card getById(User user, int id);
 
-    void create(User user, Card card);
+    void create(Card card);
 
     void update(User user, Card card);
 
