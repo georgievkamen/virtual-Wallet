@@ -4,7 +4,8 @@ import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.Sort;
+import com.team9.virtualwallet.models.enums.SortAmount;
+import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.services.contracts.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,19 +31,18 @@ public class TransactionRestController {
 
     @GetMapping("/filter")
     public List<Transaction> transaction(@RequestHeader HttpHeaders headers,
-                                         @RequestParam Sort sort,
-                                         @RequestParam(required = false)
-                                                 Optional<Date> startDate,
+                                         @RequestParam(required = false) SortAmount sortAmount,
+                                         Optional<Date> startDate,
                                          Optional<Date> endDate,
                                          Optional<Integer> senderId,
                                          Optional<Integer> recipientId,
                                          Optional<Direction> direction,
-                                         Optional<String> amount,
-                                         Optional<String> date) {
+                                         Optional<SortAmount> amount,
+                                         Optional<SortDate> date) {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return service.filter(user, startDate, endDate, senderId, recipientId, direction, amount, date, sort);
+        return service.filter(user, startDate, endDate, senderId, recipientId, direction, amount, date);
 
     }
 }

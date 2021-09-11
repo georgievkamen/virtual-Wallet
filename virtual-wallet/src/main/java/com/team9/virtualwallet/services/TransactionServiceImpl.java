@@ -4,7 +4,8 @@ import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.Sort;
+import com.team9.virtualwallet.models.enums.SortAmount;
+import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import com.team9.virtualwallet.services.contracts.TransactionService;
 import org.springframework.stereotype.Service;
@@ -54,11 +55,10 @@ public class TransactionServiceImpl implements TransactionService {
                                     Optional<Integer> senderId,
                                     Optional<Integer> recipientId,
                                     Optional<Direction> direction,
-                                    Optional<String> amount,
-                                    Optional<String> date,
-                                    Sort sort) {
+                                    Optional<SortAmount> amount,
+                                    Optional<SortDate> date) {
 
-        return repository.filter(user.getId(), startDate, endDate, senderId, recipientId, direction, amount, date, sort);
+        return repository.filter(user.getId(), startDate, endDate, senderId, recipientId, direction, amount, date);
     }
 
 

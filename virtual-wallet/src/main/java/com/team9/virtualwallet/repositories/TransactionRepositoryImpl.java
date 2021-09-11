@@ -3,7 +3,8 @@ package com.team9.virtualwallet.repositories;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.Sort;
+import com.team9.virtualwallet.models.enums.SortAmount;
+import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,9 +45,8 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                                     Optional<Integer> senderId,
                                     Optional<Integer> recipientId,
                                     Optional<Direction> direction,
-                                    Optional<String> amount,
-                                    Optional<String> date,
-                                    Sort sort) {
+                                    Optional<SortAmount> amount,
+                                    Optional<SortDate> date) {
 
         try (Session session = sessionFactory.openSession()) {
             var baseQuery = "select t from Transaction t ";
@@ -70,31 +70,25 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
             }
 
             if (direction.isPresent()) {
-                switch (direction.toString()) {
+                switch (direction.get().toString()) {
                     case "Incoming":
-                        filters.add("t.sender.id != :userId");
+                        filters.add("t.recipient.id = :userId");
                         break;
                     case "Outgoing":
-                        filters.add("t.sender.id = userId");
+                        filters.add("t.sender.id = :userId");
                         break;
                 }
             }
 
-            if (amount.isPresent()) {
-                sortType.add(" t.amount ");
-            }
-
-            if (date.isPresent()) {
-                sortType.add(" t.timestamp ");
-            }
+            amount.ifPresent(sortAmount -> sortType.add(String.format(" %s ", sortAmount)));
+            date.ifPresent(sortDate -> sortType.add(String.format(" %s ", sortDate.toString().replaceAll("Date", "timestamp"))));
 
             if (!filters.isEmpty()) {
                 baseQuery += " where " + String.join(" and ", filters);
             }
 
             if (!sortType.isEmpty()) {
-                baseQuery += " order by " + String.join(" then by ", sortType);
-                baseQuery += String.format(" %s ", sort);
+                baseQuery += " order by " + String.join(" , ", sortType);
             }
 
             Query<Transaction> query = session.createQuery(baseQuery, Transaction.class);

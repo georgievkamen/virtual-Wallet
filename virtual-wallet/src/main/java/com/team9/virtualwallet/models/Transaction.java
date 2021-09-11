@@ -2,7 +2,7 @@ package com.team9.virtualwallet.models;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "transactions")
@@ -14,7 +14,7 @@ public class Transaction {
     private int id;
 
     @Column(name = "timestamp")
-    private LocalDateTime timestamp;
+    private Timestamp timestamp;
 
     @ManyToOne
     @JoinColumn(name = "sender_id")
@@ -36,13 +36,14 @@ public class Transaction {
 
     public void setId(int id) {
         this.id = id;
+
     }
 
-    public LocalDateTime getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 

@@ -3,7 +3,8 @@ package com.team9.virtualwallet.repositories.contracts;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.Sort;
+import com.team9.virtualwallet.models.enums.SortAmount;
+import com.team9.virtualwallet.models.enums.SortDate;
 
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,6 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
                                     Optional<Integer> senderId,
                                     Optional<Integer> recipientId,
                                     Optional<Direction> direction,
-                                    Optional<String> amount,
-                                    Optional<String> date,
-                                    Sort sort);
+                                    Optional<SortAmount> amount,
+                                    Optional<SortDate> date);
 }
