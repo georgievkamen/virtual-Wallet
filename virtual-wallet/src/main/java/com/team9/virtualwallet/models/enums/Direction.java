@@ -7,7 +7,7 @@ public enum Direction {
     INCOMING("Incoming"),
     OUTGOING("Outgoing");
 
-    public static final String INVALID_CATEGORY = "Direction should be INCOMING or OUTGOING";
+    public static final String INVALID_DIRECTION = "Direction should be INCOMING or OUTGOING";
 
     private final String value;
 
@@ -27,14 +27,14 @@ public enum Direction {
             case OUTGOING:
                 return "Outgoing";
             default:
-                throw new EnumNotFoundException(INVALID_CATEGORY);
+                throw new EnumNotFoundException(INVALID_DIRECTION);
         }
     }
 
     public static Direction getEnum(String value) {
         for (Direction v : values())
             if (v.getValue().equalsIgnoreCase(value)) return v;
-        throw new EnumNotFoundException(INVALID_CATEGORY);
+        throw new EnumNotFoundException(INVALID_DIRECTION);
     }
 
 }
