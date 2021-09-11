@@ -108,5 +108,29 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void blockUser(User userExecuting, int id) {
+        if (!userExecuting.isEmployee()) {
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "block", "users"));
+        }
+
+        User user = repository.getById(id);
+        user.setBlocked(true);
+
+        repository.update(user);
+    }
+
+    @Override
+    public void unblockUser(User userExecuting, int id) {
+        if (!userExecuting.isEmployee()) {
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "unblock", "users"));
+        }
+
+        User user = repository.getById(id);
+        user.setBlocked(false);
+
+        repository.update(user);
+    }
+
 }
 

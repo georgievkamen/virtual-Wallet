@@ -18,6 +18,10 @@ public interface UserService {
 
     void delete(User userExecuting, int id);
 
+    void blockUser(User userExecuting, int id);
+
+    void unblockUser(User userExecuting, int id);
+
     List<User> filter(User user,
                       Optional<String> userName,
                       Optional<String> phoneNumber,
