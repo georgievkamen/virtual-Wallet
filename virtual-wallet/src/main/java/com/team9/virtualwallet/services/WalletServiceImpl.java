@@ -45,6 +45,7 @@ public class WalletServiceImpl implements WalletService {
         setDefaultIfNotExists(user, wallet);
 
         repository.create(wallet);
+        userRepository.update(user);
     }
 
     @Override
@@ -106,7 +107,6 @@ public class WalletServiceImpl implements WalletService {
     private void setDefaultIfNotExists(User user, Wallet wallet) {
         if (repository.getAll(user).isEmpty()) {
             user.setDefaultWallet(wallet);
-            userRepository.update(user);
         }
     }
 
