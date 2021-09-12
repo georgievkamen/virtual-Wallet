@@ -66,6 +66,23 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
+    @Override
+    public void depositBalance(Wallet wallet, BigDecimal balance) {
+        wallet.depositBalance(balance);
+        repository.update(wallet);
+    }
+
+    @Override
+    public void withdrawBalance(Wallet wallet, BigDecimal balance) {
+        //TODO Check if it works properly and add selected wallet instead of default
+        if (wallet.getBalance().compareTo(balance) < 0) {
+            throw new IllegalArgumentException("You do not have enough money in the selected wallet!");
+        }
+        wallet.withdrawBalance(balance);
+        repository.update(wallet);
+    }
+
+    //TODO Rename to verifyUnique
     private void verifyNotDuplicate(User user, Wallet wallet) {
         if (repository.isDuplicate(user, wallet)) {
             throw new DuplicateEntityException("You already have a wallet with the same name!");

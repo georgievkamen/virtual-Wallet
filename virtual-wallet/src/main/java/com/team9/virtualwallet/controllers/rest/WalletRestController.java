@@ -35,7 +35,7 @@ public class WalletRestController {
     }
 
     @GetMapping("/{id}")
-    public Wallet getAll(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+    public Wallet getById(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         User user = authenticationHelper.tryGetUser(headers);
         return service.getById(user, id);
     }
