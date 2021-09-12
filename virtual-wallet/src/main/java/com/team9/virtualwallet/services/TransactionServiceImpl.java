@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.services;
 
+import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
@@ -34,13 +35,20 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction getById(int id) {
+    public Transaction getById(User user, int id) {
+        Transaction transaction = repository.getById(id);
+
+        if (!user.isEmployee() && transaction.getSender().getId() != user.getId() && transaction.getRecipient().getId() != user.getId()) {
+            throw new UnauthorizedOperationException("You are not the sender or recipient of this transaction!");
+        }
+
         return repository.getById(id);
     }
 
     //TODO Add selected wallet instead of default
     @Override
     public void create(Transaction transaction, int selectedWalletId) {
+        //TODO Add checks if user is trying to transfer money to himself
         Wallet selectedWallet = walletRepository.getById(selectedWalletId);
 
         if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {

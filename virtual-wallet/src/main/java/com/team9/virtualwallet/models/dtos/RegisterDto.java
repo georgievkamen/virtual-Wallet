@@ -2,6 +2,7 @@ package com.team9.virtualwallet.models.dtos;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class RegisterDto extends LoginDto {
@@ -16,7 +17,7 @@ public class RegisterDto extends LoginDto {
     private String passwordConfirm;
 
     @NotBlank(message = "Phone number can't be blank!")
-    @Size(min = 10, max = 10, message = "Phone number length must be 10 digits long!")
+    @Pattern(regexp = "08[789]\\d{7}", message = "Phone number must be 08xxxxxxxx!")
     private String phoneNumber;
 
     public RegisterDto() {

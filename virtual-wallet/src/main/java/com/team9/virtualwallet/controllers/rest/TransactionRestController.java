@@ -58,6 +58,20 @@ public class TransactionRestController {
         User user = authenticationHelper.tryGetUser(headers);
 
         return service.filter(user, startDate, endDate, senderId, recipientId, direction, amount, date);
-
     }
+
+    @GetMapping
+    public List<Transaction> getAll(@RequestHeader HttpHeaders headers) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        return service.getAll(user);
+    }
+
+    @GetMapping("/{id}")
+    public Transaction getById(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        return service.getById(user, id);
+    }
+
 }
