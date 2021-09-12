@@ -7,6 +7,7 @@ import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
 import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
+import com.team9.virtualwallet.repositories.contracts.WalletRepository;
 import com.team9.virtualwallet.services.contracts.TransactionService;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +19,29 @@ import java.util.Optional;
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
+    private final WalletRepository walletRepository;
 
-    public TransactionServiceImpl(TransactionRepository repository) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository) {
         this.repository = repository;
+        this.walletRepository = walletRepository;
     }
 
-    private List<Transaction> getAll(User user) {
+    public List<Transaction> getAll(User user) {
         return repository.getAll(user);
     }
 
+    @Override
+    public Transaction getById(int id) {
+        return repository.getById(id);
+    }
+
     //TODO Add selected wallet instead of default
-    private void create(Transaction transaction, Wallet selectedWallet) {
+    @Override
+    public void create(Transaction transaction, int selectedWalletId) {
+        Wallet selectedWallet = walletRepository.getById(selectedWalletId);
+
         verifyEnoughMoneyInSelectedWallet(transaction, selectedWallet);
+        verifyUserNotBlocked(transaction.getSender());
         // Verify recipient has a wallet
         if (transaction.getRecipient().getDefaultWallet() == null) {
             throw new IllegalArgumentException("Recipient doesn't have a default wallet set!");
@@ -39,13 +51,6 @@ public class TransactionServiceImpl implements TransactionService {
         selectedWallet.withdrawBalance(transaction.getAmount());
         transaction.getRecipient().getDefaultWallet().depositBalance(transaction.getAmount());
         repository.create(transaction);
-    }
-
-    private void verifyEnoughMoneyInSelectedWallet(Transaction transaction, Wallet selectedWallet) {
-        //TODO Check if it works properly and add selected wallet instead of default
-        if (selectedWallet.getBalance().compareTo(transaction.getAmount()) < 0) {
-            throw new IllegalArgumentException("You do not have enough money in the selected wallet!");
-        }
     }
 
     @Override
@@ -59,6 +64,19 @@ public class TransactionServiceImpl implements TransactionService {
                                     Optional<SortDate> date) {
 
         return repository.filter(user.getId(), startDate, endDate, senderId, recipientId, direction, amount, date);
+    }
+
+    private void verifyEnoughMoneyInSelectedWallet(Transaction transaction, Wallet selectedWallet) {
+        //TODO Check if it works properly and add selected wallet instead of default
+        if (selectedWallet.getBalance().compareTo(transaction.getAmount()) < 0) {
+            throw new IllegalArgumentException("You do not have enough money in the selected wallet!");
+        }
+    }
+
+    private void verifyUserNotBlocked(User user) {
+        if (user.isBlocked()) {
+            throw new IllegalArgumentException("You are currently blocked, you cannot make transactions");
+        }
     }
 
 

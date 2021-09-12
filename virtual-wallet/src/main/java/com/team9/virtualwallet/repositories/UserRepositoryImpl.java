@@ -41,7 +41,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
             }
 
             if (email.isPresent()) {
-                filters.add(" u.email like concat('%',:email,'%') ");
+                filters.add(" u.email like :email");
             }
 
             if (!filters.isEmpty()) {

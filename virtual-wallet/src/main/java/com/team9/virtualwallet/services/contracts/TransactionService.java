@@ -12,6 +12,12 @@ import java.util.Optional;
 
 public interface TransactionService {
 
+    List<Transaction> getAll(User user);
+
+    Transaction getById(int id);
+
+    void create(Transaction transaction, int selectedWalletId);
+
     List<Transaction> filter(User user,
                              Optional<Date> startDate,
                              Optional<Date> endDate,
