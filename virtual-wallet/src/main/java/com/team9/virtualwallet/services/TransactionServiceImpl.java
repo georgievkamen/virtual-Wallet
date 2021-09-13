@@ -7,6 +7,7 @@ import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
 import com.team9.virtualwallet.models.enums.SortDate;
+import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
 import com.team9.virtualwallet.services.contracts.TransactionService;
@@ -22,11 +23,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
     private final WalletRepository walletRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
     private final WalletService walletService;
 
-    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, WalletService walletService) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, PaymentMethodRepository paymentMethodRepository, WalletService walletService) {
         this.repository = repository;
         this.walletRepository = walletRepository;
+        this.paymentMethodRepository = paymentMethodRepository;
         this.walletService = walletService;
     }
 
@@ -60,10 +63,38 @@ public class TransactionServiceImpl implements TransactionService {
         if (transaction.getRecipient().getDefaultWallet() == null) {
             throw new IllegalArgumentException("Recipient doesn't have a default wallet set!");
         }
+        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(transaction.getRecipient().getDefaultWallet().getId()));
 
         // Remove Balance from Sender and deposit it to Recipient
+
         walletService.withdrawBalance(selectedWallet, transaction.getAmount());
         walletService.depositBalance(transaction.getRecipient().getDefaultWallet(), transaction.getAmount());
+        repository.create(transaction);
+    }
+
+    @Override
+    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId) {
+        //TODO Add checks if user is trying to transfer money to himself
+        Wallet selectedWallet = walletRepository.getById(selectedWalletId);
+
+        if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this wallet!");
+        }
+
+        walletService.depositBalance(selectedWallet, transaction.getAmount());
+        repository.create(transaction);
+    }
+
+    @Override
+    public void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId) {
+        //TODO Add checks if user is trying to transfer money to himself
+        Wallet selectedWallet = walletRepository.getById(selectedWalletId);
+
+        if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this wallet!");
+        }
+
+        walletService.withdrawBalance(selectedWallet, transaction.getAmount());
         repository.create(transaction);
     }
 

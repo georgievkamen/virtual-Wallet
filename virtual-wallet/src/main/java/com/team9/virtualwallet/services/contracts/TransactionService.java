@@ -18,6 +18,10 @@ public interface TransactionService {
 
     void create(Transaction transaction, int selectedWalletId);
 
+    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId);
+
+    public void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId);
+
     List<Transaction> filter(User user,
                              Optional<Date> startDate,
                              Optional<Date> endDate,

@@ -3,6 +3,7 @@ package com.team9.virtualwallet.controllers.rest;
 import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
@@ -41,6 +42,30 @@ public class TransactionRestController {
         //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromDto(user, transactionDto);
         service.create(transaction, transactionDto.getSelectedWalletId());
+
+        return transaction;
+    }
+
+    @PostMapping("/external/deposit")
+    public Transaction createExternalDeposit(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        //TODO Do we need create a transaction by username//email//phone number
+        Transaction transaction = modelMapper.fromExternalDto(user, externalTransactionDto);
+        service.createExternalDeposit(transaction, externalTransactionDto.getSelectedWalletId(),
+                externalTransactionDto.getSelectedCardId());
+
+        return transaction;
+    }
+
+    @PostMapping("/external/withdraw")
+    public Transaction createExternalWithdraw(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        //TODO Do we need create a transaction by username//email//phone number
+        Transaction transaction = modelMapper.fromExternalDto(user, externalTransactionDto);
+        service.createExternalWithdraw(transaction, externalTransactionDto.getSelectedWalletId(),
+                externalTransactionDto.getSelectedCardId());
 
         return transaction;
     }

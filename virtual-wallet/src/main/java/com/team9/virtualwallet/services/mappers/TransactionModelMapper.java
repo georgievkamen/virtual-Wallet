@@ -2,7 +2,9 @@ package com.team9.virtualwallet.services.mappers;
 
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
+import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,14 @@ import java.time.LocalDateTime;
 public class TransactionModelMapper {
 
     private final UserRepository userRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
     private final TransactionRepository repository;
 
 
     @Autowired
-    public TransactionModelMapper(UserRepository userRepository, TransactionRepository repository) {
+    public TransactionModelMapper(UserRepository userRepository, PaymentMethodRepository paymentMethodRepository, TransactionRepository repository) {
         this.userRepository = userRepository;
+        this.paymentMethodRepository = paymentMethodRepository;
         this.repository = repository;
     }
 
@@ -46,10 +50,26 @@ public class TransactionModelMapper {
         LocalDateTime localDateTime = LocalDateTime.now();
         User recipient = userRepository.getById(transactionDto.getRecipientId());
 
+        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(transactionDto.getSelectedWalletId()));
         transaction.setRecipient(recipient);
         transaction.setAmount(transactionDto.getAmount());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
 
+    }
+
+    public Transaction fromExternalDto(User user, ExternalTransactionDto externalTransactionDto) {
+        Transaction transaction = new Transaction();
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId()));
+        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId()));
+        transaction.setAmount(externalTransactionDto.getAmount());
+        transaction.setTimestamp(Timestamp.valueOf(localDateTime));
+        transaction.setRecipient(user);
+        transaction.setSender(user);
+
+        return transaction;
     }
 
 }

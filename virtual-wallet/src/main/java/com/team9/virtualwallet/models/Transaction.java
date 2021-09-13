@@ -27,6 +27,15 @@ public class Transaction {
     @Column(name = "amount")
     private BigDecimal amount;
 
+    @ManyToOne
+    @JoinColumn(name = "sender_payment_method_id")
+    private PaymentMethod senderPaymentMethod;
+
+    @ManyToOne
+    @JoinColumn(name = "recipient_payment_method_id")
+    private PaymentMethod recipientPaymentMethod;
+
+
     public Transaction() {
     }
 
@@ -69,5 +78,21 @@ public class Transaction {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public PaymentMethod getSenderPaymentMethod() {
+        return senderPaymentMethod;
+    }
+
+    public void setSenderPaymentMethod(PaymentMethod senderPaymentMethod) {
+        this.senderPaymentMethod = senderPaymentMethod;
+    }
+
+    public PaymentMethod getRecipientPaymentMethod() {
+        return recipientPaymentMethod;
+    }
+
+    public void setRecipientPaymentMethod(PaymentMethod recipientPaymentMethod) {
+        this.recipientPaymentMethod = recipientPaymentMethod;
     }
 }
