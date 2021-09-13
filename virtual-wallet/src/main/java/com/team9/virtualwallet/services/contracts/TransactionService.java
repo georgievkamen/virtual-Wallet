@@ -18,7 +18,7 @@ public interface TransactionService {
 
     void create(Transaction transaction, int selectedWalletId);
 
-    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId);
+    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected);
 
     public void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId);
 

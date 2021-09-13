@@ -13,6 +13,7 @@ import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -50,10 +51,14 @@ public class TransactionRestController {
     public Transaction createExternalDeposit(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto) {
         User user = authenticationHelper.tryGetUser(headers);
 
+        RestTemplate restTemplate = new RestTemplate();
+
+        boolean rejected = Boolean.TRUE.equals(restTemplate.getForObject("http://localhost/api/dummy", Boolean.class));
+
         //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromExternalDto(user, externalTransactionDto);
         service.createExternalDeposit(transaction, externalTransactionDto.getSelectedWalletId(),
-                externalTransactionDto.getSelectedCardId());
+                externalTransactionDto.getSelectedCardId(), rejected);
 
         return transaction;
     }

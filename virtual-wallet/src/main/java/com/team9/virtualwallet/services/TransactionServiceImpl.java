@@ -73,7 +73,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId) {
+    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected) {
+        if (rejected) {
+            throw new IllegalArgumentException("Sorry your transfer is rejected");
+        }
         //TODO Add checks if user is trying to transfer money to himself
         Wallet selectedWallet = walletRepository.getById(selectedWalletId);
 
