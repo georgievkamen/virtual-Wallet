@@ -30,9 +30,9 @@ public class SendEmailServiceImpl implements SendEmailService {
         mail.setTo(user.getEmail());
         mail.setSubject("Confirm your Registration!");
         mail.setFrom(sender);
-        mail.setText(String.format("You have created an account on DeliverIT!" +
-                "We are very happy to welcome you!" +
-                "The last step is to verify your account via the link below:" +
+        mail.setText(String.format("You have created an account on Virtual Wallet! \n" +
+                "We are very happy to welcome you! \n" +
+                "The last step is to verify your account via the link below: \n" +
                 "http://localhost/confirm-account?token=%s", confirmationToken.getConfirmationToken()));
 
         sendMail(mail);
