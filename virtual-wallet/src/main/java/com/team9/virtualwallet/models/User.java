@@ -27,8 +27,11 @@ public class User {
     @Column(name = "blocked")
     private boolean blocked;
 
-    @Column(name = "verified")
-    private boolean verified;
+    @Column(name = "email_verified")
+    private boolean emailVerified;
+
+    @Column(name = "id_verified")
+    private boolean idVerified;
 
     @Column(name = "user_photo")
     private String userPhoto;
@@ -96,12 +99,20 @@ public class User {
         this.blocked = blocked;
     }
 
-    public boolean isVerified() {
-        return verified;
+    public boolean isEmailVerified() {
+        return emailVerified;
     }
 
-    public void setVerified(boolean verified) {
-        this.verified = verified;
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public boolean isIdVerified() {
+        return idVerified;
+    }
+
+    public void setIdVerified(boolean idVerified) {
+        this.idVerified = idVerified;
     }
 
     public String getUserPhoto() {

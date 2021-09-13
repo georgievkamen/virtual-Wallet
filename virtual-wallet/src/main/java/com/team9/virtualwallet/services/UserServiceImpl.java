@@ -2,9 +2,12 @@ package com.team9.virtualwallet.services;
 
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
+import com.team9.virtualwallet.models.ConfirmationToken;
 import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.repositories.contracts.ConfirmationTokenRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.services.contracts.UserService;
+import com.team9.virtualwallet.services.emails.SendEmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +21,14 @@ import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZ
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final SendEmailServiceImpl sendEmailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, SendEmailServiceImpl sendEmailService) {
         this.repository = userRepository;
+        this.confirmationTokenRepository = confirmationTokenRepository;
+        this.sendEmailService = sendEmailService;
     }
 
     @Override
@@ -49,7 +56,12 @@ public class UserServiceImpl implements UserService {
     public void create(User user) {
         verifyNotDuplicate(user);
 
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
+
+        sendEmailService.sendEmailConfirmation(user, confirmationToken);
+
         repository.create(user);
+        confirmationTokenRepository.create(confirmationToken);
     }
 
 
@@ -104,8 +116,22 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateEntityException("User", "email", user.getEmail());
         }
         if (!usersByPhoneNumber.isEmpty() && usersByPhoneNumber.get(0).getId() != user.getId()) {
-            throw new DuplicateEntityException("User", "phoneNumber", user.getEmail());
+            throw new DuplicateEntityException("User", "phone number", user.getPhoneNumber());
         }
+    }
+
+    @Override
+    public void confirmUser(String confirmationToken) {
+        ConfirmationToken token = confirmationTokenRepository.getByField("confirmationToken", confirmationToken);
+        User user = token.getUser();
+
+        if (user.isEmailVerified()) {
+            throw new IllegalArgumentException("You have already verified your Email!");
+        }
+
+        user.setEmailVerified(true);
+
+        repository.update(user);
     }
 
     @Override

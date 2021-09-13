@@ -23,6 +23,8 @@ dependencies {
     implementation 'mysql:mysql-connector-java'
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.5.4'
+
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

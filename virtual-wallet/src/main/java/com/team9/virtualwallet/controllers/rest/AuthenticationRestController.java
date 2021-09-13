@@ -6,10 +6,7 @@ import com.team9.virtualwallet.services.contracts.UserService;
 import com.team9.virtualwallet.services.mappers.UserModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -39,6 +36,12 @@ public class AuthenticationRestController {
         User user = modelMapper.fromRegisterDto(registerDto);
         service.create(user);
         return user;
+    }
+
+    @GetMapping("/confirm-account")
+    public String confirmAccount(@RequestParam("token") String token) {
+        service.confirmUser(token);
+        return "Your account has been verified!";
     }
 
 

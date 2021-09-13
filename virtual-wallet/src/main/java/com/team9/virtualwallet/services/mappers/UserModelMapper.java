@@ -32,6 +32,8 @@ public class UserModelMapper {
         HashSet<Role> roles = new HashSet<>();
         user.setRoles(roles);
         user.addRole(roleRepository.getById(1));
+        user.setEmailVerified(false);
+        user.setIdVerified(false);
 
         return user;
     }

@@ -18,6 +18,8 @@ public interface UserService {
 
     void delete(User userExecuting, int id);
 
+    void confirmUser(String confirmationToken);
+
     void blockUser(User userExecuting, int id);
 
     void unblockUser(User userExecuting, int id);
