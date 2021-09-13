@@ -38,6 +38,7 @@ public class TransactionRestController {
     public Transaction create(@RequestHeader HttpHeaders headers, @RequestBody @Valid TransactionDto transactionDto) {
         User user = authenticationHelper.tryGetUser(headers);
 
+        //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromDto(user, transactionDto);
         service.create(transaction, transactionDto.getSelectedWalletId());
 

@@ -3,8 +3,11 @@ package com.team9.virtualwallet.services;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.Card;
+import com.team9.virtualwallet.models.PaymentMethod;
 import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.models.enums.Type;
 import com.team9.virtualwallet.repositories.contracts.CardRepository;
+import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
 import com.team9.virtualwallet.services.contracts.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +22,12 @@ import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZ
 public class CardServiceImpl implements CardService {
 
     private final CardRepository repository;
+    private final PaymentMethodRepository paymentMethodRepository;
 
     @Autowired
-    public CardServiceImpl(CardRepository repository) {
+    public CardServiceImpl(CardRepository repository, PaymentMethodRepository paymentMethodRepository) {
         this.repository = repository;
+        this.paymentMethodRepository = paymentMethodRepository;
     }
 
     @Override
@@ -43,6 +48,12 @@ public class CardServiceImpl implements CardService {
     public void create(Card card) {
         verifyUnique(card);
         validateCardExpiryDate(card);
+
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setType(Type.CARD);
+        paymentMethodRepository.create(paymentMethod);
+
+        card.setId(paymentMethod.getId());
         repository.create(card);
     }
 

@@ -2,8 +2,11 @@ package com.team9.virtualwallet.services;
 
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
+import com.team9.virtualwallet.models.PaymentMethod;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
+import com.team9.virtualwallet.models.enums.Type;
+import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
 import com.team9.virtualwallet.services.contracts.WalletService;
@@ -18,11 +21,13 @@ public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository repository;
     private final UserRepository userRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
 
     @Autowired
-    public WalletServiceImpl(WalletRepository repository, UserRepository userRepository) {
+    public WalletServiceImpl(WalletRepository repository, UserRepository userRepository, PaymentMethodRepository paymentMethodRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.paymentMethodRepository = paymentMethodRepository;
     }
 
     @Override
@@ -43,6 +48,12 @@ public class WalletServiceImpl implements WalletService {
     public void create(User user, Wallet wallet) {
         verifyNotDuplicate(user, wallet);
         setDefaultIfNotExists(user, wallet);
+
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setType(Type.WALLET);
+        paymentMethodRepository.create(paymentMethod);
+
+        wallet.setId(paymentMethod.getId());
 
         repository.create(wallet);
         userRepository.update(user);
