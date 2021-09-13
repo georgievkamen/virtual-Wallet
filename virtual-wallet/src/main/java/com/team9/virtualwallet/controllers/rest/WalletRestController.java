@@ -8,10 +8,13 @@ import com.team9.virtualwallet.services.contracts.WalletService;
 import com.team9.virtualwallet.services.mappers.WalletModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.team9.virtualwallet.config.RestResponseEntityExceptionHandler.checkFields;
 
 @RestController
 @RequestMapping("/api/users/wallets")
@@ -41,7 +44,9 @@ public class WalletRestController {
     }
 
     @PostMapping
-    public Wallet create(@RequestHeader HttpHeaders headers, @Valid @RequestBody WalletDto walletDto) {
+    public Wallet create(@RequestHeader HttpHeaders headers, @Valid @RequestBody WalletDto walletDto, BindingResult result) {
+        checkFields(result);
+
         User user = authenticationHelper.tryGetUser(headers);
         Wallet wallet = modelMapper.fromDto(user, walletDto);
         service.create(user, wallet);
@@ -49,7 +54,9 @@ public class WalletRestController {
     }
 
     @PutMapping("/{id}")
-    public Wallet update(@RequestHeader HttpHeaders headers, @Valid @RequestBody WalletDto walletDto, @PathVariable int id) {
+    public Wallet update(@RequestHeader HttpHeaders headers, @Valid @RequestBody WalletDto walletDto, @PathVariable int id, BindingResult result) {
+        checkFields(result);
+
         User user = authenticationHelper.tryGetUser(headers);
         Wallet wallet = modelMapper.fromDto(walletDto, id);
         service.update(user, wallet);
