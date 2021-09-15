@@ -80,40 +80,42 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId) {
-        Card cardToDeposit = cardRepository.getById(transaction.getSenderPaymentMethod().getId());
-        Wallet walletToWithdraw = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
-
-        if (transaction.getSender().getId() != walletToWithdraw.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this wallet!");
-        }
-
-        if (transaction.getRecipient().getId() != cardToDeposit.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this card!");
-        }
-
-        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
-
-        walletToWithdraw.depositBalance(transaction.getAmount());
-        repository.createExternal(transaction, walletToWithdraw);
-    }
-
-    @Override
-    public void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId) {
-        Wallet walletToDeposit = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
-        Card cardToWithdraw = cardRepository.getById(transaction.getRecipientPaymentMethod().getId());
+        Card cardToWithdraw = cardRepository.getById(transaction.getSenderPaymentMethod().getId());
+        Wallet walletToDeposit = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
         if (transaction.getSender().getId() != walletToDeposit.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
         }
 
-        if (transaction.getSender().getId() != cardToWithdraw.getUser().getId()) {
+        if (transaction.getRecipient().getId() != cardToWithdraw.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this card!");
         }
 
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
-        walletToDeposit.withdrawBalance(transaction.getAmount());
+        walletToDeposit.depositBalance(transaction.getAmount());
         repository.createExternal(transaction, walletToDeposit);
+    }
+
+    @Override
+    public void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId) {
+        Wallet walletToWithdraw = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
+        Card cardToDeposit = cardRepository.getById(transaction.getRecipientPaymentMethod().getId());
+
+        if (transaction.getSender().getId() != walletToWithdraw.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this wallet!");
+        }
+
+        if (transaction.getSender().getId() != cardToDeposit.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this card!");
+        }
+
+        walletService.verifyEnoughBalance(walletToWithdraw, transaction.getAmount());
+
+        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
+
+        walletToWithdraw.withdrawBalance(transaction.getAmount());
+        repository.createExternal(transaction, walletToWithdraw);
     }
 
     @Override
