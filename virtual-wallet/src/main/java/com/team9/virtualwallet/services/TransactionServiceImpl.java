@@ -1,13 +1,14 @@
 package com.team9.virtualwallet.services;
 
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
+import com.team9.virtualwallet.models.Card;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
 import com.team9.virtualwallet.models.enums.SortDate;
-import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
+import com.team9.virtualwallet.repositories.contracts.CardRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
 import com.team9.virtualwallet.services.contracts.CategoryService;
@@ -24,14 +25,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
     private final WalletRepository walletRepository;
-    private final PaymentMethodRepository paymentMethodRepository;
+    private final CardRepository cardRepository;
     private final WalletService walletService;
     private final CategoryService categoryService;
 
-    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, PaymentMethodRepository paymentMethodRepository, WalletService walletService, CategoryService categoryService) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardRepository cardRepository, WalletService walletService, CategoryService categoryService) {
         this.repository = repository;
         this.walletRepository = walletRepository;
-        this.paymentMethodRepository = paymentMethodRepository;
+        this.cardRepository = cardRepository;
         this.walletService = walletService;
         this.categoryService = categoryService;
     }
@@ -78,34 +79,41 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected, Optional<Integer> categoryId) {
-        if (rejected) {
-            throw new IllegalArgumentException("Sorry your transfer is rejected");
-        }
-        //TODO Add checks if user is trying to transfer money to himself
-        Wallet selectedWallet = walletRepository.getById(selectedWalletId);
+    public void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId) {
+        Card cardToDeposit = cardRepository.getById(transaction.getSenderPaymentMethod().getId());
+        Wallet walletToWithdraw = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
-        if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {
+        if (transaction.getSender().getId() != walletToWithdraw.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
         }
+
+        if (transaction.getRecipient().getId() != cardToDeposit.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this card!");
+        }
+
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
-        walletService.depositBalance(selectedWallet, transaction.getAmount());
-        repository.create(transaction);
+        walletToWithdraw.depositBalance(transaction.getAmount());
+        repository.createExternal(transaction, walletToWithdraw);
     }
 
     @Override
-    public void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId, Optional<Integer> categoryId) {
-        //TODO Add checks if user is trying to transfer money to himself
-        Wallet selectedWallet = walletRepository.getById(selectedWalletId);
+    public void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId) {
+        Wallet walletToDeposit = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
+        Card cardToWithdraw = cardRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
-        if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {
+        if (transaction.getSender().getId() != walletToDeposit.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
         }
+
+        if (transaction.getSender().getId() != cardToWithdraw.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this card!");
+        }
+
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
-        walletService.withdrawBalance(selectedWallet, transaction.getAmount());
-        repository.create(transaction);
+        walletToDeposit.withdrawBalance(transaction.getAmount());
+        repository.createExternal(transaction, walletToDeposit);
     }
 
     @Override
@@ -122,8 +130,8 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.filter(user.getId(), startDate, endDate, categoryId, senderId, recipientId, direction, amount, date);
     }
 
-    //TODO Think about moving it in Wallet or UserService
 
+    //TODO Think about moving it in Wallet or UserService
     private void verifyUserNotBlocked(User user) {
         if (user.isBlocked()) {
             throw new IllegalArgumentException("You are currently blocked, you cannot make transactions");

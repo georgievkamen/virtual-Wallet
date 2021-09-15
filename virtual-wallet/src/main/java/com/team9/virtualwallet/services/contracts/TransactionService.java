@@ -18,9 +18,9 @@ public interface TransactionService {
 
     void create(Transaction transaction, int selectedWalletId, Optional<Integer> categoryId);
 
-    void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected, Optional<Integer> categoryId);
+    void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId);
 
-    void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId, Optional<Integer> categoryId);
+    void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId);
 
     List<Transaction> filter(User user,
                              Optional<Date> startDate,

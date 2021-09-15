@@ -43,8 +43,18 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     public void create(Transaction transaction, Wallet walletToWithdraw, Wallet walletToDeposit) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.update(walletToWithdraw);
             session.update(walletToDeposit);
+            session.update(walletToWithdraw);
+            session.save(transaction);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public void createExternal(Transaction transaction, Wallet wallet) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.update(wallet);
             session.save(transaction);
             session.getTransaction().commit();
         }

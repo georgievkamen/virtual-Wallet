@@ -40,16 +40,30 @@ public class TransactionModelMapper {
         return transaction;
     }
 
-    public Transaction fromExternalDto(User user, ExternalTransactionDto externalTransactionDto) {
+    public Transaction fromExternalDepositDto(User user, ExternalTransactionDto externalTransactionDto) {
         Transaction transaction = new Transaction();
         LocalDateTime localDateTime = LocalDateTime.now();
 
-        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Card"));
-        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId(), "Card"));
-        transaction.setAmount(externalTransactionDto.getAmount());
-        transaction.setTimestamp(Timestamp.valueOf(localDateTime));
         transaction.setRecipient(user);
         transaction.setSender(user);
+        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId(), "Card"));
+        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Card"));
+        transaction.setAmount(externalTransactionDto.getAmount());
+        transaction.setTimestamp(Timestamp.valueOf(localDateTime));
+
+        return transaction;
+    }
+
+    public Transaction fromExternalWithdrawDto(User user, ExternalTransactionDto externalTransactionDto) {
+        Transaction transaction = new Transaction();
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        transaction.setRecipient(user);
+        transaction.setSender(user);
+        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId(), "Card"));
+        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Card"));
+        transaction.setAmount(externalTransactionDto.getAmount());
+        transaction.setTimestamp(Timestamp.valueOf(localDateTime));
 
         return transaction;
     }

@@ -12,8 +12,10 @@ import com.team9.virtualwallet.services.contracts.TransactionService;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -52,13 +54,13 @@ public class TransactionRestController {
         User user = authenticationHelper.tryGetUser(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-
         boolean rejected = Boolean.TRUE.equals(restTemplate.getForObject("http://localhost/api/dummy", Boolean.class));
+        if (rejected) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Sorry your transfer is rejected");
+        }
 
-        //TODO Do we need create a transaction by username//email//phone number
-        Transaction transaction = modelMapper.fromExternalDto(user, externalTransactionDto);
-        service.createExternalDeposit(transaction, externalTransactionDto.getSelectedWalletId(),
-                externalTransactionDto.getSelectedCardId(), rejected, categoryId);
+        Transaction transaction = modelMapper.fromExternalDepositDto(user, externalTransactionDto);
+        service.createExternalDeposit(transaction, categoryId);
 
         return transaction;
     }
@@ -67,10 +69,14 @@ public class TransactionRestController {
     public Transaction createExternalWithdraw(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto, @RequestParam(required = false) Optional<Integer> categoryId) {
         User user = authenticationHelper.tryGetUser(headers);
 
-        //TODO Do we need create a transaction by username//email//phone number
-        Transaction transaction = modelMapper.fromExternalDto(user, externalTransactionDto);
-        service.createExternalWithdraw(transaction, externalTransactionDto.getSelectedWalletId(),
-                externalTransactionDto.getSelectedCardId(), categoryId);
+        RestTemplate restTemplate = new RestTemplate();
+        boolean rejected = Boolean.TRUE.equals(restTemplate.getForObject("http://localhost/api/dummy", Boolean.class));
+        if (rejected) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Sorry your transfer is rejected");
+        }
+
+        Transaction transaction = modelMapper.fromExternalWithdrawDto(user, externalTransactionDto);
+        service.createExternalWithdraw(transaction, categoryId);
 
         return transaction;
     }
