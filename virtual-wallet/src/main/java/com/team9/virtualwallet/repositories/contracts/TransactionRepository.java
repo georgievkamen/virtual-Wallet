@@ -17,6 +17,7 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
     public List<Transaction> filter(int userId,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
+                                    Optional<Integer> categoryId,
                                     Optional<Integer> senderId,
                                     Optional<Integer> recipientId,
                                     Optional<Direction> direction,

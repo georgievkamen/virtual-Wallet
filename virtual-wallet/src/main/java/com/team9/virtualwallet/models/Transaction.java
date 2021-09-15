@@ -35,6 +35,13 @@ public class Transaction {
     @JoinColumn(name = "recipient_payment_method_id")
     private PaymentMethod recipientPaymentMethod;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "category_transactions",
+            joinColumns = @JoinColumn(name = "transaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Category category;
 
     public Transaction() {
     }
@@ -94,5 +101,13 @@ public class Transaction {
 
     public void setRecipientPaymentMethod(PaymentMethod recipientPaymentMethod) {
         this.recipientPaymentMethod = recipientPaymentMethod;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

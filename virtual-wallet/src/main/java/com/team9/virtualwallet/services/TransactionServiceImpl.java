@@ -10,6 +10,7 @@ import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
+import com.team9.virtualwallet.services.contracts.CategoryService;
 import com.team9.virtualwallet.services.contracts.TransactionService;
 import com.team9.virtualwallet.services.contracts.WalletService;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,14 @@ public class TransactionServiceImpl implements TransactionService {
     private final WalletRepository walletRepository;
     private final PaymentMethodRepository paymentMethodRepository;
     private final WalletService walletService;
+    private final CategoryService categoryService;
 
-    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, PaymentMethodRepository paymentMethodRepository, WalletService walletService) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, PaymentMethodRepository paymentMethodRepository, WalletService walletService, CategoryService categoryService) {
         this.repository = repository;
         this.walletRepository = walletRepository;
         this.paymentMethodRepository = paymentMethodRepository;
         this.walletService = walletService;
+        this.categoryService = categoryService;
     }
 
     public List<Transaction> getAll(User user) {
@@ -50,7 +53,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     //TODO Add selected wallet instead of default
     @Override
-    public void create(Transaction transaction, int selectedWalletId) {
+    public void create(Transaction transaction, int selectedWalletId, Optional<Integer> categoryId) {
         //TODO Add checks if user is trying to transfer money to himself
         Wallet selectedWallet = walletRepository.getById(selectedWalletId);
 
@@ -65,6 +68,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(transaction.getRecipient().getDefaultWallet().getId()));
 
+        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
         // Remove Balance from Sender and deposit it to Recipient
 
         walletService.withdrawBalance(selectedWallet, transaction.getAmount());
@@ -72,8 +76,9 @@ public class TransactionServiceImpl implements TransactionService {
         repository.create(transaction);
     }
 
+
     @Override
-    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected) {
+    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected, Optional<Integer> categoryId) {
         if (rejected) {
             throw new IllegalArgumentException("Sorry your transfer is rejected");
         }
@@ -83,19 +88,21 @@ public class TransactionServiceImpl implements TransactionService {
         if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
         }
+        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
         walletService.depositBalance(selectedWallet, transaction.getAmount());
         repository.create(transaction);
     }
 
     @Override
-    public void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId) {
+    public void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId, Optional<Integer> categoryId) {
         //TODO Add checks if user is trying to transfer money to himself
         Wallet selectedWallet = walletRepository.getById(selectedWalletId);
 
         if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
         }
+        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
         walletService.withdrawBalance(selectedWallet, transaction.getAmount());
         repository.create(transaction);
@@ -105,13 +112,14 @@ public class TransactionServiceImpl implements TransactionService {
     public List<Transaction> filter(User user,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
+                                    Optional<Integer> categoryId,
                                     Optional<Integer> senderId,
                                     Optional<Integer> recipientId,
                                     Optional<Direction> direction,
                                     Optional<SortAmount> amount,
                                     Optional<SortDate> date) {
 
-        return repository.filter(user.getId(), startDate, endDate, senderId, recipientId, direction, amount, date);
+        return repository.filter(user.getId(), startDate, endDate, categoryId, senderId, recipientId, direction, amount, date);
     }
 
     //TODO Think about moving it in Wallet or UserService

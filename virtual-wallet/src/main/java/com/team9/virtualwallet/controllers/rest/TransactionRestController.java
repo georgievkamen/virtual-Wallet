@@ -37,18 +37,18 @@ public class TransactionRestController {
     }
 
     @PostMapping
-    public Transaction create(@RequestHeader HttpHeaders headers, @RequestBody @Valid TransactionDto transactionDto) {
+    public Transaction create(@RequestHeader HttpHeaders headers, @RequestBody @Valid TransactionDto transactionDto, @RequestParam(required = false) Optional<Integer> categoryId) {
         User user = authenticationHelper.tryGetUser(headers);
 
         //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromDto(user, transactionDto);
-        service.create(transaction, transactionDto.getSelectedWalletId());
+        service.create(transaction, transactionDto.getSelectedWalletId(), categoryId);
 
         return transaction;
     }
 
     @PostMapping("/external/deposit")
-    public Transaction createExternalDeposit(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto) {
+    public Transaction createExternalDeposit(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto, @RequestParam(required = false) Optional<Integer> categoryId) {
         User user = authenticationHelper.tryGetUser(headers);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -58,37 +58,38 @@ public class TransactionRestController {
         //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromExternalDto(user, externalTransactionDto);
         service.createExternalDeposit(transaction, externalTransactionDto.getSelectedWalletId(),
-                externalTransactionDto.getSelectedCardId(), rejected);
+                externalTransactionDto.getSelectedCardId(), rejected, categoryId);
 
         return transaction;
     }
 
     @PostMapping("/external/withdraw")
-    public Transaction createExternalWithdraw(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto) {
+    public Transaction createExternalWithdraw(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto, @RequestParam(required = false) Optional<Integer> categoryId) {
         User user = authenticationHelper.tryGetUser(headers);
 
         //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromExternalDto(user, externalTransactionDto);
         service.createExternalWithdraw(transaction, externalTransactionDto.getSelectedWalletId(),
-                externalTransactionDto.getSelectedCardId());
+                externalTransactionDto.getSelectedCardId(), categoryId);
 
         return transaction;
     }
 
     @GetMapping("/filter")
-    public List<Transaction> transaction(@RequestHeader HttpHeaders headers,
-                                         @RequestParam(required = false)
-                                                 Optional<Date> startDate,
-                                         Optional<Date> endDate,
-                                         Optional<Integer> senderId,
-                                         Optional<Integer> recipientId,
-                                         Optional<Direction> direction,
-                                         Optional<SortAmount> amount,
-                                         Optional<SortDate> date) {
+    public List<Transaction> filter(@RequestHeader HttpHeaders headers,
+                                    @RequestParam(required = false)
+                                            Optional<Date> startDate,
+                                    Optional<Date> endDate,
+                                    Optional<Integer> categoryId,
+                                    Optional<Integer> senderId,
+                                    Optional<Integer> recipientId,
+                                    Optional<Direction> direction,
+                                    Optional<SortAmount> amount,
+                                    Optional<SortDate> date) {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return service.filter(user, startDate, endDate, senderId, recipientId, direction, amount, date);
+        return service.filter(user, startDate, endDate, categoryId, senderId, recipientId, direction, amount, date);
     }
 
     @GetMapping

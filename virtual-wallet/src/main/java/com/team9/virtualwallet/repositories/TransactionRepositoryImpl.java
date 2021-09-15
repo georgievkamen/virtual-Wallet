@@ -42,6 +42,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     public List<Transaction> filter(int userId,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
+                                    Optional<Integer> categoryId,
                                     Optional<Integer> senderId,
                                     Optional<Integer> recipientId,
                                     Optional<Direction> direction,
@@ -49,7 +50,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                                     Optional<SortDate> date) {
 
         try (Session session = sessionFactory.openSession()) {
-            var baseQuery = "select t from Transaction t ";
+            var baseQuery = "select t from Transaction t join Category c on t.category.id = c.id";
             List<String> filters = new ArrayList<>();
             List<String> sortType = new ArrayList<>();
 
@@ -59,6 +60,10 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
 
             if (endDate.isPresent()) {
                 filters.add(" t.timestamp < :endDate");
+            }
+
+            if (categoryId.isPresent()) {
+                filters.add(" c.id = :categoryId");
             }
 
             if (senderId.isPresent()) {
@@ -95,6 +100,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
 
             startDate.ifPresent(value -> query.setParameter("startDate", value));
             endDate.ifPresent(value -> query.setParameter("endDate", value));
+            categoryId.ifPresent(integer -> query.setParameter("categoryId", integer));
             senderId.ifPresent(integer -> query.setParameter("senderId", integer));
             recipientId.ifPresent(integer -> query.setParameter("recipientId", integer));
             direction.ifPresent(integer -> query.setParameter("userId", userId));

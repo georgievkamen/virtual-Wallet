@@ -16,15 +16,16 @@ public interface TransactionService {
 
     Transaction getById(User user, int id);
 
-    void create(Transaction transaction, int selectedWalletId);
+    void create(Transaction transaction, int selectedWalletId, Optional<Integer> categoryId);
 
-    public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected);
+    void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected, Optional<Integer> categoryId);
 
-    public void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId);
+    void createExternalWithdraw(Transaction transaction, int selectedWalletId, int cardId, Optional<Integer> categoryId);
 
     List<Transaction> filter(User user,
                              Optional<Date> startDate,
                              Optional<Date> endDate,
+                             Optional<Integer> categoryId,
                              Optional<Integer> senderId,
                              Optional<Integer> recipientId,
                              Optional<Direction> direction,
