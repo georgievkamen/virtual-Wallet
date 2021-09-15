@@ -2,6 +2,7 @@ package com.team9.virtualwallet.repositories;
 
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
 import com.team9.virtualwallet.models.enums.SortDate;
@@ -35,6 +36,17 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
             Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id", Transaction.class);
             query.setParameter("id", user.getId());
             return query.list();
+        }
+    }
+
+    @Override
+    public void create(Transaction transaction, Wallet walletToWithdraw, Wallet walletToDeposit) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.update(walletToWithdraw);
+            session.update(walletToDeposit);
+            session.save(transaction);
+            session.getTransaction().commit();
         }
     }
 

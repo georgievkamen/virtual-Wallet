@@ -18,8 +18,10 @@ public interface WalletService {
 
     void delete(User user, int id);
 
-    void depositBalance(Wallet wallet, BigDecimal balance);
+    void depositBalance(Wallet wallet, BigDecimal funds);
 
-    void withdrawBalance(Wallet wallet, BigDecimal balance);
+    void withdrawBalance(Wallet wallet, BigDecimal funds);
+
+    void verifyEnoughBalance(Wallet wallet, BigDecimal funds);
 
 }

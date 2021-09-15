@@ -51,31 +51,31 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.getById(id);
     }
 
-    //TODO Add selected wallet instead of default
     @Override
     public void create(Transaction transaction, int selectedWalletId, Optional<Integer> categoryId) {
-        //TODO Add checks if user is trying to transfer money to himself
-        Wallet selectedWallet = walletRepository.getById(selectedWalletId);
+        Wallet senderWallet = walletRepository.getById(selectedWalletId);
+        Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
 
-        if (transaction.getSender().getId() != selectedWallet.getUser().getId()) {
+        if (transaction.getSender().getId() != senderWallet.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
         }
 
-        verifyUserNotBlocked(transaction.getSender());
-        // Verify recipient has a wallet
-        if (transaction.getRecipient().getDefaultWallet() == null) {
-            throw new IllegalArgumentException("Recipient doesn't have a default wallet set!");
+        //TODO Fix this || Create a method for transfer from one wallet to another
+        if (transaction.getSender().getId() == transaction.getRecipient().getId()) {
+            throw new IllegalArgumentException("You can't send money to yourself!");
         }
-        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(transaction.getRecipient().getDefaultWallet().getId()));
+
+        verifyUserNotBlocked(transaction.getSender());
+        walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
+        verifyRecipientHasDefaultWallet(transaction);
 
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
-        // Remove Balance from Sender and deposit it to Recipient
 
-        walletService.withdrawBalance(selectedWallet, transaction.getAmount());
-        walletService.depositBalance(transaction.getRecipient().getDefaultWallet(), transaction.getAmount());
-        repository.create(transaction);
+        senderWallet.withdrawBalance(transaction.getAmount());
+        recipientWallet.depositBalance(transaction.getAmount());
+
+        repository.create(transaction, senderWallet, recipientWallet);
     }
-
 
     @Override
     public void createExternalDeposit(Transaction transaction, int selectedWalletId, int cardId, boolean rejected, Optional<Integer> categoryId) {
@@ -123,11 +123,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     //TODO Think about moving it in Wallet or UserService
+
     private void verifyUserNotBlocked(User user) {
         if (user.isBlocked()) {
             throw new IllegalArgumentException("You are currently blocked, you cannot make transactions");
         }
     }
 
+    private void verifyRecipientHasDefaultWallet(Transaction transaction) {
+        if (transaction.getRecipient().getDefaultWallet() == null) {
+            throw new IllegalArgumentException("Recipient doesn't have a default wallet set!");
+        }
+    }
 
 }

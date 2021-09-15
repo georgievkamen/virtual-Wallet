@@ -79,19 +79,23 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void depositBalance(Wallet wallet, BigDecimal balance) {
-        wallet.depositBalance(balance);
+    public void depositBalance(Wallet wallet, BigDecimal funds) {
+        wallet.depositBalance(funds);
         repository.update(wallet);
     }
 
     @Override
-    public void withdrawBalance(Wallet wallet, BigDecimal balance) {
-        //TODO Check if it works properly and add selected wallet instead of default
-        if (wallet.getBalance().compareTo(balance) < 0) {
+    public void withdrawBalance(Wallet wallet, BigDecimal funds) {
+        verifyEnoughBalance(wallet, funds);
+        wallet.withdrawBalance(funds);
+        repository.update(wallet);
+    }
+
+    @Override
+    public void verifyEnoughBalance(Wallet wallet, BigDecimal funds) {
+        if (wallet.getBalance().compareTo(funds) < 0) {
             throw new IllegalArgumentException("You do not have enough money in the selected wallet!");
         }
-        wallet.withdrawBalance(balance);
-        repository.update(wallet);
     }
 
     //TODO Rename to verifyUnique
