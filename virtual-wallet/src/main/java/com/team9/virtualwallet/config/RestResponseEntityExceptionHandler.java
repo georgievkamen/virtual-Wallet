@@ -4,32 +4,39 @@ import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.EnumNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@Order(Ordered.HIGHEST_PRECEDENCE)
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Objects;
+
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = UnauthorizedOperationException.class)
-    private ResponseEntity<Object> unauthorized(RuntimeException e) {
-        return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+    private void unauthorized(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.UNAUTHORIZED.value());
     }
 
     @ExceptionHandler(value = {EntityNotFoundException.class, EnumNotFoundException.class})
-    private ResponseEntity<Object> notFound(RuntimeException e) {
-        return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    private void notFound(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.NOT_FOUND.value());
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class, DuplicateEntityException.class})
-    private ResponseEntity<Object> conflict(RuntimeException e) {
-        return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT);
+    public void conflict(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.CONFLICT.value());
+    }
+
+    public static void checkFields(BindingResult result) {
+        if (result.hasErrors()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
     }
 
 }

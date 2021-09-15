@@ -6,10 +6,13 @@ import com.team9.virtualwallet.services.contracts.UserService;
 import com.team9.virtualwallet.services.mappers.UserModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+
+import static com.team9.virtualwallet.config.RestResponseEntityExceptionHandler.checkFields;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,7 +28,9 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody @Valid RegisterDto registerDto) {
+    public User register(@RequestBody @Valid RegisterDto registerDto, BindingResult result) {
+        checkFields(result);
+
 
         //TODO Ask how to fix @Valid not showing text because of @ControllerAdvice
 

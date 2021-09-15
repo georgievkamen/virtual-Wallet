@@ -7,10 +7,13 @@ import com.team9.virtualwallet.models.dtos.CardDto;
 import com.team9.virtualwallet.services.contracts.CardService;
 import com.team9.virtualwallet.services.mappers.CardModelMapper;
 import org.springframework.http.HttpHeaders;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.team9.virtualwallet.config.RestResponseEntityExceptionHandler.checkFields;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -41,7 +44,9 @@ public class CardRestController {
     }
 
     @PostMapping
-    public Card create(@RequestHeader HttpHeaders headers, @RequestBody @Valid CardDto cardDto) {
+    public Card create(@RequestHeader HttpHeaders headers, @RequestBody @Valid CardDto cardDto, BindingResult result) {
+        checkFields(result);
+
         User user = authenticationHelper.tryGetUser(headers);
 
         Card card = modelMapper.fromDto(user, cardDto);
@@ -51,7 +56,9 @@ public class CardRestController {
     }
 
     @PutMapping("/{id}")
-    public Card update(@RequestHeader HttpHeaders headers, @RequestBody @Valid CardDto cardDto, @PathVariable int id) {
+    public Card update(@RequestHeader HttpHeaders headers, @RequestBody @Valid CardDto cardDto, @PathVariable int id, BindingResult result) {
+        checkFields(result);
+
         User user = authenticationHelper.tryGetUser(headers);
 
         Card card = modelMapper.fromDto(cardDto, id);
