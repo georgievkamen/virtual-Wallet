@@ -106,6 +106,26 @@ create table wallets
         foreign key (user_id) references users (user_id)
 );
 
+create table categories
+(
+    category_id int auto_increment
+        primary key,
+    name        varchar(16) not null,
+    user_id     int         not null,
+    constraint categories_users_id_fk
+        foreign key (user_id) references users (user_id)
+);
+
+create table category_transactions
+(
+    transaction_id int null,
+    category_id    int null,
+    constraint category_transactions_categories_fk
+        foreign key (category_id) references categories (category_id),
+    constraint category_transactions_id_fk
+        foreign key (transaction_id) references transactions (transaction_id)
+);
+
 alter table users
     add constraint users_wallets_fk
         foreign key (default_wallet_id) references wallets (wallet_id);
