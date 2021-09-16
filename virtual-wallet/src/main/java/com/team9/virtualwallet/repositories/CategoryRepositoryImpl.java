@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public class CategoryRepositoryImpl extends BaseRepositoryImpl<Category> implements CategoryRepository {
 
+    //TODO Override delete
     private final SessionFactory sessionFactory;
 
     @Autowired
