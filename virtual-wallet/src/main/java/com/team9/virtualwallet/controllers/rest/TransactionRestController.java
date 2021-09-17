@@ -70,8 +70,8 @@ public class TransactionRestController {
         User user = authenticationHelper.tryGetUser(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        boolean rejected = Boolean.TRUE.equals(restTemplate.getForObject("http://localhost/api/dummy", Boolean.class));
-        if (rejected) {
+        HttpStatus status = restTemplate.getForObject("http://localhost/api/dummy", HttpStatus.class);
+        if (status != null && status.isError()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Sorry your transfer is rejected");
         }
 

@@ -4,13 +4,16 @@ import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.ConfirmationToken;
 import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.repositories.contracts.ConfirmationTokenRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.services.contracts.UserService;
+import com.team9.virtualwallet.services.contracts.WalletService;
 import com.team9.virtualwallet.services.emails.SendEmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,12 +25,14 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final WalletService walletService;
     private final SendEmailServiceImpl sendEmailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, SendEmailServiceImpl sendEmailService) {
+    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, WalletService walletService, SendEmailServiceImpl sendEmailService) {
         this.repository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
+        this.walletService = walletService;
         this.sendEmailService = sendEmailService;
     }
 
@@ -61,9 +66,9 @@ public class UserServiceImpl implements UserService {
         sendEmailService.sendEmailConfirmation(user, confirmationToken);
 
         repository.create(user);
+        createDefaultWallet(user);
         confirmationTokenRepository.create(confirmationToken);
     }
-
 
     @Override
     public void update(User userExecuting, User user, int id) {
@@ -80,6 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //TODO HANDLE SQL EXCEPTIONS
+
     @Override
     public void delete(User userExecuting, int id) {
         User userToDelete = repository.getById(id);
@@ -102,22 +108,6 @@ public class UserServiceImpl implements UserService {
                 .filter(u -> u.getId() != user.getId())
                 .collect(Collectors.toList());
 
-    }
-
-    public void verifyNotDuplicate(User user) {
-        List<User> usersByUserName = repository.getByFieldList("username", user.getUsername());
-        List<User> usersByEmail = repository.getByFieldList("email", user.getEmail());
-        List<User> usersByPhoneNumber = repository.getByFieldList("phoneNumber", user.getPhoneNumber());
-
-        if (!usersByUserName.isEmpty() && usersByUserName.get(0).getId() != user.getId()) {
-            throw new DuplicateEntityException("User", "username", user.getUsername());
-        }
-        if (!usersByEmail.isEmpty() && usersByEmail.get(0).getId() != user.getId()) {
-            throw new DuplicateEntityException("User", "email", user.getEmail());
-        }
-        if (!usersByPhoneNumber.isEmpty() && usersByPhoneNumber.get(0).getId() != user.getId()) {
-            throw new DuplicateEntityException("User", "phone number", user.getPhoneNumber());
-        }
     }
 
     @Override
@@ -156,6 +146,31 @@ public class UserServiceImpl implements UserService {
         user.setBlocked(false);
 
         repository.update(user);
+    }
+
+    public void verifyNotDuplicate(User user) {
+        List<User> usersByUserName = repository.getByFieldList("username", user.getUsername());
+        List<User> usersByEmail = repository.getByFieldList("email", user.getEmail());
+        List<User> usersByPhoneNumber = repository.getByFieldList("phoneNumber", user.getPhoneNumber());
+
+        if (!usersByUserName.isEmpty() && usersByUserName.get(0).getId() != user.getId()) {
+            throw new DuplicateEntityException("User", "username", user.getUsername());
+        }
+        if (!usersByEmail.isEmpty() && usersByEmail.get(0).getId() != user.getId()) {
+            throw new DuplicateEntityException("User", "email", user.getEmail());
+        }
+        if (!usersByPhoneNumber.isEmpty() && usersByPhoneNumber.get(0).getId() != user.getId()) {
+            throw new DuplicateEntityException("User", "phone number", user.getPhoneNumber());
+        }
+    }
+
+    private void createDefaultWallet(User user) {
+        Wallet defaultWallet = new Wallet();
+        defaultWallet.setName("Default Wallet");
+        defaultWallet.setBalance(BigDecimal.valueOf(0));
+        defaultWallet.setUser(user);
+        walletService.create(user, defaultWallet);
+        user.setDefaultWallet(defaultWallet);
     }
 
 }
