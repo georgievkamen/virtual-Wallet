@@ -62,11 +62,9 @@ public class UserServiceImpl implements UserService {
         verifyNotDuplicate(user);
 
         ConfirmationToken confirmationToken = new ConfirmationToken(user);
-
         sendEmailService.sendEmailConfirmation(user, confirmationToken);
 
         repository.create(user);
-        createDefaultWallet(user);
         confirmationTokenRepository.create(confirmationToken);
     }
 
@@ -120,8 +118,9 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setEmailVerified(true);
-
         repository.update(user);
+
+        createDefaultWallet(user);
     }
 
     @Override
@@ -170,7 +169,6 @@ public class UserServiceImpl implements UserService {
         defaultWallet.setBalance(BigDecimal.valueOf(0));
         defaultWallet.setUser(user);
         walletService.create(user, defaultWallet);
-        user.setDefaultWallet(defaultWallet);
     }
 
 }

@@ -31,9 +31,6 @@ public class AuthenticationRestController {
     public User register(@RequestBody @Valid RegisterDto registerDto, BindingResult result) {
         checkFields(result);
 
-
-        //TODO Ask how to fix @Valid not showing text because of @ControllerAdvice
-
         if (!registerDto.getPassword().equals(registerDto.getPasswordConfirm())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Passwords should match!");
         }
