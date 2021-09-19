@@ -59,6 +59,10 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = repository.getById(id);
         verifyOwnership(user, category, "You can only delete your own categories!");
 
+        if (!category.getTransactions().isEmpty()) {
+            category.deleteTransactions();
+        }
+
         repository.delete(category);
     }
 

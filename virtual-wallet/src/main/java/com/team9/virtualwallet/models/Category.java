@@ -1,6 +1,8 @@
 package com.team9.virtualwallet.models;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "categories")
@@ -17,6 +19,14 @@ public class Category {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "category_transactions",
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "transaction_id")
+    )
+    private Set<Transaction> transactions;
 
     public Category() {
     }
@@ -43,6 +53,18 @@ public class Category {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    public void deleteTransactions() {
+        this.transactions = new HashSet<>();
     }
 
 }

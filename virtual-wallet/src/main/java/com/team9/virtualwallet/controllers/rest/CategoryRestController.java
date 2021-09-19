@@ -49,6 +49,13 @@ public class CategoryRestController {
         return category;
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        service.delete(user, id);
+    }
+
 
     @GetMapping
     public List<Category> getAll(@RequestHeader HttpHeaders headers) {
