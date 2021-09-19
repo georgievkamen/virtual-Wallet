@@ -22,6 +22,8 @@ create table users
     password          varchar(30)          not null,
     email             varchar(50)          not null,
     phone_number      varchar(10)          not null,
+    first_name        varchar(50)          not null,
+    last_name         varchar(50)          not null,
     blocked           tinyint(1) default 0 not null,
     email_verified    tinyint(1) default 0 not null,
     id_verified       tinyint(1) default 0 not null,
@@ -52,6 +54,16 @@ create table cards
         foreign key (user_id) references users (user_id)
 );
 
+create table categories
+(
+    category_id int auto_increment
+        primary key,
+    name        varchar(16) not null,
+    user_id     int         not null,
+    constraint categories_users_id_fk
+        foreign key (user_id) references users (user_id)
+);
+
 create table confirmation_tokens
 (
     token_id           bigint auto_increment
@@ -61,6 +73,16 @@ create table confirmation_tokens
     user_id            int                                   not null,
     constraint confirmation_tokens_users_fk
         foreign key (user_id) references users (user_id)
+);
+
+create table contact_list
+(
+    user_id    int not null,
+    contact_id int not null,
+    constraint contact_list__users_fk
+        foreign key (user_id) references users (user_id),
+    constraint contact_list_user_id_fk
+        foreign key (contact_id) references users (user_id)
 );
 
 create table transactions
@@ -81,6 +103,16 @@ create table transactions
         foreign key (recipient_id) references users (user_id),
     constraint transactions_users_sender_fk
         foreign key (sender_id) references users (user_id)
+);
+
+create table category_transactions
+(
+    transaction_id int null,
+    category_id    int null,
+    constraint category_transactions_categories_fk
+        foreign key (category_id) references categories (category_id),
+    constraint category_transactions_id_fk
+        foreign key (transaction_id) references transactions (transaction_id)
 );
 
 create table users_roles
@@ -104,26 +136,6 @@ create table wallets
         foreign key (wallet_id) references payment_methods (id),
     constraint wallets_users_fk
         foreign key (user_id) references users (user_id)
-);
-
-create table categories
-(
-    category_id int auto_increment
-        primary key,
-    name        varchar(16) not null,
-    user_id     int         not null,
-    constraint categories_users_id_fk
-        foreign key (user_id) references users (user_id)
-);
-
-create table category_transactions
-(
-    transaction_id int null,
-    category_id    int null,
-    constraint category_transactions_categories_fk
-        foreign key (category_id) references categories (category_id),
-    constraint category_transactions_id_fk
-        foreign key (transaction_id) references transactions (transaction_id)
 );
 
 alter table users
