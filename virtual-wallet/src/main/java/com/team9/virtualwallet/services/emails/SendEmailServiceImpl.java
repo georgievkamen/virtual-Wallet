@@ -40,7 +40,7 @@ public class SendEmailServiceImpl implements SendEmailService {
         StringBuilder sb = new StringBuilder();
         File file = null;
         try {
-            file = ResourceUtils.getFile("classpath:templates/verify-email-template.html");
+            file = ResourceUtils.getFile("classpath:templates/email-templates/verify-email-template.html");
         } catch (FileNotFoundException e) {
             System.out.println("F");
         }
