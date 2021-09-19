@@ -29,6 +29,8 @@ public class UserModelMapper {
         user.setEmail(registerDto.getEmail());
         user.setPassword(registerDto.getPassword());
         user.setPhoneNumber(registerDto.getPhoneNumber());
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
         HashSet<Role> roles = new HashSet<>();
         user.setRoles(roles);
         user.addRole(roleRepository.getById(1));

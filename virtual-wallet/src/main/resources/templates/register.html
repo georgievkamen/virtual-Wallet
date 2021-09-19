@@ -92,6 +92,7 @@
 
                             <form class="auth-register-form mt-2" action="/auth/register" th:object="${register}"
                                   method="POST" novalidate>
+
                                 <div class="mb-1">
                                     <label class="form-label" for="register-username">Username</label>
                                     <input type="text" th:field="*{username}" class="form-control"
@@ -100,6 +101,7 @@
                                     <div th:if="${#fields.hasErrors('username')}" class="invalid-feedback"
                                          th:errors="*{username}"></div>
                                 </div>
+
                                 <div class="mb-1">
                                     <label class="form-label" for="register-email">Email</label>
                                     <input type="text" th:field="*{email}" class="form-control"
@@ -107,6 +109,28 @@
                                            id="register-email" placeholder="john@example.com" tabindex="2"/>
                                     <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback"
                                          th:errors="*{email}"></div>
+                                </div>
+
+                                <div class="mb-1">
+                                    <label class="form-label" for="register-first-name">First name</label>
+                                    <input type="text" th:field="*{firstName}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
+                                           id="register-first-name"
+                                           placeholder="John"
+                                           tabindex="4"/>
+                                    <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback"
+                                         th:errors="*{firstName}"></div>
+                                </div>
+
+                                <div class="mb-1">
+                                    <label class="form-label" for="register-last-name">Last name</label>
+                                    <input type="text" th:field="*{lastName}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
+                                           id="register-last-name"
+                                           placeholder="Doe"
+                                           tabindex="5"/>
+                                    <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback"
+                                         th:errors="*{lastName}"></div>
                                 </div>
 
                                 <div class="mb-1">
@@ -126,7 +150,7 @@
                                            th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid' : ''"
                                            id="register-confirm-password"
                                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                           tabindex="4"/>
+                                           tabindex="6"/>
                                     <div th:if="${#fields.hasErrors('passwordConfirm')}" class="invalid-feedback"
                                          th:errors="*{passwordConfirm}"></div>
                                 </div>
@@ -135,20 +159,20 @@
                                     <label class="form-label" for="register-phone">Phone Number</label>
                                     <input type="text" th:field="*{phoneNumber}" class="form-control"
                                            th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
-                                           id="register-phone" placeholder="08XXXXXXXX" tabindex="5"/>
+                                           id="register-phone" placeholder="08XXXXXXXX" tabindex="7"/>
                                     <div th:if="${#fields.hasErrors('phoneNumber')}" class="invalid-feedback"
                                          th:errors="*{phoneNumber}"></div>
                                 </div>
 
                                 <div class="mb-1">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="register-years"
-                                               tabindex="6"/>
+                                        <input class="form-check-input" type="checkbox" id="register-years" required=""
+                                               tabindex="8"/>
                                         <label class="form-check-label" for="register-years">I am over 18 years
                                             old!</label>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary w-100" tabindex="7">Sign up</button>
+                                <button class="btn btn-primary w-100" tabindex="9">Sign up</button>
                             </form>
 
                             <p class="text-center mt-2">
