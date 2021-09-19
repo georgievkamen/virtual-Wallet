@@ -5,10 +5,8 @@ import com.team9.virtualwallet.models.dtos.RegisterDto;
 import com.team9.virtualwallet.services.contracts.UserService;
 import com.team9.virtualwallet.services.mappers.UserModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
@@ -28,15 +26,15 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody @Valid RegisterDto registerDto, BindingResult result) {
+    public String register(@RequestBody @Valid RegisterDto registerDto, BindingResult result) {
         checkFields(result);
 
         User user = modelMapper.fromRegisterDto(registerDto);
         service.create(user);
-        return user;
+        return String.format("We have send an activation code to your E-Mail: %s!", user.getEmail());
     }
 
-    @GetMapping("/confirm-account")
+    @GetMapping("/verify-email")
     public String confirmAccount(@RequestParam("token") String token) {
         service.confirmUser(token);
         return "Your account has been verified!";

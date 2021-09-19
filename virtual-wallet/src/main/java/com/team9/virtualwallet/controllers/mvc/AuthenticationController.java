@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -44,7 +41,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public String handleLogin(@Valid @ModelAttribute("login") LoginDto dto,
+    public String handleLogin(@ModelAttribute("login") LoginDto dto,
                               BindingResult bindingResult,
                               HttpSession session) {
         if (bindingResult.hasErrors()) {
@@ -83,10 +80,9 @@ public class AuthenticationController {
         try {
             User user = mapper.fromRegisterDto(registerDto);
             userService.create(user);
-//            session.setAttribute(CURRENT_USER_SESSION_KEY, user.getUsername());
-            session.setAttribute("email", user.getEmail());
+            session.setAttribute(CURRENT_USER_SESSION_KEY, user.getUsername());
             model.addAttribute("email", user.getEmail());
-            return "redirect:/auth/verify-email";
+            return "verify-email";
         } catch (DuplicateEntityException e) {
             String field = e.getMessage().split(" ")[2];
             if (field.equalsIgnoreCase("username")) {
@@ -106,17 +102,13 @@ public class AuthenticationController {
     }
 
     @GetMapping("/verify-email")
-    public String showVerifyEmailPage(HttpSession session, Model model) {
+    public String handleEmailVerification(@RequestParam("token") String token, HttpSession session, Model model) {
         try {
-            authenticationHelper.tryGetUser(session);
+            userService.confirmUser(token);
             return "redirect:/panel";
-        } catch (AuthenticationFailureException e) {
-            model.addAttribute("email", session.getAttribute("email"));
-            if (model.getAttribute("email") != null) {
-                return "verify-email";
-            } else {
-                return "redirect:/";
-            }
+        } catch (IllegalArgumentException e) {
+            return "redirect:/panel";
         }
     }
+
 }
