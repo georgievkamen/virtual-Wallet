@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,5 +37,26 @@ public class UserRestController {
 
         service.unblockUser(userExecuting, id);
         return service.getById(userExecuting, id);
+    }
+
+    @GetMapping("/contacts")
+    public List<User> getContacts(@RequestHeader HttpHeaders headers) {
+        User userExecuting = authenticationHelper.tryGetUser(headers);
+
+        return service.getContacts(userExecuting);
+    }
+
+    @DeleteMapping("/contacts")
+    public void removeContact(@RequestHeader HttpHeaders headers, @RequestParam int contactId) {
+        User userExecuting = authenticationHelper.tryGetUser(headers);
+
+        service.removeContact(userExecuting, contactId);
+    }
+
+    @PostMapping("/contacts")
+    public void addContact(@RequestHeader HttpHeaders headers, @RequestParam int contactId) {
+        User userExecuting = authenticationHelper.tryGetUser(headers);
+
+        service.addContact(userExecuting, contactId);
     }
 }

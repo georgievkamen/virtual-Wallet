@@ -1,7 +1,10 @@
 package com.team9.virtualwallet.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -53,6 +56,15 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "contact_list",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "contact_id")
+    )
+    private Set<User> contacts;
 
     public User() {
     }
@@ -159,6 +171,22 @@ public class User {
 
     public void removeRole(Role role) {
         this.roles.remove(role);
+    }
+
+    public Set<User> getContacts() {
+        return this.contacts;
+    }
+
+    public void setContacts(Set<User> contacts) {
+        this.contacts = contacts;
+    }
+
+    public void addContact(User contact) {
+        this.contacts.add(contact);
+    }
+
+    public void removeContact(String username) {
+        this.contacts = contacts.stream().filter(user -> !user.getUsername().equals(username)).collect(Collectors.toSet());
     }
 
     public boolean isEmployee() {
