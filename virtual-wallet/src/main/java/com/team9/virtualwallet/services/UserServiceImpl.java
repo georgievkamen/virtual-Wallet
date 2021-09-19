@@ -1,6 +1,7 @@
 package com.team9.virtualwallet.services;
 
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
+import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.ConfirmationToken;
 import com.team9.virtualwallet.models.User;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -110,6 +112,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void addContact(User userExecuting, int contactId) {
+
+        User contactToAdd = repository.getById(contactId);
+        verifyContactNotAdded(userExecuting, contactToAdd);
+        userExecuting.addContact(contactToAdd);
+
+        repository.update(userExecuting);
+    }
+
+    @Override
+    public void removeContact(User userExecuting, int contactId) {
+
+        User contactToDelete = repository.getById(contactId);
+        verifyContactExists(userExecuting, contactToDelete);
+        userExecuting.removeContact(contactToDelete.getUsername());
+
+        repository.update(userExecuting);
+    }
+
+    @Override
+    public List<User> getContacts(User user) {
+        return new ArrayList<>(user.getContacts());
+    }
+
+    @Override
     public void confirmUser(String confirmationToken) {
         ConfirmationToken token = confirmationTokenRepository.getByField("confirmationToken", confirmationToken);
         User user = token.getUser();
@@ -159,6 +186,18 @@ public class UserServiceImpl implements UserService {
         }
         if (!usersByPhoneNumber.isEmpty() && usersByPhoneNumber.get(0).getId() != user.getId()) {
             throw new DuplicateEntityException("User", "phone number", user.getPhoneNumber());
+        }
+    }
+
+    private void verifyContactNotAdded(User userExecuting, User contactToAdd) {
+        if (userExecuting.getContacts().stream().anyMatch(user -> user.getUsername().equals(contactToAdd.getUsername()))) {
+            throw new DuplicateEntityException(String.format("User with username %s is already in your contact list", contactToAdd.getUsername()));
+        }
+    }
+
+    private void verifyContactExists(User userExecuting, User contactToDelete) {
+        if (userExecuting.getContacts().stream().noneMatch(user -> user.getUsername().equals(contactToDelete.getUsername()))) {
+            throw new EntityNotFoundException(String.format("Contact with username %s is not in your contact list", contactToDelete.getUsername()));
         }
     }
 

@@ -20,6 +20,12 @@ public interface UserService {
 
     void confirmUser(String confirmationToken);
 
+    void addContact(User userExecuting, int contactId);
+
+    void removeContact(User userExecuting, int contactId);
+
+    List<User> getContacts(User user);
+
     void blockUser(User userExecuting, int id);
 
     void unblockUser(User userExecuting, int id);
