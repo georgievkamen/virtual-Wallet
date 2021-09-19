@@ -80,11 +80,6 @@ public class AuthenticationController {
             return "register";
         }
 
-        if (!registerDto.getPassword().equals(registerDto.getPasswordConfirm())) {
-            bindingResult.rejectValue("passwordConfirm", "password_error", "Password confirmation should match password!");
-            return "register";
-        }
-
         try {
             User user = mapper.fromRegisterDto(registerDto);
             userService.create(user);

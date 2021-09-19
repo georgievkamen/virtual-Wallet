@@ -31,10 +31,6 @@ public class AuthenticationRestController {
     public User register(@RequestBody @Valid RegisterDto registerDto, BindingResult result) {
         checkFields(result);
 
-        if (!registerDto.getPassword().equals(registerDto.getPasswordConfirm())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Passwords should match!");
-        }
-
         User user = modelMapper.fromRegisterDto(registerDto);
         service.create(user);
         return user;

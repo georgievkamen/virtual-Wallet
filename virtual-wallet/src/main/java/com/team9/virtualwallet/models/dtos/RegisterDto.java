@@ -1,12 +1,13 @@
 package com.team9.virtualwallet.models.dtos;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import com.team9.virtualwallet.utils.FieldsValueMatch;
 
+import javax.validation.constraints.*;
+
+@FieldsValueMatch(field = "password", fieldMatch = "passwordConfirm", message = "Passwords do not match!")
 public class RegisterDto extends LoginDto {
 
-    //TODO Remove the down 2
+    @NotBlank(message = "Email must be valid!")
     @Email(message = "Email must be valid!")
     private String email;
 
@@ -15,10 +16,12 @@ public class RegisterDto extends LoginDto {
     @Pattern(regexp = "08\\d{8}", message = "Phone number must be 08XXXXXXXX!")
     private String phoneNumber;
 
-    @Size(min = 2, message = "First name must be at least 2 characters long!")
+    @NotNull(message = "First name must be at least 2 characters long!")
+    @Size(min = 2, max = 50, message = "First name must be at least 2 characters long!")
     private String firstName;
 
-    @Size(min = 2, message = "Last name must be at least 2 characters long!")
+    @NotNull(message = "Last name must be at least 2 characters long!")
+    @Size(min = 2, max = 50, message = "Last name must be at least 2 characters long!")
     private String lastName;
 
     public RegisterDto() {
