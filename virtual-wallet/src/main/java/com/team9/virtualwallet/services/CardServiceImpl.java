@@ -12,10 +12,10 @@ import com.team9.virtualwallet.services.contracts.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static com.team9.virtualwallet.services.utils.Helpers.validateCardExpiryDate;
 import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZED_ACTION;
 
 @Service
@@ -91,12 +91,6 @@ public class CardServiceImpl implements CardService {
 
         if (repository.isDuplicate(card) && !Objects.equals(card.getCardNumber(), cardToEdit.getCardNumber())) {
             throw new DuplicateEntityException("Card with same card number already exists!");
-        }
-    }
-
-    private void validateCardExpiryDate(Card card) {
-        if (card.getExpirationDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Card is expired!");
         }
     }
 

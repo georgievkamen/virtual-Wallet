@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.team9.virtualwallet.services.utils.Helpers.validateCardExpiryDate;
+
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
@@ -81,6 +83,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId) {
         Card cardToWithdraw = cardRepository.getById(transaction.getSenderPaymentMethod().getId());
+        validateCardExpiryDate(cardToWithdraw);
         Wallet walletToDeposit = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
         if (transaction.getSender().getId() != walletToDeposit.getUser().getId()) {
@@ -101,6 +104,7 @@ public class TransactionServiceImpl implements TransactionService {
     public void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId) {
         Wallet walletToWithdraw = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
         Card cardToDeposit = cardRepository.getById(transaction.getRecipientPaymentMethod().getId());
+        validateCardExpiryDate(cardToDeposit);
 
         if (transaction.getSender().getId() != walletToWithdraw.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
