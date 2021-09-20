@@ -47,7 +47,6 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public void create(User user, Wallet wallet) {
         verifyNotDuplicate(user, wallet);
-        setDefaultIfNotExists(user, wallet);
 
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setType(Type.WALLET);
@@ -116,12 +115,6 @@ public class WalletServiceImpl implements WalletService {
     private void verifyOwnership(User user, Wallet wallet, String message) {
         if (wallet.getUser().getId() != user.getId()) {
             throw new UnauthorizedOperationException(message);
-        }
-    }
-
-    private void setDefaultIfNotExists(User user, Wallet wallet) {
-        if (repository.getAll(user).isEmpty()) {
-            user.setDefaultWallet(wallet);
         }
     }
 

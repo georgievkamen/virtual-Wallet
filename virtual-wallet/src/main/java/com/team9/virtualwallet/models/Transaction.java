@@ -27,6 +27,9 @@ public class Transaction {
     @Column(name = "amount")
     private BigDecimal amount;
 
+    @Column(name = "description")
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "sender_payment_method_id")
     private PaymentMethod senderPaymentMethod;
@@ -85,6 +88,14 @@ public class Transaction {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public PaymentMethod getSenderPaymentMethod() {

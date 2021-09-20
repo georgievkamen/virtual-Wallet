@@ -59,9 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
         Wallet senderWallet = walletRepository.getById(selectedWalletId);
         Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
 
-        if (transaction.getSender().getId() != senderWallet.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this wallet!");
-        }
+        verifyWalletOwnership(transaction, senderWallet);
 
         //TODO Fix this || Create a method for transfer from one wallet to another
         if (transaction.getSender().getId() == transaction.getRecipient().getId()) {
@@ -70,7 +68,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         verifyUserNotBlocked(transaction.getSender());
         walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
-        verifyRecipientHasDefaultWallet(transaction);
 
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
@@ -86,13 +83,9 @@ public class TransactionServiceImpl implements TransactionService {
         validateCardExpiryDate(cardToWithdraw);
         Wallet walletToDeposit = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
-        if (transaction.getSender().getId() != walletToDeposit.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this wallet!");
-        }
+        verifyWalletOwnership(transaction, walletToDeposit);
 
-        if (transaction.getRecipient().getId() != cardToWithdraw.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this card!");
-        }
+        verifyCardOwnership(transaction, cardToWithdraw);
 
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
@@ -106,13 +99,8 @@ public class TransactionServiceImpl implements TransactionService {
         Card cardToDeposit = cardRepository.getById(transaction.getRecipientPaymentMethod().getId());
         validateCardExpiryDate(cardToDeposit);
 
-        if (transaction.getSender().getId() != walletToWithdraw.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this wallet!");
-        }
-
-        if (transaction.getSender().getId() != cardToDeposit.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this card!");
-        }
+        verifyWalletOwnership(transaction, walletToWithdraw);
+        verifyCardOwnership(transaction, cardToDeposit);
 
         walletService.verifyEnoughBalance(walletToWithdraw, transaction.getAmount());
 
@@ -144,9 +132,15 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private void verifyRecipientHasDefaultWallet(Transaction transaction) {
-        if (transaction.getRecipient().getDefaultWallet() == null) {
-            throw new IllegalArgumentException("Recipient doesn't have a default wallet set!");
+    private void verifyWalletOwnership(Transaction transaction, Wallet wallet) {
+        if (transaction.getSender().getId() != wallet.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this wallet!");
+        }
+    }
+
+    private void verifyCardOwnership(Transaction transaction, Card card) {
+        if (transaction.getRecipient().getId() != card.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this card!");
         }
     }
 

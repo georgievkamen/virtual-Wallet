@@ -8,8 +8,4 @@ public class CardExpiredException extends RuntimeException {
         super(String.format("Card with number %s is expired on %s", cardNumber, expirationDate));
     }
 
-    public CardExpiredException(String message) {
-        super(message);
-    }
-
 }

@@ -35,6 +35,7 @@ public class TransactionModelMapper {
         transaction.setSenderPaymentMethod(paymentMethodRepository.getById(transactionDto.getSelectedWalletId(), "Wallet"));
         transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(recipient.getDefaultWallet().getId(), "Wallet"));
         transaction.setAmount(transactionDto.getAmount());
+        transaction.setDescription(transactionDto.getDescription());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
 
         return transaction;
@@ -49,6 +50,7 @@ public class TransactionModelMapper {
         transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId(), "Card"));
         transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Card"));
         transaction.setAmount(externalTransactionDto.getAmount());
+        transaction.setDescription(externalTransactionDto.getDescription());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
 
         return transaction;
@@ -63,6 +65,7 @@ public class TransactionModelMapper {
         transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId(), "Card"));
         transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Card"));
         transaction.setAmount(externalTransactionDto.getAmount());
+        transaction.setDescription(externalTransactionDto.getDescription());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
 
         return transaction;

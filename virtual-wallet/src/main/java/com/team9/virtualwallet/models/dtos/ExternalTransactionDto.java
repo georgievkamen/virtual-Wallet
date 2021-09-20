@@ -1,24 +1,13 @@
 package com.team9.virtualwallet.models.dtos;
 
-import java.math.BigDecimal;
+import javax.validation.constraints.NotNull;
 
-public class ExternalTransactionDto {
+public class ExternalTransactionDto extends BaseTransactionDto {
 
+    @NotNull
     private int selectedCardId;
 
-    private int selectedWalletId;
-
-    private BigDecimal amount;
-
     public ExternalTransactionDto() {
-    }
-
-    public int getSelectedWalletId() {
-        return selectedWalletId;
-    }
-
-    public void setSelectedWalletId(int selectedWalletId) {
-        this.selectedWalletId = selectedWalletId;
     }
 
     public int getSelectedCardId() {
@@ -29,11 +18,4 @@ public class ExternalTransactionDto {
         this.selectedCardId = selectedCardId;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
 }
