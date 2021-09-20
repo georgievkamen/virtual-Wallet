@@ -13,7 +13,8 @@ import org.springframework.util.ResourceUtils;
 
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
-import java.io.*;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -24,11 +25,14 @@ public class SendEmailServiceImpl implements SendEmailService {
     @Value("${mail.sender}")
     private String sender;
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
+
+    private final String mailText;
 
     @Autowired
-    public SendEmailServiceImpl(JavaMailSender javaMailSender) {
+    public SendEmailServiceImpl(JavaMailSender javaMailSender) throws IOException {
         this.javaMailSender = javaMailSender;
+        this.mailText = Files.readString(ResourceUtils.getFile("classpath:templates/email-templates/verify-email-template.html").toPath());
     }
 
     @Override
@@ -36,25 +40,7 @@ public class SendEmailServiceImpl implements SendEmailService {
         LocalDateTime localDateTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(localDateTime);
         String time = timestamp.toString();
-
-        StringBuilder sb = new StringBuilder();
-        File file = null;
-        try {
-            file = ResourceUtils.getFile("classpath:templates/email-templates/verify-email-template.html");
-        } catch (FileNotFoundException e) {
-            System.out.println("F");
-        }
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String s;
-            while ((s = br.readLine()) != null) {
-                sb.append(s);
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String html = String.format(sb.toString(), user.getFirstName(), user.getLastName(), confirmationToken.getConfirmationToken(), time);
+        String html = String.format(mailText, user.getFirstName(), user.getLastName(), confirmationToken.getConfirmationToken(), time);
 
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
