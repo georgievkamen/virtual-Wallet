@@ -1,5 +1,7 @@
 package com.team9.virtualwallet.models;
 
+import com.team9.virtualwallet.models.enums.TransactionType;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -29,6 +31,9 @@ public class Transaction {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "transaction_type")
+    private TransactionType transactionType;
 
     @ManyToOne
     @JoinColumn(name = "sender_payment_method_id")
@@ -92,6 +97,14 @@ public class Transaction {
 
     public String getDescription() {
         return description;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
     public void setDescription(String description) {

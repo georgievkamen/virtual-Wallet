@@ -8,6 +8,7 @@ import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
 import com.team9.virtualwallet.models.enums.SortDate;
+import com.team9.virtualwallet.models.enums.TransactionType;
 import com.team9.virtualwallet.repositories.contracts.CardRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
@@ -16,6 +17,7 @@ import com.team9.virtualwallet.services.contracts.TransactionService;
 import com.team9.virtualwallet.services.contracts.WalletService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -73,6 +75,12 @@ public class TransactionServiceImpl implements TransactionService {
 
         senderWallet.withdrawBalance(transaction.getAmount());
         recipientWallet.depositBalance(transaction.getAmount());
+
+        if (transaction.getAmount().compareTo(BigDecimal.valueOf(100000)) > 0) {
+            transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
+        } else {
+            transaction.setTransactionType(TransactionType.SMALL_TRANSACTION);
+        }
 
         repository.create(transaction, senderWallet, recipientWallet);
     }

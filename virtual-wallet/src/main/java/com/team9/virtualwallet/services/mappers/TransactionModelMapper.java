@@ -4,6 +4,7 @@ import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
+import com.team9.virtualwallet.models.enums.TransactionType;
 import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,11 @@ public class TransactionModelMapper {
         transaction.setRecipient(user);
         transaction.setSender(user);
         transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId(), "Card"));
-        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Card"));
+        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Wallet"));
         transaction.setAmount(externalTransactionDto.getAmount());
         transaction.setDescription(externalTransactionDto.getDescription());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
+        transaction.setTransactionType(TransactionType.WALLET_TO_CARD);
 
         return transaction;
     }
@@ -62,11 +64,12 @@ public class TransactionModelMapper {
 
         transaction.setRecipient(user);
         transaction.setSender(user);
+        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Wallet"));
         transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedCardId(), "Card"));
-        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(externalTransactionDto.getSelectedWalletId(), "Card"));
         transaction.setAmount(externalTransactionDto.getAmount());
         transaction.setDescription(externalTransactionDto.getDescription());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
+        transaction.setTransactionType(TransactionType.WALLET_TO_CARD);
 
         return transaction;
     }
