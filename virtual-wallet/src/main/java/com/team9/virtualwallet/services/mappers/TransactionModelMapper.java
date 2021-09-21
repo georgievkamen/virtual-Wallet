@@ -53,7 +53,7 @@ public class TransactionModelMapper {
         transaction.setAmount(externalTransactionDto.getAmount());
         transaction.setDescription(externalTransactionDto.getDescription());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
-        transaction.setTransactionType(TransactionType.WALLET_TO_CARD);
+        transaction.setTransactionType(TransactionType.CARD_TO_WALLET);
 
         return transaction;
     }
