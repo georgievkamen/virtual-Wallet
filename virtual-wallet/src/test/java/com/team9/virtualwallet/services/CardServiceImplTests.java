@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.services;
 
+import com.team9.virtualwallet.exceptions.CardExpiredException;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.Card;
@@ -100,7 +101,7 @@ public class CardServiceImplTests {
         Mockito.when(mockRepository.isDuplicate(mockCard))
                 .thenReturn(false);
 
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(CardExpiredException.class,
                 () -> service.create(mockCard));
     }
 

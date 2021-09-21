@@ -97,6 +97,9 @@ public class Helpers {
         mockCategory.setUser(user);
         mockCategory.setName("Beer");
         mockCategory.setId(1);
+        Set<Transaction> transactions = new HashSet<>();
+        transactions.add(new Transaction());
+        mockCategory.setTransactions(transactions);
 
         return mockCategory;
     }
