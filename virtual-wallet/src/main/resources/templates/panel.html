@@ -45,9 +45,7 @@
       data-menu="horizontal-menu" data-col="">
 
 <!--BEGIN: Header-->
-
 <nav th:replace="fragments :: header"></nav>
-
 <!--END: Header-->
 
 <!-- BEGIN: Main Menu-->
@@ -145,12 +143,7 @@
 <div class="drag-target"></div>
 
 <!-- BEGIN: Footer-->
-<footer class="footer footer-static footer-light">
-    <p class="clearfix mb-0 text-center">Copyright &copy; 2021 Virtual Wallet Inc. All rights reserved.</p>
-</footer>
-<button class="btn btn-primary btn-icon scroll-top" type="button">
-    <i class="fas fa-arrow-up"></i>
-</button>
+<div th:replace="fragments :: footer"></div>
 <!-- END: Footer-->
 
 

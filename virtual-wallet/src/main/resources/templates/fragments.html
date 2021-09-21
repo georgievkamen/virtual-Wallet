@@ -77,7 +77,7 @@
                                               height="40" width="40"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-user">
-                    <a class="dropdown-item" href="/panel/account-settings">
+                    <a class="dropdown-item" href="/panel/account-profile">
                         <i class="far fa-user me-50"></i>
                         Account
                     </a>
@@ -183,6 +183,17 @@
     </div>
 </div>
 <!-- END: Main Menu-->
+
+<!-- BEGIN: Footer-->
+<div th:fragment="footer" id="footer">
+    <footer class="footer footer-static footer-light">
+        <p class="clearfix mb-0 text-center">Copyright &copy; 2021 Virtual Wallet Inc. All rights reserved.</p>
+    </footer>
+    <button class="btn btn-primary btn-icon scroll-top" type="button">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+</div>
+<!-- END: Footer-->
 
 </body>
 </html>
