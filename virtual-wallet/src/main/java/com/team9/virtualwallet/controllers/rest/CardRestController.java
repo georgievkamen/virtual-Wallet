@@ -66,4 +66,11 @@ public class CardRestController {
 
         return card;
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        service.delete(user, id);
+    }
 }

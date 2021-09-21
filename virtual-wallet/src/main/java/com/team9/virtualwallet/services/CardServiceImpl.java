@@ -69,7 +69,6 @@ public class CardServiceImpl implements CardService {
         repository.update(card);
     }
 
-    //TODO HANDLE SQL EXCEPTIONS
     @Override
     public void delete(User userExecuting, int id) {
         Card card = repository.getById(id);

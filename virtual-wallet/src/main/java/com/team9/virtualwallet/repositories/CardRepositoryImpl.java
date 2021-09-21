@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.repositories;
 
+import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.models.Card;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.repositories.contracts.CardRepository;
@@ -25,15 +26,33 @@ public class CardRepositoryImpl extends BaseRepositoryImpl<Card> implements Card
     @Override
     public List<Card> getAll(User user) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Card> query = session.createQuery("from Card where user.id = :id", Card.class);
+            Query<Card> query = session.createQuery("from Card where user.id = :id and isDeleted = false ", Card.class);
             query.setParameter("id", user.getId());
             return query.list();
         }
     }
 
+    @Override
+    public Card getById(int id) {
+        try (Session session = sessionFactory.openSession()) {
+            Card card = session.get(Card.class, id);
+            if (card == null || card.isDeleted()) {
+                throw new EntityNotFoundException("Card", id);
+            }
+            return card;
+        }
+    }
+
+    @Override
+    public void delete(Card card) {
+        card.setDeleted(true);
+        card.setCardNumber("0");
+        super.update(card);
+    }
+
     public boolean isDuplicate(Card card) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Card> query = session.createQuery("from Card where cardNumber = :cardNumber", Card.class);
+            Query<Card> query = session.createQuery("from Card c where c.cardNumber = :cardNumber and c.isDeleted = false ", Card.class);
             query.setParameter("cardNumber", card.getCardNumber());
             List<Card> result = query.list();
             return result.size() > 0;

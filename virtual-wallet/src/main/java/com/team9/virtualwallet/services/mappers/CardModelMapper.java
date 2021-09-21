@@ -46,6 +46,7 @@ public class CardModelMapper {
         card.setCardHolder(cardDto.getCardHolder().toUpperCase());
         card.setExpirationDate(expirationDate);
         card.setCvv(cardDto.getCvv());
+        card.setDeleted(false);
     }
 
 }
