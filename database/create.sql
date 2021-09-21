@@ -1,144 +1,534 @@
-create table payment_methods
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Server version:               10.5.11-MariaDB - mariadb.org binary distribution
+-- Server OS:                    Win64
+-- HeidiSQL Version:             11.3.0.6295
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+-- Dumping database structure for virtual_wallet
+CREATE
+DATABASE IF NOT EXISTS `virtual_wallet` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE
+`virtual_wallet`;
+
+-- Dumping structure for table virtual_wallet.cards
+CREATE TABLE IF NOT EXISTS `cards`
 (
-    id   int auto_increment
-        primary key,
-    type enum ('CARD', 'WALLET') not null
-);
-
-create table roles
+    `card_id` int
 (
-    role_id int auto_increment
-        primary key,
-    name    varchar(50) not null,
-    constraint roles_role_name_uindex
-        unique (name)
-);
-
-create table users
+    11
+) NOT NULL AUTO_INCREMENT,
+    `card_number` varchar
 (
-    user_id           int auto_increment
-        primary key,
-    username          varchar(20)          not null,
-    password          varchar(30)          not null,
-    email             varchar(50)          not null,
-    phone_number      varchar(10)          not null,
-    first_name        varchar(50)          not null,
-    last_name         varchar(50)          not null,
-    blocked           tinyint(1) default 0 not null,
-    email_verified    tinyint(1) default 0 not null,
-    id_verified       tinyint(1) default 0 not null,
-    user_photo        varchar(500)         null,
-    default_wallet_id int                  null,
-    constraint users_email_uindex
-        unique (email),
-    constraint users_phone_number_uindex
-        unique (phone_number),
-    constraint users_username_uindex
-        unique (username)
-);
-
-create table cards
+    16
+) DEFAULT NULL,
+    `expiration_date` date NOT NULL,
+    `card_holder` varchar
 (
-    card_id         int auto_increment
-        primary key,
-    card_number     varchar(16) default '' not null,
-    expiration_date date                   not null,
-    card_holder     varchar(30)            not null,
-    cvv             varchar(3)  default '' not null,
-    user_id         int                    not null,
-    constraint cards_number_uindex
-        unique (card_number),
-    constraint cards_payment_methods_fk
-        foreign key (card_id) references payment_methods (id),
-    constraint cards_users_fk
-        foreign key (user_id) references users (user_id)
-);
-
-create table categories
+    30
+) NOT NULL,
+    `cvv` varchar
 (
-    category_id int auto_increment
-        primary key,
-    name        varchar(16) not null,
-    user_id     int         not null,
-    constraint categories_users_id_fk
-        foreign key (user_id) references users (user_id)
-);
-
-create table confirmation_tokens
+    3
+) NOT NULL DEFAULT '',
+    `user_id` int
 (
-    token_id           bigint auto_increment
-        primary key,
-    confirmation_token varchar(255)                          not null,
-    created_date       timestamp default current_timestamp() not null on update current_timestamp(),
-    user_id            int                                   not null,
-    constraint confirmation_tokens_users_fk
-        foreign key (user_id) references users (user_id)
-);
-
-create table contact_list
+    11
+) NOT NULL,
+    `deleted` tinyint
 (
-    user_id    int not null,
-    contact_id int not null,
-    constraint contact_list__users_fk
-        foreign key (user_id) references users (user_id),
-    constraint contact_list_user_id_fk
-        foreign key (contact_id) references users (user_id)
-);
-
-create table transactions
+    1
+) DEFAULT 0,
+    PRIMARY KEY
 (
-    transaction_id              int auto_increment
-        primary key,
-    timestamp                   timestamp default current_timestamp() not null on update current_timestamp(),
-    sender_id                   int                                   not null,
-    recipient_id                int                                   not null,
-    amount                      decimal                               not null,
-    sender_payment_method_id    int                                   not null,
-    recipient_payment_method_id int                                   not null,
-    constraint transactions_payment_method_fk
-        foreign key (sender_payment_method_id) references payment_methods (id),
-    constraint transactions_recipient_payment_method_id_fk
-        foreign key (recipient_payment_method_id) references payment_methods (id),
-    constraint transactions_users_recipient_fk
-        foreign key (recipient_id) references users (user_id),
-    constraint transactions_users_sender_fk
-        foreign key (sender_id) references users (user_id)
-);
-
-create table category_transactions
+    `card_id`
+),
+    KEY `cards_users_fk`
 (
-    transaction_id int null,
-    category_id    int null,
-    constraint category_transactions_categories_fk
-        foreign key (category_id) references categories (category_id),
-    constraint category_transactions_id_fk
-        foreign key (transaction_id) references transactions (transaction_id)
-);
-
-create table users_roles
+    `user_id`
+),
+    CONSTRAINT `cards_payment_methods_fk` FOREIGN KEY
 (
-    user_id int not null,
-    role_id int not null,
-    constraint users_roles_roles_fk
-        foreign key (role_id) references roles (role_id),
-    constraint users_roles_users_fk
-        foreign key (user_id) references users (user_id)
-);
-
-create table wallets
+    `card_id`
+) REFERENCES `payment_methods`
 (
-    wallet_id int auto_increment
-        primary key,
-    name      varchar(100) not null,
-    balance   decimal      not null,
-    user_id   int          null,
-    constraint wallets_payment_methods_fk
-        foreign key (wallet_id) references payment_methods (id),
-    constraint wallets_users_fk
-        foreign key (user_id) references users (user_id)
-);
+    `id`
+),
+    CONSTRAINT `cards_users_fk` FOREIGN KEY
+(
+    `user_id`
+) REFERENCES `users`
+(
+    `user_id`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
-alter table users
-    add constraint users_wallets_fk
-        foreign key (default_wallet_id) references wallets (wallet_id);
+-- Data exporting was unselected.
 
+-- Dumping structure for table virtual_wallet.categories
+CREATE TABLE IF NOT EXISTS `categories`
+(
+    `category_id` int
+(
+    11
+) NOT NULL AUTO_INCREMENT,
+    `name` varchar
+(
+    16
+) NOT NULL,
+    `user_id` int
+(
+    11
+) NOT NULL,
+    PRIMARY KEY
+(
+    `category_id`
+),
+    KEY `Categories_users_id_fk`
+(
+    `user_id`
+),
+    CONSTRAINT `Categories_users_id_fk` FOREIGN KEY
+(
+    `user_id`
+) REFERENCES `users`
+(
+    `user_id`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.category_transactions
+CREATE TABLE IF NOT EXISTS `category_transactions`
+(
+    `transaction_id` int
+(
+    11
+) DEFAULT NULL,
+    `category_id` int
+(
+    11
+) DEFAULT NULL,
+    KEY `category_transactions_id_fk`
+(
+    `transaction_id`
+),
+    KEY `category_transactions__categories_fk`
+(
+    `category_id`
+),
+    CONSTRAINT `category_transactions__categories_fk` FOREIGN KEY
+(
+    `category_id`
+) REFERENCES `categories`
+(
+    `category_id`
+),
+    CONSTRAINT `category_transactions_id_fk` FOREIGN KEY
+(
+    `transaction_id`
+) REFERENCES `transactions`
+(
+    `transaction_id`
+)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.confirmation_tokens
+CREATE TABLE IF NOT EXISTS `confirmation_tokens`
+(
+    `token_id` bigint
+(
+    20
+) NOT NULL AUTO_INCREMENT,
+    `confirmation_token` varchar
+(
+    255
+) NOT NULL,
+    `created_date` timestamp NOT NULL DEFAULT current_timestamp
+(
+) ON UPDATE current_timestamp
+(
+),
+    `user_id` int
+(
+    11
+) NOT NULL,
+    PRIMARY KEY
+(
+    `token_id`
+),
+    KEY `confirmation_tokens_users_fk`
+(
+    `user_id`
+),
+    CONSTRAINT `confirmation_tokens_users_fk` FOREIGN KEY
+(
+    `user_id`
+) REFERENCES `users`
+(
+    `user_id`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.contact_list
+CREATE TABLE IF NOT EXISTS `contact_list`
+(
+    `user_id` int
+(
+    11
+) NOT NULL,
+    `contact_id` int
+(
+    11
+) NOT NULL,
+    KEY `contact_list_user_id_fk`
+(
+    `contact_id`
+),
+    KEY `contact_list__users_fk`
+(
+    `user_id`
+),
+    CONSTRAINT `contact_list__users_fk` FOREIGN KEY
+(
+    `user_id`
+) REFERENCES `users`
+(
+    `user_id`
+),
+    CONSTRAINT `contact_list_user_id_fk` FOREIGN KEY
+(
+    `contact_id`
+) REFERENCES `users`
+(
+    `user_id`
+)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.payment_methods
+CREATE TABLE IF NOT EXISTS `payment_methods`
+(
+    `id` int
+(
+    11
+) NOT NULL AUTO_INCREMENT,
+    `type` enum
+(
+    'CARD',
+    'WALLET'
+) NOT NULL,
+    PRIMARY KEY
+(
+    `id`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.roles
+CREATE TABLE IF NOT EXISTS `roles`
+(
+    `role_id` int
+(
+    11
+) NOT NULL AUTO_INCREMENT,
+    `name` varchar
+(
+    50
+) NOT NULL,
+    PRIMARY KEY
+(
+    `role_id`
+),
+    UNIQUE KEY `roles_role_name_uindex`
+(
+    `name`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.transactions
+CREATE TABLE IF NOT EXISTS `transactions`
+(
+    `transaction_id` int
+(
+    11
+) NOT NULL AUTO_INCREMENT,
+    `timestamp` timestamp NOT NULL DEFAULT current_timestamp
+(
+) ON UPDATE current_timestamp
+(
+),
+    `sender_id` int
+(
+    11
+) NOT NULL,
+    `recipient_id` int
+(
+    11
+) NOT NULL,
+    `amount` decimal
+(
+    10,
+    0
+) NOT NULL,
+    `sender_payment_method_id` int
+(
+    11
+) NOT NULL,
+    `recipient_payment_method_id` int
+(
+    11
+) NOT NULL,
+    `description` varchar
+(
+    50
+) NOT NULL,
+    `transaction_type` enum
+(
+    'CARD_TO_WALLET',
+    'WALLET_TO_CARD',
+    'SMALL_TRANSACTION',
+    'LARGE_TRANSACTION'
+) DEFAULT NULL,
+    PRIMARY KEY
+(
+    `transaction_id`
+),
+    KEY `transactions_payment_method_fk`
+(
+    `sender_payment_method_id`
+),
+    KEY `transactions_recipient_payment_method_id_fk`
+(
+    `recipient_payment_method_id`
+),
+    KEY `transactions_users_recipient_fk`
+(
+    `recipient_id`
+),
+    KEY `transactions_users_sender_fk`
+(
+    `sender_id`
+),
+    CONSTRAINT `transactions_payment_method_fk` FOREIGN KEY
+(
+    `sender_payment_method_id`
+) REFERENCES `payment_methods`
+(
+    `id`
+),
+    CONSTRAINT `transactions_recipient_payment_method_id_fk` FOREIGN KEY
+(
+    `recipient_payment_method_id`
+) REFERENCES `payment_methods`
+(
+    `id`
+),
+    CONSTRAINT `transactions_users_recipient_fk` FOREIGN KEY
+(
+    `recipient_id`
+) REFERENCES `users`
+(
+    `user_id`
+),
+    CONSTRAINT `transactions_users_sender_fk` FOREIGN KEY
+(
+    `sender_id`
+) REFERENCES `users`
+(
+    `user_id`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.users
+CREATE TABLE IF NOT EXISTS `users`
+(
+    `user_id` int
+(
+    11
+) NOT NULL AUTO_INCREMENT,
+    `username` varchar
+(
+    20
+) NOT NULL,
+    `first_name` varchar
+(
+    50
+) NOT NULL,
+    `last_name` varchar
+(
+    50
+) NOT NULL,
+    `phone_number` varchar
+(
+    10
+) NOT NULL,
+    `blocked` tinyint
+(
+    1
+) NOT NULL DEFAULT 0,
+    `email_verified` tinyint
+(
+    1
+) NOT NULL DEFAULT 0,
+    `id_verified` tinyint
+(
+    1
+) NOT NULL DEFAULT 0,
+    `user_photo` varchar
+(
+    500
+) DEFAULT NULL,
+    `default_wallet_id` int
+(
+    11
+) DEFAULT NULL,
+    `password` varchar
+(
+    30
+) NOT NULL,
+    `email` varchar
+(
+    50
+) NOT NULL,
+    PRIMARY KEY
+(
+    `user_id`
+),
+    UNIQUE KEY `users_email_uindex`
+(
+    `email`
+),
+    UNIQUE KEY `users_phone_number_uindex`
+(
+    `phone_number`
+),
+    UNIQUE KEY `users_username_uindex`
+(
+    `username`
+),
+    KEY `users_wallets_fk`
+(
+    `default_wallet_id`
+),
+    CONSTRAINT `users_wallets_fk` FOREIGN KEY
+(
+    `default_wallet_id`
+) REFERENCES `wallets`
+(
+    `wallet_id`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.users_roles
+CREATE TABLE IF NOT EXISTS `users_roles`
+(
+    `user_id` int
+(
+    11
+) NOT NULL,
+    `role_id` int
+(
+    11
+) NOT NULL,
+    KEY `users_roles_roles_fk`
+(
+    `role_id`
+),
+    KEY `users_roles_users_fk`
+(
+    `user_id`
+),
+    CONSTRAINT `users_roles_roles_fk` FOREIGN KEY
+(
+    `role_id`
+) REFERENCES `roles`
+(
+    `role_id`
+),
+    CONSTRAINT `users_roles_users_fk` FOREIGN KEY
+(
+    `user_id`
+) REFERENCES `users`
+(
+    `user_id`
+)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table virtual_wallet.wallets
+CREATE TABLE IF NOT EXISTS `wallets`
+(
+    `wallet_id` int
+(
+    11
+) NOT NULL AUTO_INCREMENT,
+    `name` varchar
+(
+    100
+) NOT NULL,
+    `balance` decimal
+(
+    10,
+    0
+) NOT NULL,
+    `user_id` int
+(
+    11
+) DEFAULT NULL,
+    `deleted` tinyint
+(
+    1
+) DEFAULT 0,
+    PRIMARY KEY
+(
+    `wallet_id`
+),
+    KEY `wallets_users_fk`
+(
+    `user_id`
+),
+    CONSTRAINT `wallets_payment_methods_fk` FOREIGN KEY
+(
+    `wallet_id`
+) REFERENCES `payment_methods`
+(
+    `id`
+),
+    CONSTRAINT `wallets_users_fk` FOREIGN KEY
+(
+    `user_id`
+) REFERENCES `users`
+(
+    `user_id`
+)
+    ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
