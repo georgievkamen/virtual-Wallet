@@ -1,9 +1,6 @@
 package com.team9.virtualwallet.config;
 
-import com.team9.virtualwallet.exceptions.DuplicateEntityException;
-import com.team9.virtualwallet.exceptions.EntityNotFoundException;
-import com.team9.virtualwallet.exceptions.EnumNotFoundException;
-import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
+import com.team9.virtualwallet.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,7 +15,7 @@ import java.util.Objects;
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = UnauthorizedOperationException.class)
+    @ExceptionHandler(value = {UnauthorizedOperationException.class, AuthenticationFailureException.class})
     private void unauthorized(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.UNAUTHORIZED.value());
     }

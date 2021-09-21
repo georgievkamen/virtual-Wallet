@@ -10,6 +10,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -48,6 +49,16 @@ public class WalletRepositoryImpl extends BaseRepositoryImpl<Wallet> implements 
         wallet.setDeleted(true);
         wallet.setName("deleted");
         super.update(wallet);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object getTotalBalanceByUser(User user) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<BigDecimal> query = session.createQuery("select sum(balance) from Wallet where user.id = :id");
+            query.setParameter("id", user.getId());
+            return query.getSingleResult();
+        }
     }
 
     public boolean isDuplicate(User user, Wallet wallet) {

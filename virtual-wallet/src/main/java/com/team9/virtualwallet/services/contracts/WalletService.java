@@ -12,6 +12,8 @@ public interface WalletService {
 
     Wallet getById(User user, int id);
 
+    Object getTotalBalanceByUser(User user);
+
     void create(User user, Wallet wallet);
 
     void update(User user, Wallet wallet);

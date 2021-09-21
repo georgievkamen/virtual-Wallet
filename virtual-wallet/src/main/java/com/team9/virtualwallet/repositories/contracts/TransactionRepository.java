@@ -15,6 +15,8 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
 
     List<Transaction> getAll(User user);
 
+    List<Transaction> getLastTransactions(User user, int count);
+
     void create(Transaction transaction, Wallet walletToWithdraw, Wallet walletToDeposit);
 
     void createExternal(Transaction transaction, Wallet wallet);

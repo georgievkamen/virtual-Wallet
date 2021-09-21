@@ -45,6 +45,11 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    public Object getTotalBalanceByUser(User user) {
+        return repository.getTotalBalanceByUser(user);
+    }
+
+    @Override
     public void create(User user, Wallet wallet) {
         verifyNotDuplicate(user, wallet);
 
@@ -100,6 +105,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void setDefaultWallet(User user, Wallet wallet) {
+        //TODO Това май не ни трябва? Няма смисъл да спамим грешки.
         if (user.getDefaultWallet().getId() == wallet.getId()) {
             throw new IllegalArgumentException("This is already your default wallet");
         }
@@ -108,7 +114,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     //TODO Rename to verifyUnique
-
     private void verifyNotDuplicate(User user, Wallet wallet) {
         if (repository.isDuplicate(user, wallet)) {
             throw new DuplicateEntityException("You already have a wallet with the same name!");

@@ -14,6 +14,8 @@ public interface TransactionService {
 
     List<Transaction> getAll(User user);
 
+    List<Transaction> getLastTransactions(User user, int count);
+
     Transaction getById(User user, int id);
 
     void create(Transaction transaction, int selectedWalletId, Optional<Integer> categoryId);

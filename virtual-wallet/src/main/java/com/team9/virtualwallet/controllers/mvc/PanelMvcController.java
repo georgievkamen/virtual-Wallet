@@ -3,6 +3,8 @@ package com.team9.virtualwallet.controllers.mvc;
 import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.services.contracts.TransactionService;
+import com.team9.virtualwallet.services.contracts.WalletService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +18,13 @@ import javax.servlet.http.HttpSession;
 public class PanelMvcController {
 
     private final AuthenticationHelper authenticationHelper;
+    private final WalletService walletService;
+    private final TransactionService transactionService;
 
-    public PanelMvcController(AuthenticationHelper authenticationHelper) {
+    public PanelMvcController(AuthenticationHelper authenticationHelper, WalletService walletService, TransactionService transactionService) {
         this.authenticationHelper = authenticationHelper;
+        this.walletService = walletService;
+        this.transactionService = transactionService;
     }
 
     @ModelAttribute("currentLoggedUser")
@@ -43,9 +49,11 @@ public class PanelMvcController {
     }
 
     @GetMapping
-    public String showPanelPage(HttpSession session) {
+    public String showPanelPage(HttpSession session, Model model) {
         try {
-            authenticationHelper.tryGetUser(session);
+            User user = authenticationHelper.tryGetUser(session);
+            model.addAttribute("totalBalance", walletService.getTotalBalanceByUser(user));
+            model.addAttribute("lastTransactions", transactionService.getLastTransactions(user, 10));
             return "panel";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";

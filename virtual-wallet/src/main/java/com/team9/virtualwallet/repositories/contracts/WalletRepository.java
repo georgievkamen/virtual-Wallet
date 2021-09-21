@@ -10,4 +10,6 @@ public interface WalletRepository extends BaseRepository<Wallet> {
     List<Wallet> getAll(User user);
 
     boolean isDuplicate(User user, Wallet wallet);
+
+    Object getTotalBalanceByUser(User user);
 }

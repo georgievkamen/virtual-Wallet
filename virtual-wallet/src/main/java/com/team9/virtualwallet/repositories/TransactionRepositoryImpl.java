@@ -40,6 +40,16 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     }
 
     @Override
+    public List<Transaction> getLastTransactions(User user, int count) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id order by timestamp desc", Transaction.class);
+            query.setParameter("id", user.getId());
+            query.setMaxResults(count);
+            return query.list();
+        }
+    }
+
+    @Override
     public void create(Transaction transaction, Wallet walletToWithdraw, Wallet walletToDeposit) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();

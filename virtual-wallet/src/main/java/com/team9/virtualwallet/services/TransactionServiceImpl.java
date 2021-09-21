@@ -41,8 +41,14 @@ public class TransactionServiceImpl implements TransactionService {
         this.categoryService = categoryService;
     }
 
+    @Override
     public List<Transaction> getAll(User user) {
         return repository.getAll(user);
+    }
+
+    @Override
+    public List<Transaction> getLastTransactions(User user, int count) {
+        return repository.getLastTransactions(user, count);
     }
 
     @Override
