@@ -28,6 +28,7 @@ public class WalletModelMapper {
         wallet.setName(walletDto.getName());
         wallet.setBalance(BigDecimal.valueOf(0));
         wallet.setUser(userRepository.getById(user.getId()));
+        wallet.setDeleted(false);
 
         return wallet;
     }

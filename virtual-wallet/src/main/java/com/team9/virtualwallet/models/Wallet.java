@@ -24,6 +24,10 @@ public class Wallet {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
+    @Column(name = "deleted")
+    private boolean isDeleted;
+
     public Wallet() {
     }
 
@@ -65,5 +69,13 @@ public class Wallet {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

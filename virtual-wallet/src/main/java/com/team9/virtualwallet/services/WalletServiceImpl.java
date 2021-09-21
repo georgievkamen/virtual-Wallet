@@ -69,6 +69,7 @@ public class WalletServiceImpl implements WalletService {
     public void delete(User user, int id) {
         Wallet wallet = repository.getById(id);
         verifyOwnership(user, wallet, "You can only delete your own wallets!");
+        verifyUserHasOtherWalletsAndNotDefault(user, wallet);
 
         if (wallet.getBalance().compareTo(BigDecimal.valueOf(0)) == 0) {
             repository.delete(wallet);
@@ -98,6 +99,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     //TODO Rename to verifyUnique
+
     private void verifyNotDuplicate(User user, Wallet wallet) {
         if (repository.isDuplicate(user, wallet)) {
             throw new DuplicateEntityException("You already have a wallet with the same name!");
@@ -118,4 +120,9 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
+    private void verifyUserHasOtherWalletsAndNotDefault(User user, Wallet wallet) {
+        if (getAll(user).size() == 1 || user.getDefaultWallet().getId() == wallet.getId()) {
+            throw new IllegalArgumentException("You must have at least one default wallet at your account!");
+        }
+    }
 }

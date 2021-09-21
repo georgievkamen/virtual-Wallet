@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.repositories;
 
+import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
@@ -25,19 +26,38 @@ public class WalletRepositoryImpl extends BaseRepositoryImpl<Wallet> implements 
     @Override
     public List<Wallet> getAll(User user) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Wallet> query = session.createQuery("from Wallet where user.id = :id", Wallet.class);
+            Query<Wallet> query = session.createQuery("from Wallet where user.id = :id and isDeleted = false ", Wallet.class);
             query.setParameter("id", user.getId());
             return query.list();
         }
     }
 
+    @Override
+    public Wallet getById(int id) {
+        try (Session session = sessionFactory.openSession()) {
+            Wallet wallet = session.get(Wallet.class, id);
+            if (wallet == null || wallet.isDeleted()) {
+                throw new EntityNotFoundException("Wallet", id);
+            }
+            return wallet;
+        }
+    }
+
+    @Override
+    public void delete(Wallet wallet) {
+        wallet.setDeleted(true);
+        wallet.setName("deleted");
+        super.update(wallet);
+    }
+
     public boolean isDuplicate(User user, Wallet wallet) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Wallet> query = session.createQuery("from Wallet where name = :name and user.id = :user", Wallet.class);
+            Query<Wallet> query = session.createQuery("from Wallet where name = :name and user.id = :user and isDeleted = false ", Wallet.class);
             query.setParameter("user", user.getId());
             query.setParameter("name", wallet.getName());
             List<Wallet> result = query.list();
             return result.size() > 0;
         }
     }
+
 }
