@@ -4,8 +4,8 @@ import javax.validation.constraints.NotNull;
 
 public class TransactionDto extends BaseTransactionDto {
 
-    @NotNull
-    private int recipientId;
+    @NotNull(message = "You must provide a recipient!")
+    private Integer recipientId;
 
     public TransactionDto() {
     }

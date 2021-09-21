@@ -4,8 +4,8 @@ import javax.validation.constraints.NotNull;
 
 public class ExternalTransactionDto extends BaseTransactionDto {
 
-    @NotNull
-    private int selectedCardId;
+    @NotNull(message = "You must provide a card!")
+    private Integer selectedCardId;
 
     public ExternalTransactionDto() {
     }
