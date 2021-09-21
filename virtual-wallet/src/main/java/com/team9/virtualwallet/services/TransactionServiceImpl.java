@@ -76,7 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
         senderWallet.withdrawBalance(transaction.getAmount());
         recipientWallet.depositBalance(transaction.getAmount());
 
-        if (transaction.getAmount().compareTo(BigDecimal.valueOf(100000)) > 0) {
+        if (transaction.getAmount().compareTo(BigDecimal.valueOf(100000)) >= 0) {
             transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
         } else {
             transaction.setTransactionType(TransactionType.SMALL_TRANSACTION);
