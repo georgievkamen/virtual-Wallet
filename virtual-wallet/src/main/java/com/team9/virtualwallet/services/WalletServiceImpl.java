@@ -98,6 +98,15 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
+    @Override
+    public void setDefaultWallet(User user, Wallet wallet) {
+        if (user.getDefaultWallet().getId() == wallet.getId()) {
+            throw new IllegalArgumentException("This is already your default wallet");
+        }
+        user.setDefaultWallet(wallet);
+        userRepository.update(user);
+    }
+
     //TODO Rename to verifyUnique
 
     private void verifyNotDuplicate(User user, Wallet wallet) {

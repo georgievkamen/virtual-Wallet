@@ -24,4 +24,6 @@ public interface WalletService {
 
     void verifyEnoughBalance(Wallet wallet, BigDecimal funds);
 
+    void setDefaultWallet(User user, Wallet wallet);
+
 }
