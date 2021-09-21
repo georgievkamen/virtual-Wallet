@@ -13,6 +13,7 @@ import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +22,8 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static com.team9.virtualwallet.config.RestResponseEntityExceptionHandler.checkFields;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -38,8 +41,24 @@ public class TransactionRestController {
         this.modelMapper = modelMapper;
     }
 
+    @GetMapping
+    public List<Transaction> getAll(@RequestHeader HttpHeaders headers) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        return service.getAll(user);
+    }
+
+    @GetMapping("/{id}")
+    public Transaction getById(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        User user = authenticationHelper.tryGetUser(headers);
+
+        return service.getById(user, id);
+    }
+
     @PostMapping
-    public Transaction create(@RequestHeader HttpHeaders headers, @RequestBody @Valid TransactionDto transactionDto, @RequestParam(required = false) Optional<Integer> categoryId) {
+    public Transaction create(@RequestHeader HttpHeaders headers, @RequestBody @Valid TransactionDto transactionDto, BindingResult result, @RequestParam(required = false) Optional<Integer> categoryId) {
+        checkFields(result);
+
         User user = authenticationHelper.tryGetUser(headers);
 
         //TODO Do we need create a transaction by username//email//phone number
@@ -50,7 +69,9 @@ public class TransactionRestController {
     }
 
     @PostMapping("/external/deposit")
-    public Transaction createExternalDeposit(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto, @RequestParam(required = false) Optional<Integer> categoryId) {
+    public Transaction createExternalDeposit(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto, BindingResult result, @RequestParam(required = false) Optional<Integer> categoryId) {
+        checkFields(result);
+
         User user = authenticationHelper.tryGetUser(headers);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -66,7 +87,9 @@ public class TransactionRestController {
     }
 
     @PostMapping("/external/withdraw")
-    public Transaction createExternalWithdraw(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto, @RequestParam(required = false) Optional<Integer> categoryId) {
+    public Transaction createExternalWithdraw(@RequestHeader HttpHeaders headers, @RequestBody @Valid ExternalTransactionDto externalTransactionDto, BindingResult result, @RequestParam(required = false) Optional<Integer> categoryId) {
+        checkFields(result);
+
         User user = authenticationHelper.tryGetUser(headers);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -96,20 +119,6 @@ public class TransactionRestController {
         User user = authenticationHelper.tryGetUser(headers);
 
         return service.filter(user, startDate, endDate, categoryId, senderId, recipientId, direction, amount, date);
-    }
-
-    @GetMapping
-    public List<Transaction> getAll(@RequestHeader HttpHeaders headers) {
-        User user = authenticationHelper.tryGetUser(headers);
-
-        return service.getAll(user);
-    }
-
-    @GetMapping("/{id}")
-    public Transaction getById(@RequestHeader HttpHeaders headers, @PathVariable int id) {
-        User user = authenticationHelper.tryGetUser(headers);
-
-        return service.getById(user, id);
     }
 
 }

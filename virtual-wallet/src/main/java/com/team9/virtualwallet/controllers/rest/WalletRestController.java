@@ -63,20 +63,18 @@ public class WalletRestController {
         return wallet;
     }
 
-    @PutMapping("/default")
-    public Wallet setDefault(@RequestHeader HttpHeaders headers, @RequestParam int id) {
-        // checkFields(result);
-
-        User user = authenticationHelper.tryGetUser(headers);
-        Wallet wallet = service.getById(user, id);
-        service.setDefaultWallet(user, wallet);
-        return wallet;
-    }
-
     @DeleteMapping("/{id}")
     public void delete(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         User user = authenticationHelper.tryGetUser(headers);
         service.delete(user, id);
+    }
+
+    @PutMapping("/default")
+    public Wallet setDefault(@RequestHeader HttpHeaders headers, @RequestParam int id) {
+        User user = authenticationHelper.tryGetUser(headers);
+        Wallet wallet = service.getById(user, id);
+        service.setDefaultWallet(user, wallet);
+        return wallet;
     }
 
 }
