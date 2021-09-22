@@ -21,6 +21,17 @@ public class CardModelMapper {
         this.repository = repository;
     }
 
+    public CardDto toDto(Card card) {
+        CardDto cardDto = new CardDto();
+
+        cardDto.setCardHolder(card.getCardHolder());
+        cardDto.setCardNumber(card.getCardNumber());
+        cardDto.setCvv(card.getCvv());
+        cardDto.setExpirationDate(card.getExpirationDateFormattedCVV());
+
+        return cardDto;
+    }
+
     public Card fromDto(User user, CardDto cardDto) {
         Card card = new Card();
 

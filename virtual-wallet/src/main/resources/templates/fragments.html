@@ -151,28 +151,28 @@
                 </li>
 
                 <li class="dropdown nav-item">
-                    <a class="nav-link d-flex align-items-center" href="/transactions">
+                    <a class="nav-link d-flex align-items-center" href="/panel/transactions">
                         <i class="fas fa-money-check"></i>
                         <span>Transactions</span>
                     </a>
                 </li>
 
                 <li class="dropdown nav-item">
-                    <a class="nav-link d-flex align-items-center" href="/wallets">
+                    <a class="nav-link d-flex align-items-center" href="/panel/wallets">
                         <i class="fas fa-wallet"></i>
                         <span>Wallets</span>
                     </a>
                 </li>
 
                 <li class="dropdown nav-item">
-                    <a class="nav-link d-flex align-items-center" href="/cards">
+                    <a class="nav-link d-flex align-items-center" href="/panel/cards">
                         <i class="far fa-credit-card"></i>
                         <span>Cards</span>
                     </a>
                 </li>
 
                 <li class="dropdown nav-item">
-                    <a class="nav-link d-flex align-items-center" href="/secret">
+                    <a class="nav-link d-flex align-items-center" href="/panel/secret">
                         <i class="fas fa-lock"></i>
                         <span>Secret</span>
                     </a>
@@ -183,6 +183,50 @@
     </div>
 </div>
 <!-- END: Main Menu-->
+
+<!-- START: Card Form-->
+<form th:fragment="card-form" class="validate-form" th:action="@{__${#httpServletRequest.requestURI}__}"
+      th:object="${card}" method="post">
+    <div class="mb-1">
+        <label class="form-label" for="card-number">Card Number</label>
+        <input type="text" class="form-control" id="card-number" th:field="*{cardNumber}"
+               th:classappend="${#fields.hasErrors('cardNumber')} ? 'is-invalid' : ''"
+               placeholder="1234123412341234"/>
+        <div th:if="${#fields.hasErrors('cardNumber')}" class="invalid-feedback"
+             th:errors="*{cardNumber}"></div>
+    </div>
+    <div class="mb-1">
+        <label class="form-label" for="card-holder">Card Holder</label>
+        <input type="text" class="form-control" id="card-holder" th:field="*{cardHolder}"
+               th:classappend="${#fields.hasErrors('cardHolder')} ? 'is-invalid' : ''"
+               placeholder="John Doe"/>
+        <div th:if="${#fields.hasErrors('cardHolder')}" class="invalid-feedback"
+             th:errors="*{cardHolder}"></div>
+    </div>
+    <div class="row">
+        <div class="col-6 mb-1">
+            <label class="form-label" for="cvv">CVV</label>
+            <input type="text" class="form-control" id="cvv" th:field="*{cvv}"
+                   th:classappend="${#fields.hasErrors('cvv')} ? 'is-invalid' : ''"
+                   placeholder="555"/>
+            <div th:if="${#fields.hasErrors('cvv')}" class="invalid-feedback"
+                 th:errors="*{cvv}"></div>
+        </div>
+        <div class="col-6 mb-1">
+            <label class="form-label" for="expiraton-date">Expiration Date</label>
+            <input type="text" class="form-control" id="expiraton-date"
+                   th:field="*{expirationDate}"
+                   th:classappend="${#fields.hasErrors('expirationDate')} ? 'is-invalid' : ''"
+                   placeholder="12/24"/>
+            <div th:if="${#fields.hasErrors('expirationDate')}" class="invalid-feedback"
+                 th:errors="*{expirationDate}"></div>
+        </div>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary me-1 mt-1">Save changes</button>
+    </div>
+</form>
+<!-- END: Card Form -->
 
 <!-- BEGIN: Footer-->
 <div th:fragment="footer" id="footer">

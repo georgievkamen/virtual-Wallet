@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "cards")
@@ -68,7 +69,7 @@ public class Card {
         this.cardHolder = cardHolder;
     }
 
-    private String getMaskedCardNumber() {
+    public String getMaskedCardNumber() {
         StringBuilder maskedNumber = new StringBuilder();
         String mask = "xxxx-xxxx-xxxx-####";
         int index = 0;
@@ -85,6 +86,16 @@ public class Card {
             }
         }
         return maskedNumber.toString();
+    }
+
+    public String getExpirationDateFormatted() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM.yyyy");
+        return dtf.format(expirationDate);
+    }
+
+    public String getExpirationDateFormattedCVV() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/yy");
+        return dtf.format(expirationDate);
     }
 
     public String getCvv() {
