@@ -49,6 +49,10 @@ public class User {
     @JoinColumn(name = "default_wallet_id")
     private Wallet defaultWallet;
 
+    @JsonIgnore
+    @Column(name = "deleted")
+    private boolean isDeleted;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -183,6 +187,14 @@ public class User {
 
     public void addContact(User contact) {
         this.contacts.add(contact);
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     public void removeContact(String username) {

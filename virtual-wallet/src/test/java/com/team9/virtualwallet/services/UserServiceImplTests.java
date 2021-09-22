@@ -210,7 +210,7 @@ public class UserServiceImplTests {
                 .update(Mockito.any(User.class));
     }
 
-    @Test
+/*    @Test
     public void Delete_Should_Throw_When_UserNotEmployee() {
 
         Assertions.assertThrows(UnauthorizedOperationException.class,
@@ -231,7 +231,7 @@ public class UserServiceImplTests {
         Mockito.verify(mockRepository, Mockito.times(1))
                 .delete(Mockito.any(User.class));
 
-    }
+    }*/
 
     @Test
     public void Filter_Should_Call_Repository() {

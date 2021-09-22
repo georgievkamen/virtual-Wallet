@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UserService {
     User getById(User user, int id);
 
-    public List<User> getAll(User user);
+    List<User> getAll(User user);
 
     User getByUsername(String username);
 
@@ -16,7 +16,7 @@ public interface UserService {
 
     void update(User userExecuting, User user, int id);
 
-    void delete(User userExecuting, int id);
+    void delete(User user);
 
     void confirmUser(String confirmationToken);
 

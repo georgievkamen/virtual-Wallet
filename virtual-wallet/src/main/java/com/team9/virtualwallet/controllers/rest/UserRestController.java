@@ -23,6 +23,13 @@ public class UserRestController {
         this.service = service;
     }
 
+    @DeleteMapping
+    public void delete(@RequestHeader HttpHeaders headers) {
+        User userExecuting = authenticationHelper.tryGetUser(headers);
+
+        service.delete(userExecuting);
+    }
+
     @GetMapping("/{id}/block")
     public User blockUser(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         User userExecuting = authenticationHelper.tryGetUser(headers);

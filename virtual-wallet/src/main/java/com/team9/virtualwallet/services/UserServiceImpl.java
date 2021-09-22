@@ -85,17 +85,9 @@ public class UserServiceImpl implements UserService {
         repository.update(user);
     }
 
-    //TODO HANDLE SQL EXCEPTIONS
-
     @Override
-    public void delete(User userExecuting, int id) {
-        User userToDelete = repository.getById(id);
-
-        if (!userExecuting.isEmployee()) {
-            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "delete", "users"));
-        }
-
-        repository.delete(userToDelete);
+    public void delete(User user) {
+        repository.delete(user);
     }
 
     @Override

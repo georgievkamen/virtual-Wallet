@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.repositories;
 
+import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import org.hibernate.Session;
@@ -24,12 +25,47 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
+    public List<User> getAll() {
+        try (Session session = sessionFactory.openSession()) {
+            Query<User> query = session.createQuery("from User where isDeleted = false ", User.class);
+            return query.list();
+        }
+    }
+
+    @Override
+    public User getById(int id) {
+        try (Session session = sessionFactory.openSession()) {
+            User user = session.get(User.class, id);
+            if (user == null || user.isDeleted()) {
+                throw new EntityNotFoundException("User", id);
+            }
+            return user;
+        }
+    }
+
+    @Override
+    public void delete(User user) {
+        user.setDeleted(true);
+        user.setEmail("0");
+        user.setPhoneNumber("0");
+        user.setBlocked(true);
+
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.createSQLQuery(" delete from contact_list where user_id or contact_id = :id ")
+                    .setParameter("id", user.getId());
+            session.update(user);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Override
     public List<User> filter(Optional<String> userName,
                              Optional<String> phoneNumber,
                              Optional<String> email) {
 
         try (Session session = sessionFactory.openSession()) {
-            var baseQuery = "select u from User u ";
+            var baseQuery = "select u from User u where u.isDeleted = false ";
             List<String> filters = new ArrayList<>();
 
             if (userName.isPresent()) {
@@ -45,7 +81,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
             }
 
             if (!filters.isEmpty()) {
-                baseQuery += " where " + String.join(" and ", filters);
+                baseQuery += " and " + String.join(" and ", filters);
             }
 
             Query<User> query = session.createQuery(baseQuery, User.class);
