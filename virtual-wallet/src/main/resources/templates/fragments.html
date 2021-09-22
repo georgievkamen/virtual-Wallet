@@ -228,6 +228,23 @@
 </form>
 <!-- END: Card Form -->
 
+<!-- START: Wallet Form-->
+<form th:fragment="wallet-form" class="validate-form" th:action="@{__${#httpServletRequest.requestURI}__}"
+      th:object="${wallet}" method="post">
+    <div class="mb-1">
+        <label class="form-label" for="wallet-name">Wallet Name</label>
+        <input type="text" class="form-control" id="wallet-name" th:field="*{name}"
+               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+               placeholder="Wallet name"/>
+        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback"
+             th:errors="*{name}"></div>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary me-1 mt-1">Save changes</button>
+    </div>
+</form>
+<!-- END: Wallet Form -->
+
 <!-- BEGIN: Footer-->
 <div th:fragment="footer" id="footer">
     <footer class="footer footer-static footer-light">

@@ -66,7 +66,7 @@ public class CardMvcController {
     }
 
     @GetMapping("/add")
-    public String showEditCardPage(HttpSession session, Model model) {
+    public String showAddCardPage(HttpSession session, Model model) {
         try {
             authenticationHelper.tryGetUser(session);
             model.addAttribute("card", new CardDto());

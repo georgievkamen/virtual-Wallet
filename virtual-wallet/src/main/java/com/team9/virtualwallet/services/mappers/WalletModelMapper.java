@@ -22,6 +22,14 @@ public class WalletModelMapper {
         this.userRepository = userRepository;
     }
 
+    public WalletDto toDto(Wallet wallet) {
+        WalletDto walletDto = new WalletDto();
+
+        walletDto.setName(wallet.getName());
+
+        return walletDto;
+    }
+
     public Wallet fromDto(User user, WalletDto walletDto) {
         Wallet wallet = new Wallet();
 

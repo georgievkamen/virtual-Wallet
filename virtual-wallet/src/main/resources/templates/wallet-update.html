@@ -6,8 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
-    <title>Virtual Wallet | Home</title>
-    <link rel="shortcut icon" type="image/x-icon" href="../images/ico/favicon.ico">
+    <title>Virtual Wallet | Updating Wallet</title>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/ico/favicon.ico}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
           rel="stylesheet">
 
@@ -61,49 +61,14 @@
             <div class="row d-flex justify-content-center">
 
                 <!-- Cards Card -->
-                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
-                    <div class="row" id="table-borderless">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header border-bottom row">
-                                    <div class="col-6 text-start">
-                                        <h4 class="card-title text-primary ms-1">Cards</h4>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <a class="btn btn-relief-info m-1"
-                                           th:href="@{__${#httpServletRequest.requestURI}__/add}">Add
-                                            Card</a>
-                                    </div>
-                                </div>
-                                <div class="card-body pt-1">
-                                    <div th:if="${cardsExist}" class="table-responsive">
-                                        <table class="table table-borderless">
-                                            <thead>
-                                            <tr class="text-center">
-                                                <th>Card Number</th>
-                                                <th>Card Holder</th>
-                                                <th>Expiration Date</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr class="text-center" th:each="card : ${cards}">
-                                                <td>[[${card.getMaskedCardNumber}]]</td>
-                                                <td>[[${card.cardHolder}]]</td>
-                                                <td>[[${card.getExpirationDateFormatted}]]</td>
-                                                <td class="text-end">
-                                                    <a class="btn btn-relief-primary"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${card.id})}">Edit</a>
-                                                    <a class="btn btn-relief-danger"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${card.id})}">Delete</a>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="card col-lg-5 col-md-5 col-sm-12">
+                    <div class="card-header border-bottom">
+                        <h4 class="card-title text-primary">Updating Wallet (#[[${walletId}]])</h4>
+                    </div>
+                    <div class="card-body pt-1">
+                        <!-- form -->
+                        <form th:replace="fragments :: wallet-form"></form>
+                        <!--/ form -->
                     </div>
                 </div>
                 <!--/ Medal Card -->

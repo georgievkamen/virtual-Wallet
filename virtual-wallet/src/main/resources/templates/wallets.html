@@ -67,35 +67,41 @@
                             <div class="card">
                                 <div class="card-header border-bottom row">
                                     <div class="col-6 text-start">
-                                        <h4 class="card-title text-primary ms-1">Cards</h4>
+                                        <h4 class="card-title text-primary ms-1">Wallets</h4>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <a class="btn btn-relief-info m-1"
+                                        <a class="btn btn-relief-success m-1"
                                            th:href="@{__${#httpServletRequest.requestURI}__/add}">Add
-                                            Card</a>
+                                            Wallet</a>
                                     </div>
                                 </div>
                                 <div class="card-body pt-1">
-                                    <div th:if="${cardsExist}" class="table-responsive">
+                                    <div th:if="${walletsExist}" class="table-responsive">
                                         <table class="table table-borderless">
                                             <thead>
                                             <tr class="text-center">
-                                                <th>Card Number</th>
-                                                <th>Card Holder</th>
-                                                <th>Expiration Date</th>
+                                                <th>Wallet Name</th>
+                                                <th>Balance</th>
                                                 <th>Actions</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr class="text-center" th:each="card : ${cards}">
-                                                <td>[[${card.getMaskedCardNumber}]]</td>
-                                                <td>[[${card.cardHolder}]]</td>
-                                                <td>[[${card.getExpirationDateFormatted}]]</td>
-                                                <td class="text-end">
+                                            <tr class="text-center" th:each="wallet : ${wallets}">
+                                                <td>[[${wallet.name}]]</td>
+                                                <td>[[${wallet.balance}]] BGN</td>
+                                                <td>
                                                     <a class="btn btn-relief-primary"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${card.id})}">Edit</a>
+                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${wallet.id})}">Edit</a>
                                                     <a class="btn btn-relief-danger"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${card.id})}">Delete</a>
+                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${wallet.id})}">Delete</a>
+                                                    <a class="btn btn-relief-success"
+                                                       th:if="${wallet.id == currentLoggedUser.defaultWallet.id}"
+                                                       href="#">Default Wallet</a>
+                                                    <a class="btn btn-relief-info"
+                                                       style="padding-left: 24.594px; padding-right: 24.595px"
+                                                       th:if="${wallet.id != currentLoggedUser.defaultWallet.id}"
+                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/default(id=${wallet.id})}">Make
+                                                        Default</a>
                                                 </td>
                                             </tr>
                                             </tbody>
