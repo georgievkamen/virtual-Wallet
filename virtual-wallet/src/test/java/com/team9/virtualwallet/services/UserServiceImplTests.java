@@ -136,6 +136,7 @@ public class UserServiceImplTests {
                 .create(Mockito.any(User.class));
     }
 
+/*
     @Test
     public void Update_Should_Throw_When_UserNotEmployeeOrNotOwner() {
 
@@ -160,8 +161,9 @@ public class UserServiceImplTests {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> service.update(mockCustomer, mockCustomer2, 1));
     }
+*/
 
-    @Test
+/*    @Test
     public void Update_Should_Throw_When_DuplicateExits() {
 
         var mockCustomer = createMockCustomer();
@@ -189,8 +191,9 @@ public class UserServiceImplTests {
 
         Assertions.assertThrows(DuplicateEntityException.class,
                 () -> service.update(mockEmployee, mockCustomer, 1));
-    }
+    }*/
 
+/*
     @Test
     public void Update_Should_Call_Repository_When_UserValid() {
 
@@ -208,6 +211,7 @@ public class UserServiceImplTests {
         Mockito.verify(mockRepository, Mockito.times(1))
                 .update(Mockito.any(User.class));
     }
+*/
 
 /*    @Test
     public void Delete_Should_Throw_When_UserNotEmployee() {

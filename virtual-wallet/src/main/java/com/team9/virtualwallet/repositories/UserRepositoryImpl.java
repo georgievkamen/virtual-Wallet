@@ -8,9 +8,18 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -22,6 +31,24 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     public UserRepositoryImpl(SessionFactory sessionFactory) {
         super(sessionFactory, User.class);
         this.sessionFactory = sessionFactory;
+    }
+
+    @Override
+    public void update(User user, Optional<MultipartFile> multipartFile) throws IOException {
+        if (multipartFile.isPresent()) {
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.get().getOriginalFilename()));
+            user.setUserPhoto(fileName);
+            Path uploadPath = Paths.get("virtual-wallet", "src", "main", "resources", "images", String.valueOf(user.getId()));
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            try (InputStream inputStream = multipartFile.get().getInputStream()) {
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        super.update(user);
     }
 
     @Override

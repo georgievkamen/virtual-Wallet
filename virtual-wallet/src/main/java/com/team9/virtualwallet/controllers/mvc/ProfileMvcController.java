@@ -14,9 +14,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Optional;
 
 import static com.team9.virtualwallet.config.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
@@ -59,7 +63,9 @@ public class ProfileMvcController {
 
     @PostMapping("/panel/account-profile")
     public String updateProfile(@Valid @ModelAttribute("user") UserDto userDto,
-                                BindingResult result, HttpSession session) {
+                                BindingResult result, HttpSession session,
+                                @RequestParam(value = "fileImage", required = false)
+                                        Optional<MultipartFile> multipartFile) {
         if (result.hasErrors()) {
             return "account-profile";
         }
@@ -67,7 +73,8 @@ public class ProfileMvcController {
         try {
             User userExecuting = authenticationHelper.tryGetUser(session);
             User user = modelMapper.fromUserDto(userExecuting.getId(), userDto);
-            service.update(userExecuting, user, user.getId());
+
+            service.update(userExecuting, user, user.getId(), multipartFile);
             return "redirect:/panel/account-profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
@@ -82,6 +89,8 @@ public class ProfileMvcController {
             if (field.equalsIgnoreCase("phone")) {
                 result.rejectValue("phoneNumber", "duplicate_phoneNumber", e.getMessage());
             }
+            return "account-profile";
+        } catch (IOException e) {
             return "account-profile";
         }
     }
