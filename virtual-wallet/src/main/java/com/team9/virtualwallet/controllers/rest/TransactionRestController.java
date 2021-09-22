@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.team9.virtualwallet.config.RestResponseEntityExceptionHandler.checkFields;
+import static com.team9.virtualwallet.controllers.utils.PagingHelper.getPage;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -42,10 +43,12 @@ public class TransactionRestController {
     }
 
     @GetMapping
-    public List<Transaction> getAll(@RequestHeader HttpHeaders headers) {
+    public List<Transaction> getAll(@RequestHeader HttpHeaders headers,
+                                    @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "5") int size) {
         User user = authenticationHelper.tryGetUser(headers);
 
-        return service.getAll(user);
+        return getPage(service.getAll(user), page, size);
     }
 
     @GetMapping("/{id}")
@@ -106,8 +109,10 @@ public class TransactionRestController {
 
     @GetMapping("/filter")
     public List<Transaction> filter(@RequestHeader HttpHeaders headers,
+                                    @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "5") int size,
                                     @RequestParam(required = false)
-                                            Optional<Date> startDate,
+                                                Optional<Date> startDate,
                                     Optional<Date> endDate,
                                     Optional<Integer> categoryId,
                                     Optional<Integer> senderId,
@@ -118,7 +123,9 @@ public class TransactionRestController {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return service.filter(user, startDate, endDate, categoryId, senderId, recipientId, direction, amount, date);
+        return getPage(service.filter(user, startDate, endDate, categoryId, senderId, recipientId, direction, amount, date), page, size);
     }
 
 }
+
+

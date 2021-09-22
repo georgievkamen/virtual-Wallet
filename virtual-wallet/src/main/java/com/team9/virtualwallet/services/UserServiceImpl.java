@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZED_ACTION;
 
@@ -96,11 +95,18 @@ public class UserServiceImpl implements UserService {
                              Optional<String> phoneNumber,
                              Optional<String> email) {
 
-        return repository.filter(userName, phoneNumber, email)
-                .stream()
-                .filter(u -> u.getId() != user.getId())
-                .collect(Collectors.toList());
+        if (!user.isEmployee()) {
+            throw new UnauthorizedOperationException("Only employees can filter all users");
+        }
 
+        return repository.filter(userName, phoneNumber, email, user.getId());
+
+    }
+
+    @Override
+    public List<User> search(User user, String searchTerm) {
+
+        return repository.search(searchTerm, user.getId());
     }
 
     @Override
