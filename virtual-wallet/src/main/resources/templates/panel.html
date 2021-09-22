@@ -90,7 +90,7 @@
                                 <div th:each="transaction : ${lastTransactions}" class="transaction-item">
                                     <div class="d-flex">
                                         <div class="avatar rounded float-start"
-                                             th:classappend="${transaction.sender.id != transaction.recipient.id} ? (${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-success' : 'bg-light-danger') : (${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'bg-light-info' : 'bg-light-warning')">
+                                             th:classappend="${transaction.sender.id != transaction.recipient.id} ? (${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success') : (${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'bg-light-info' : 'bg-light-warning')">
                                             <div class="avatar-content">
                                                 <i th:if="${transaction.sender.id == transaction.recipient.id}"
                                                    class="avatar-icon font-medium-3"
