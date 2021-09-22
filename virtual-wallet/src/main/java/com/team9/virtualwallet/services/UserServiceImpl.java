@@ -105,6 +105,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addContact(User userExecuting, int contactId) {
+        if (userExecuting.getId() == contactId) {
+            throw new IllegalArgumentException("You cannot add yourself to contacts!");
+        }
 
         User contactToAdd = repository.getById(contactId);
         verifyContactNotAdded(userExecuting, contactToAdd);

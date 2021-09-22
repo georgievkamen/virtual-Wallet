@@ -52,9 +52,11 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
 
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.createSQLQuery(" delete from contact_list where user_id or contact_id = :id ")
-                    .setParameter("id", user.getId());
             session.update(user);
+            session.createSQLQuery("delete from contact_list where contact_id = :id or user_id = :id ")
+                    .setParameter("id", user.getId())
+                    .setParameter("id", user.getId())
+                    .executeUpdate();
             session.getTransaction().commit();
         }
     }
