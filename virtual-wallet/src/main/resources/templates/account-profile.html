@@ -188,7 +188,8 @@
                                 </div>
                             </div>
 
-                            <form id="formAccountDeactivation" class="validate-form" onsubmit="return false">
+                            <form id="formAccountDeactivation" class="validate-form" action="/panel/account/delete"
+                                  method="post">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="accountActivation" required
                                            id="accountActivation" data-msg="Please confirm you want to delete account"/>

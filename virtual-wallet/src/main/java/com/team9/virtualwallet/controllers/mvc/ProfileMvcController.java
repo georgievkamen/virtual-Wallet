@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import static com.team9.virtualwallet.config.ApplicationConstants.CURRENT_USER_SESSION_KEY;
+
 @Controller
 public class ProfileMvcController {
 
@@ -95,26 +97,18 @@ public class ProfileMvcController {
         }
     }
 
-    @PostMapping("/panel/account-security")
-    public String updateSecurity(@Valid @ModelAttribute("userPassword") PasswordDto passwordDto,
-                                 BindingResult errors, HttpSession session) {
-        if (errors.hasErrors()) {
-            return "account-security";
-        }
-
+    @PostMapping("/panel/account/delete")
+    public String deleteAccount(HttpSession session) {
         try {
             User user = authenticationHelper.tryGetUser(session);
 
-            if (!passwordDto.getOldPassword().equals(user.getPassword())) {
-                errors.rejectValue("oldPassword", "old_password_error", "Current password is incorrect!");
-                return "account-security";
-            }
-
-            user.setPassword(passwordDto.getNewPassword());
-            service.update(user, user, user.getId());
-            return "account-security";
+            service.delete(user);
+            session.removeAttribute(CURRENT_USER_SESSION_KEY);
+            return "redirect:/";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         }
     }
+
+
 }

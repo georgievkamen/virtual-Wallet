@@ -50,8 +50,14 @@ public class AuthenticationController {
 
         try {
             authenticationHelper.verifyAuthentication(dto.getUsername(), dto.getPassword());
-            session.setAttribute(CURRENT_USER_SESSION_KEY, dto.getUsername());
-            return "redirect:/panel";
+            User user = userService.getByUsername(dto.getUsername());
+            if (!user.isBlocked()) {
+                session.setAttribute(CURRENT_USER_SESSION_KEY, dto.getUsername());
+                return "redirect:/panel";
+            } else {
+                bindingResult.rejectValue("username", "account_deleted", "You have deleted your account!");
+                return "login";
+            }
         } catch (AuthenticationFailureException e) {
             bindingResult.rejectValue("username", "auth_error", e.getMessage());
             return "login";
