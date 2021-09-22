@@ -231,7 +231,6 @@ window.colors = {
 
       return true;
     }
-
     /*
     Checks if the keyCode pressed is inside special chars
     -------------------------------------------------------
@@ -981,11 +980,11 @@ window.colors = {
     setLayout(switchToLayout);
 
     // ToDo: Customizer fix
-    $('.horizontal-menu .header-navbar.navbar-fixed').css({
-      background: 'inherit',
-      'box-shadow': 'inherit'
-    });
-    $('.horizontal-menu .horizontal-menu-wrapper.header-navbar').css('background', 'inherit');
+    // $('.horizontal-menu .header-navbar.navbar-fixed').css({
+    //   background: 'inherit',
+    //   'box-shadow': 'inherit'
+    // });
+    // $('.horizontal-menu .horizontal-menu-wrapper.header-navbar').css('background', 'inherit');
   });
 
   // Get current local storage layout
