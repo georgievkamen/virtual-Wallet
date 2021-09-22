@@ -40,6 +40,10 @@ public class AuthenticationHelper {
             throw new AuthenticationFailureException(AUTHENTICATION_FAILURE_MESSAGE);
         }
 
+        if (user.isDeleted()) {
+            throw new UnauthorizedOperationException("You have deleted your account!");
+        }
+
         return user;
     }
 
