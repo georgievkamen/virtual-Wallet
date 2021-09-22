@@ -2,15 +2,13 @@ package com.team9.virtualwallet.models.dtos;
 
 import com.team9.virtualwallet.utils.FieldsValueMatch;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @FieldsValueMatch(field = "password", fieldMatch = "passwordConfirm", message = "Passwords do not match!")
 public class RegisterDto extends LoginDto {
 
     @NotNull(message = "You must provide an email!")
+    @NotBlank(message = "You must provide an email!")
     @Email(message = "Email must be valid!")
     private String email;
 
