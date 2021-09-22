@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface UserRepository extends BaseRepository<User> {
 
-    public List<User> filter(Optional<String> userName, Optional<String> phoneNumber, Optional<String> email);
+    List<User> filter(Optional<String> userName, Optional<String> phoneNumber, Optional<String> email, int userId);
+
+    List<User> search(String searchTerm, int userId);
 
 }

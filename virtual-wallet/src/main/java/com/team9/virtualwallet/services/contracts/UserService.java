@@ -30,6 +30,8 @@ public interface UserService {
 
     void unblockUser(User userExecuting, int id);
 
+    List<User> search(User user, String searchTerm);
+
     List<User> filter(User user,
                       Optional<String> userName,
                       Optional<String> phoneNumber,

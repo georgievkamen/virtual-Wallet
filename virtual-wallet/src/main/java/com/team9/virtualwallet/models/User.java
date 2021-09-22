@@ -53,6 +53,7 @@ public class User {
     @Column(name = "deleted")
     private boolean isDeleted;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",

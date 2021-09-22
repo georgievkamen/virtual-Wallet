@@ -62,24 +62,38 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
+    public List<User> search(String searchTerm, int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            String baseQuery = "from User where isDeleted = false and (username like :term or phoneNumber like :term or email like :term) and id != :id";
+            Query<User> query = session.createQuery(baseQuery, User.class)
+                    .setParameter("term", searchTerm)
+                    .setParameter("term", searchTerm)
+                    .setParameter("term", searchTerm)
+                    .setParameter("id", userId);
+            return query.list();
+        }
+    }
+
+    @Override
     public List<User> filter(Optional<String> userName,
                              Optional<String> phoneNumber,
-                             Optional<String> email) {
+                             Optional<String> email,
+                             int userId) {
 
         try (Session session = sessionFactory.openSession()) {
-            var baseQuery = "select u from User u where u.isDeleted = false ";
+            var baseQuery = "select u from User u where u.id != :id";
             List<String> filters = new ArrayList<>();
 
             if (userName.isPresent()) {
-                filters.add(" u.userName like :userName");
+                filters.add(" u.username like concat('%',:username,'%')");
             }
 
             if (phoneNumber.isPresent()) {
-                filters.add(" u.phoneNumber like :phoneNumber");
+                filters.add(" u.phoneNumber like concat('%',:phoneNumber,'%')");
             }
 
             if (email.isPresent()) {
-                filters.add(" u.email like :email");
+                filters.add(" u.email like concat('%',:email,'%')");
             }
 
             if (!filters.isEmpty()) {
@@ -87,8 +101,9 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
             }
 
             Query<User> query = session.createQuery(baseQuery, User.class);
+            query.setParameter("id", userId);
 
-            userName.ifPresent(s -> query.setParameter("userName", s));
+            userName.ifPresent(s -> query.setParameter("username", s));
             phoneNumber.ifPresent(s -> query.setParameter("phoneNumber", s));
             email.ifPresent(s -> query.setParameter("email", s));
 
