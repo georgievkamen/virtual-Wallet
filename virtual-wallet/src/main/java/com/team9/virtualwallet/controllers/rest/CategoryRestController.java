@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.team9.virtualwallet.config.RestResponseEntityExceptionHandler.checkFields;
+import static com.team9.virtualwallet.configs.RestResponseEntityExceptionHandler.checkFields;
 
 @RestController
 @RequestMapping("/api/users/categories")

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 
-import static com.team9.virtualwallet.config.ApplicationConstants.CURRENT_USER_SESSION_KEY;
+import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
 @Component
 public class AuthenticationHelper {
