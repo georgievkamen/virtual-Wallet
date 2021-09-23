@@ -1,4 +1,4 @@
-package com.team9.virtualwallet.config;
+package com.team9.virtualwallet.configs;
 
 import com.team9.virtualwallet.exceptions.*;
 import org.springframework.http.HttpStatus;
