@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import static com.team9.virtualwallet.config.ApplicationConstants.CURRENT_USER_SESSION_KEY;
+import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
 @Controller
 public class ProfileMvcController {
@@ -91,11 +91,14 @@ public class ProfileMvcController {
     }
 
     @PostMapping("/panel/account-profile/image")
-    public String updateProfilePhoto(HttpSession session,
-                                     @RequestParam(value = "fileImage") MultipartFile multipartFile) {
+    public String updateProfilePhoto(@RequestParam(value = "fileImage", required = false) MultipartFile multipartFile, HttpSession session) {
         try {
             User userExecuting = authenticationHelper.tryGetUser(session);
-            service.updateProfilePhoto(userExecuting, multipartFile);
+            if (multipartFile.isEmpty()) {
+                service.removeProfilePhoto(userExecuting);
+            } else {
+                service.updateProfilePhoto(userExecuting, multipartFile);
+            }
             return "redirect:/panel/account-profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";

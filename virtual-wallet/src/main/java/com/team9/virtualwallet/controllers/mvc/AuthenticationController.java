@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import static com.team9.virtualwallet.config.ApplicationConstants.CURRENT_USER_SESSION_KEY;
+import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
 @Controller
 @RequestMapping("/auth")
@@ -51,7 +51,7 @@ public class AuthenticationController {
         try {
             authenticationHelper.verifyAuthentication(dto.getUsername(), dto.getPassword());
             User user = userService.getByUsername(dto.getUsername());
-            if (!user.isBlocked()) {
+            if (!user.isDeleted()) {
                 session.setAttribute(CURRENT_USER_SESSION_KEY, dto.getUsername());
                 return "redirect:/panel";
             } else {

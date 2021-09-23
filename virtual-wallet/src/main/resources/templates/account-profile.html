@@ -104,18 +104,13 @@
                         </div>
                         <div class="card-body py-2 my-25">
                             <!-- header section -->
-                            <form class="validate-form mt-2 pt-50" action="/panel/account-profile" th:object="${user}"
+                            <form action="/panel/account-profile/image" th:object="${user}"
                                   method="post" enctype="multipart/form-data">
 
                                 <div class="d-flex">
                                     <a href="#" class="me-25">
-                                        <img th:if="${currentLoggedUser.userPhoto != null}"
-                                             th:src="@{${currentLoggedUser.getProfileImage}}" id="thumbnail"
+                                        <img th:src="${currentLoggedUser.getProfileImage}" id="thumbnail"
                                              class="uploadedAvatar rounded me-50"
-                                             alt="profile image" height="100" width="100"/>
-                                        <img th:if="${currentLoggedUser.userPhoto == null}"
-                                             src="https://assets.change.org/photos/3/sj/sb/vKSjsbNiywBHMAw-800x450-noPad.jpg?1520521052"
-                                             id="thumbnail" class="uploadedAvatar rounded me-50"
                                              alt="profile image" height="100" width="100"/>
                                     </a>
                                     <!-- upload and reset button -->
@@ -123,11 +118,11 @@
                                     <div class="d-flex align-items-end mt-75 ms-1">
                                         <div>
                                             <label for="fileImage"
-                                                   class="btn btn-sm btn-primary mb-75 me-75">Upload</label>
+                                                   class="btn btn-sm btn-outline-secondary mb-75 me-75">Upload</label>
                                             <input type="file" name="fileImage" id="fileImage" hidden
                                                    accept="image/*"/>
-                                            <button type="button" id="account-reset"
-                                                    class="btn btn-sm btn-outline-secondary mb-75">Reset
+                                            <button type="submit" id="button-submit"
+                                                    class="btn btn-sm btn-danger mb-75 me-75">Reset
                                             </button>
                                             <p class="mb-0">Allowed file types: png, jpg, jpeg.</p>
                                         </div>
@@ -135,8 +130,11 @@
                                     <!--/ upload and reset button -->
                                 </div>
                                 <!--/ header section -->
+                            </form>
 
-                                <!-- form -->
+                            <!-- form -->
+                            <form class="validate-form mt-2 pt-50" action="/panel/account-profile" th:object="${user}"
+                                  method="post">
                                 <div class="row">
                                     <div class="col-12 col-sm-6 mb-1">
                                         <label class="form-label" for="accountFirstName">First Name</label>
@@ -276,6 +274,7 @@
 
             reader.onload = function (e) {
                 $('#thumbnail').attr('src', e.target.result);
+                $('#button-submit').text('Save').removeClass('btn-danger').addClass('btn-primary');
             };
             reader.readAsDataURL(file);
         }

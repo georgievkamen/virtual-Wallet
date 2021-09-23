@@ -17,7 +17,9 @@ public interface UserService {
 
     void update(User userExecuting, User user, int id);
 
-    void updateProfilePhoto(User userExecuting, MultipartFile multipartFile);
+    void updateProfilePhoto(User user, MultipartFile multipartFile);
+
+    void removeProfilePhoto(User user);
 
     void delete(User user);
 

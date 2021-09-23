@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService {
         }
         User userToUpdate = repository.getById(user.getId());
 
+        //TODO Can be removed because we don't have username in DTO
         if (!userToUpdate.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("You cannot modify username");
         }
@@ -86,8 +87,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfilePhoto(User userExecuting, MultipartFile multipartFile) {
-        repository.updateProfilePhoto(userExecuting, multipartFile);
+    public void updateProfilePhoto(User user, MultipartFile multipartFile) {
+        repository.updateProfilePhoto(user, multipartFile);
+    }
+
+    @Override
+    public void removeProfilePhoto(User user) {
+        user.setUserPhoto(null);
+        repository.update(user);
     }
 
     @Override

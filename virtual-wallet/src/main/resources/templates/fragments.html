@@ -73,7 +73,7 @@
                         <span class="fw-bolder">[[${currentLoggedUser.username}]]</span>
                     </div>
                     <span class="avatar"><img class="round"
-                                              src="https://avatarfiles.alphacoders.com/188/thumb-18869.gif" alt="avatar"
+                                              th:src="@{${currentLoggedUser.getProfileImage}}" alt="avatar"
                                               height="40" width="40"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-user">

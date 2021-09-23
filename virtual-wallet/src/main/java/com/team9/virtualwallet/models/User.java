@@ -6,6 +6,8 @@ import javax.persistence.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.team9.virtualwallet.configs.ApplicationConstants.DEFAULT_PHOTO_URL;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -220,7 +222,7 @@ public class User {
     @Transient
     public String getProfileImage() {
         if (userPhoto == null) {
-            return null;
+            return DEFAULT_PHOTO_URL;
         }
         return "/images/users/" + getId() + "/" + getUserPhoto();
     }
