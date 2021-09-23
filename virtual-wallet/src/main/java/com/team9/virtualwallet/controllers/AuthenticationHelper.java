@@ -1,4 +1,4 @@
-package com.team9.virtualwallet.controllers.utils;
+package com.team9.virtualwallet.controllers;
 
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;

@@ -1,6 +1,6 @@
 package com.team9.virtualwallet.controllers.mvc;
 
-import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
+import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
@@ -40,16 +40,6 @@ public class WalletMvcController {
             return "";
         } catch (AuthenticationFailureException e) {
             return "/auth/login";
-        }
-    }
-
-    @ModelAttribute("isEmployee")
-    public boolean isEmployee(HttpSession session) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            return user.isEmployee();
-        } catch (AuthenticationFailureException e) {
-            return false;
         }
     }
 

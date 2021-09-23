@@ -1,6 +1,6 @@
 package com.team9.virtualwallet.controllers.rest;
 
-import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
+import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.models.Card;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.CardDto;

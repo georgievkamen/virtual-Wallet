@@ -1,6 +1,6 @@
 package com.team9.virtualwallet.controllers.rest;
 
-import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
+import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.team9.virtualwallet.controllers.utils.PagingHelper.getPage;
+import static com.team9.virtualwallet.utils.PagingHelper.getPage;
 
 
 @RestController

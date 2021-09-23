@@ -1,6 +1,6 @@
 package com.team9.virtualwallet.controllers.mvc;
 
-import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
+import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.models.User;

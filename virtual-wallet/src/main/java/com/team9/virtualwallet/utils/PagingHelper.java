@@ -1,4 +1,4 @@
-package com.team9.virtualwallet.controllers.utils;
+package com.team9.virtualwallet.utils;
 
 import java.util.Collections;
 import java.util.List;

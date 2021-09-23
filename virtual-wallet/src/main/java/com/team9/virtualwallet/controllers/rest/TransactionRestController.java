@@ -1,6 +1,6 @@
 package com.team9.virtualwallet.controllers.rest;
 
-import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
+import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.team9.virtualwallet.configs.RestResponseEntityExceptionHandler.checkFields;
-import static com.team9.virtualwallet.controllers.utils.PagingHelper.getPage;
+import static com.team9.virtualwallet.utils.PagingHelper.getPage;
 
 @RestController
 @RequestMapping("/api/transactions")
