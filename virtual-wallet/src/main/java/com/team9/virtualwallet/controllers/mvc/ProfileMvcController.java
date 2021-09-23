@@ -3,6 +3,7 @@ package com.team9.virtualwallet.controllers.mvc;
 import com.team9.virtualwallet.controllers.utils.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
+import com.team9.virtualwallet.exceptions.FailedToUploadFileException;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.PasswordDto;
 import com.team9.virtualwallet.models.dtos.UserDto;
@@ -19,8 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Optional;
 
 import static com.team9.virtualwallet.config.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
@@ -63,9 +62,7 @@ public class ProfileMvcController {
 
     @PostMapping("/panel/account-profile")
     public String updateProfile(@Valid @ModelAttribute("user") UserDto userDto,
-                                BindingResult result, HttpSession session,
-                                @RequestParam(value = "fileImage", required = false)
-                                        Optional<MultipartFile> multipartFile) {
+                                BindingResult result, HttpSession session) {
         if (result.hasErrors()) {
             return "account-profile";
         }
@@ -74,7 +71,7 @@ public class ProfileMvcController {
             User userExecuting = authenticationHelper.tryGetUser(session);
             User user = modelMapper.fromUserDto(userExecuting.getId(), userDto);
 
-            service.update(userExecuting, user, user.getId(), multipartFile);
+            service.update(userExecuting, user, user.getId());
             return "redirect:/panel/account-profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
@@ -90,10 +87,23 @@ public class ProfileMvcController {
                 result.rejectValue("phoneNumber", "duplicate_phoneNumber", e.getMessage());
             }
             return "account-profile";
-        } catch (IOException e) {
+        }
+    }
+
+    @PostMapping("/panel/account-profile/image")
+    public String updateProfilePhoto(HttpSession session,
+                                     @RequestParam(value = "fileImage") MultipartFile multipartFile) {
+        try {
+            User userExecuting = authenticationHelper.tryGetUser(session);
+            service.updateProfilePhoto(userExecuting, multipartFile);
+            return "redirect:/panel/account-profile";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        } catch (FailedToUploadFileException e) {
             return "account-profile";
         }
     }
+
 
     @GetMapping("/panel/account-security")
     public String showUserSecurity(Model model, HttpSession session) {

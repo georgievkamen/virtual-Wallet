@@ -3,7 +3,6 @@ package com.team9.virtualwallet.services.contracts;
 import com.team9.virtualwallet.models.User;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +15,9 @@ public interface UserService {
 
     void create(User user);
 
-    void update(User userExecuting, User user, int id, Optional<MultipartFile> multipartFile) throws IOException;
+    void update(User userExecuting, User user, int id);
+
+    void updateProfilePhoto(User userExecuting, MultipartFile multipartFile);
 
     void delete(User user);
 

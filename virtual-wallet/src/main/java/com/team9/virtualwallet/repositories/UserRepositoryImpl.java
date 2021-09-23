@@ -1,6 +1,7 @@
 package com.team9.virtualwallet.repositories;
 
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
+import com.team9.virtualwallet.exceptions.FailedToUploadFileException;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import org.hibernate.Session;
@@ -34,19 +35,19 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
-    public void update(User user, Optional<MultipartFile> multipartFile) throws IOException {
-        if (multipartFile.isPresent()) {
-            String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.get().getOriginalFilename()));
-            user.setUserPhoto(fileName);
-            Path uploadPath = Paths.get("./images/users/" + user.getId());
+    public void updateProfilePhoto(User user, MultipartFile multipartFile) {
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        user.setUserPhoto(fileName);
+        Path uploadPath = Paths.get("./images/users/" + user.getId());
 
+        try (InputStream inputStream = multipartFile.getInputStream()) {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-            try (InputStream inputStream = multipartFile.get().getInputStream()) {
-                Path filePath = uploadPath.resolve(fileName);
-                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            }
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new FailedToUploadFileException(e.getMessage());
         }
         super.update(user);
     }

@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(User userExecuting, User user, int id, Optional<MultipartFile> multipartFile) throws IOException {
+    public void update(User userExecuting, User user, int id) {
         if (!userExecuting.isEmployee() && userExecuting.getId() != id) {
             throw new UnauthorizedOperationException("Users can only modify their own credentials!");
         }
@@ -83,7 +82,12 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("You cannot modify username");
         }
         verifyNotDuplicate(user);
-        repository.update(user, multipartFile);
+        repository.update(user);
+    }
+
+    @Override
+    public void updateProfilePhoto(User userExecuting, MultipartFile multipartFile) {
+        repository.updateProfilePhoto(userExecuting, multipartFile);
     }
 
     @Override
