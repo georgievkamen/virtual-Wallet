@@ -216,4 +216,12 @@ public class User {
     public void setDefaultWallet(Wallet defaultWallet) {
         this.defaultWallet = defaultWallet;
     }
+
+    @Transient
+    public String getProfileImage() {
+        if (userPhoto == null) {
+            return null;
+        }
+        return "/images/users/" + getId() + "/" + getUserPhoto();
+    }
 }

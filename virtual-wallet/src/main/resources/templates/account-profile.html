@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
     <title>Virtual Wallet | Account Profile</title>
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/ico/favicon.ico}">
+    <script src="https://ajax.googLeapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
           rel="stylesheet">
 
@@ -105,19 +106,25 @@
                             <!-- header section -->
                             <form class="validate-form mt-2 pt-50" action="/panel/account-profile" th:object="${user}"
                                   method="post" enctype="multipart/form-data">
+
                                 <div class="d-flex">
                                     <a href="#" class="me-25">
-                                        <img src="https://avatarfiles.alphacoders.com/188/thumb-18869.gif"
-                                             id="account-upload-img" class="uploadedAvatar rounded me-50"
+                                        <img th:if="${currentLoggedUser.userPhoto != null}"
+                                             th:src="@{${currentLoggedUser.getProfileImage}}" id="thumbnail"
+                                             class="uploadedAvatar rounded me-50"
+                                             alt="profile image" height="100" width="100"/>
+                                        <img th:if="${currentLoggedUser.userPhoto == null}"
+                                             src="https://assets.change.org/photos/3/sj/sb/vKSjsbNiywBHMAw-800x450-noPad.jpg?1520521052"
+                                             id="thumbnail" class="uploadedAvatar rounded me-50"
                                              alt="profile image" height="100" width="100"/>
                                     </a>
                                     <!-- upload and reset button -->
 
                                     <div class="d-flex align-items-end mt-75 ms-1">
                                         <div>
-                                            <label for="account-upload"
+                                            <label for="fileImage"
                                                    class="btn btn-sm btn-primary mb-75 me-75">Upload</label>
-                                            <input type="file" name="fileImage" id="account-upload" hidden
+                                            <input type="file" name="fileImage" id="fileImage" hidden
                                                    accept="image/*"/>
                                             <button type="button" id="account-reset"
                                                     class="btn btn-sm btn-outline-secondary mb-75">Reset
@@ -256,6 +263,25 @@
         }
     })
 </script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#fileImage').change(function () {
+            showImageThumbnail(this);
+        });
+
+        function showImageThumbnail(fileInput) {
+            file = fileInput.files[0];
+            reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#thumbnail').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
 </body>
 <!-- END: Body-->
 

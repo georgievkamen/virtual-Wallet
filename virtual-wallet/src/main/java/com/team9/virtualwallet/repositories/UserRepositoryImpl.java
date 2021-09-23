@@ -38,7 +38,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
         if (multipartFile.isPresent()) {
             String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.get().getOriginalFilename()));
             user.setUserPhoto(fileName);
-            Path uploadPath = Paths.get("virtual-wallet", "src", "main", "resources", "images", String.valueOf(user.getId()));
+            Path uploadPath = Paths.get("./images/users/" + user.getId());
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
