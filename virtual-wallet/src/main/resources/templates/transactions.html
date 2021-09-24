@@ -61,7 +61,7 @@
             <div class="row d-flex justify-content-center">
 
                 <!-- Cards Card -->
-                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="row" id="table-borderless">
                         <div class="col-12">
                             <div class="card">
@@ -71,7 +71,8 @@
                                     </div>
                                     <div class="col-6 text-end">
                                         <a class="btn btn-relief-success m-1"
-                                           th:href="@{__${#httpServletRequest.requestURI}__/add}">Create Transaction</a>
+                                           th:href="@{__${#httpServletRequest.requestURI}__/create}">Create
+                                            Transaction</a>
                                     </div>
                                 </div>
                                 <div class="card-body pt-1">
@@ -113,14 +114,48 @@
                                                     '+']][[${transaction.amount}]] BGN
                                                 </td>
                                                 </td>
-                                                <td>[[${transaction.sender.username}]]</td>
-                                                <td th:if="${transaction.sender.id != transaction.recipient.id}">
+
+                                                <!-- Start Sender-->
+
+                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.sender.id == currentLoggedUser.id}">
+                                                    [[${transaction.sender.username}]]/[[${walletService.getById(currentLoggedUser,
+                                                    transaction.senderPaymentMethod.id).name}]]
+                                                </td>
+                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.sender.id != currentLoggedUser.id}">
+                                                    [[${transaction.sender.username}]]
+                                                </td>
+                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD}">
+                                                    [[${transaction.sender.username}]]/[[${cardService.getById(currentLoggedUser,
+                                                    transaction.senderPaymentMethod.id).getMaskedCardNumber}]]
+                                                </td>
+                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).WALLET}">
+                                                    [[${transaction.sender.username}]]/[[${walletService.getById(currentLoggedUser,
+                                                    transaction.senderPaymentMethod.id).name}]]
+                                                </td>
+
+                                                <!-- End Sender-->
+
+
+                                                <!-- Start Recipient-->
+
+                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.recipient.id == currentLoggedUser.id}">
+                                                    [[${transaction.recipient.username}]]/[[${walletService.getById(currentLoggedUser,
+                                                    transaction.recipientPaymentMethod.id).name}]]
+                                                </td>
+                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.recipient.id != currentLoggedUser.id}">
                                                     [[${transaction.recipient.username}]]
                                                 </td>
-                                                <td th:if="${transaction.sender.id == transaction.recipient.id}">
-                                                    [[${transaction.recipientPaymentMethod.type ==
-                                                    T(com.team9.virtualwallet.models.enums.Type).CARD]]
+                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.recipientPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD}">
+                                                    [[${transaction.recipient.username}]]/[[${cardService.getById(currentLoggedUser,
+                                                    transaction.recipientPaymentMethod.id).getMaskedCardNumber}]]
                                                 </td>
+                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.recipientPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).WALLET}">
+                                                    [[${transaction.recipient.username}]]/[[${walletService.getById(currentLoggedUser,
+                                                    transaction.recipientPaymentMethod.id).name}]]
+                                                </td>
+
+                                                <!-- End Recipient-->
+
                                                 <td>[[${transaction.description}]]</td>
                                             </tr>
                                             </tbody>

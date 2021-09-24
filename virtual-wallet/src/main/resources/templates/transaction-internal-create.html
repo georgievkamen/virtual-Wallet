@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- BEGIN: Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
+    <title>Virtual Wallet | Creating Wallet</title>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/ico/favicon.ico}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
+          rel="stylesheet">
+
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/vendors.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/forms/select/select2.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/charts/apexcharts.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/extensions/toastr.min.css}">
+    <!-- END: Vendor CSS-->
+
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-extended.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/colors.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/components.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/dark-layout.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/bordered-layout.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/semi-dark-layout.css}">
+
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/core/menu/menu-types/horizontal-menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <!-- END: Page CSS-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+            crossorigin="anonymous"></script>
+
+</head>
+<!-- END: Head-->
+
+<!-- BEGIN: Body-->
+
+<body class="horizontal-layout horizontal-menu navbar-floating footer-static" data-open="hover"
+      data-menu="horizontal-menu" data-col="">
+
+<!--BEGIN: Header-->
+<nav th:replace="fragments :: header"></nav>
+<!--END: Header-->
+
+<!-- BEGIN: Main Menu-->
+<div th:replace="fragments :: menu"></div>
+<!-- END: Main Menu-->
+
+<!-- BEGIN: Content-->
+<div class="app-content content ">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper container-xxl p-0">
+        <div class="content-body">
+            <div class="row d-flex justify-content-center">
+
+                <!-- Wallet Card -->
+                <div class="card col-lg-5 col-md-5 col-sm-12">
+                    <div class="card-header border-bottom">
+                        <h4 class="card-title text-primary">Creating Transaction</h4>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title text-secondary">Find recipient</h4>
+                        </div>
+                        <div class="card-body border-bottom">
+                            <form th:action="@{/panel/transactions/create}" class="validate-form" method="get">
+                                <div class="row mb-2">
+                                    <div class="radio-buttons col-12">
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input radio" type="radio" name="fieldName"
+                                                       id="username"
+                                                       value="username" checked>
+                                                Username
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input radio" type="radio" name="fieldName"
+                                                       id="email"
+                                                       value="email">
+                                                Email
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input radio" type="radio" name="fieldName"
+                                                       id="phone-number"
+                                                       value="phoneNumber">
+                                                Phone Number
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input radio" type="radio" name="fieldName"
+                                                       id="contacts"
+                                                       value="contacts">
+                                                Contacts
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-1" id="search-form">
+                                    <label class="form-label" for="search-field" id="search-field-name">Username</label>
+                                    <div class="input-group input-group-merge"
+                                         th:classappend="${notFound != null} ? 'is-invalid' : ''">
+                                        <span class="input-group-text"><i id="search-field-icon"
+                                                                          class="far fa-user"></i></span>
+                                        <input type="text" id="search-field" class="form-control"
+                                               th:classappend="${notFound != null} ? 'is-invalid' : ''"
+                                               name="search-field" placeholder="Username"/>
+                                        <div th:if="${notFound != null}" class="invalid-feedback"
+                                             th:text="${notFound}"></div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary me-1 mt-1 mb-2">Search</button>
+
+                                <div th:if="${user != null}">
+                                    <h4 class="card-title text-secondary">Select recipient</h4>
+                                    <div class="form-check form-check-inline recipient-radio">
+                                        <label class="form-check-label" id="recipient-text">
+                                            <input class="form-check-input recipient-radio" type="radio"
+                                                   id="recipient-radio"
+                                                   th:value="${user.id}">
+                                            [[${user.username}]]
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card" id="final-form">
+                        <div class="card-body">
+                            <form class="validate-form transaction-final-form" th:action="@{/panel/transactions/create}"
+                                  th:object="${transaction}" method="post">
+                                <input type="hidden" id="recipient-id" th:field="*{recipientId}">
+                                <div class="mb-1">
+                                    <label class="form-label" for="recipient-id">Recipient</label>
+                                    <input type="text" id="recipient-form" class="form-control"
+                                           th:classappend="${#fields.hasErrors('recipientId')} ? 'is-invalid' : ''"
+                                           placeholder="No Recipient" disabled/>
+                                    <div th:if="${#fields.hasErrors('recipientId')}" class="invalid-feedback"
+                                         th:errors="*{recipientId}"></div>
+                                </div>
+                                <div class="mb-1">
+                                    <label class="form-label" for="select2-basic">Wallet</label>
+                                    <select class="select2 form-select" id="select2-basic"
+                                            th:field="*{selectedWalletId}"
+                                            th:classappend="${#fields.hasErrors('selectedWalletId')} ? 'is-invalid' : ''">
+                                        <option th:each="wallet : ${userWallets}"
+                                                th:value="${wallet.id}"
+                                                th:text="${wallet.name}"></option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('selectedWalletId')}" class="invalid-feedback"
+                                         th:errors="*{selectedWalletId}"></div>
+                                </div>
+
+                                <div class="mb-1">
+                                    <label class="form-label" for="amount">Amount</label>
+                                    <input type="number" step=".01" class="form-control" id="amount"
+                                           th:field="*{amount}"
+                                           th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid' : ''"
+                                           placeholder="499.99"/>
+                                    <div th:if="${#fields.hasErrors('amount')}" class="invalid-feedback"
+                                         th:errors="*{amount}"></div>
+                                </div>
+
+                                <div class="mb-1">
+                                    <label class="form-label" for="description">Description</label>
+                                    <input type="text" class="form-control" id="description" th:field="*{description}"
+                                           th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                                           placeholder="Description"/>
+                                    <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback"
+                                         th:errors="*{description}"></div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary me-1 mt-1">Create Transaction</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--/ Wallet Card -->
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+<div class="sidenav-overlay"></div>
+<div class="drag-target"></div>
+
+<!-- BEGIN: Footer-->
+<div th:replace="fragments :: footer"></div>
+<!-- END: Footer-->
+
+
+<!-- BEGIN: Vendor JS-->
+<script th:src="@{/vendors/js/vendors.min.js}"></script>
+<!-- BEGIN Vendor JS-->
+
+<!-- BEGIN: Page Vendor JS-->
+<script th:src="@{/vendors/js/ui/jquery.sticky.js}"></script>
+<script th:src="@{/vendors/js/charts/apexcharts.min.js}"></script>
+<script th:src="@{/vendors/js/extensions/toastr.min.js}"></script>
+<!-- END: Page Vendor JS-->
+
+<!-- BEGIN: Theme JS-->
+<script th:src="@{/js/core/app.js}"></script>
+<script th:src="@{/js/core/app-menu.js}"></script>
+<!-- END: Theme JS-->
+
+<!-- BEGIN: Page JS-->
+<script th:src="@{/js/scripts/pages/homepage.js}"></script>
+<script th:src="@{/vendors/js/forms/select/form-select2.full.min.js}"></script>
+<!-- END: Page JS-->
+
+<script type="text/javascript">
+    $(document).ready(function () {
+            $('.radio').click(function () {
+                    if (document.getElementById("username").checked) {
+                        document.getElementById("search-field-name").innerText = "Username";
+                        document.getElementById("search-field-icon").setAttribute("class", "far fa-user");
+                        document.getElementById("search-field").placeholder = "Username";
+                    } else if (document.getElementById("email").checked) {
+                        document.getElementById("search-field-name").innerText = "Email";
+                        document.getElementById("search-field-icon").setAttribute("class", "far fa-envelope");
+                        document.getElementById("search-field").placeholder = "Email";
+                    } else if (document.getElementById("phone-number").checked) {
+                        document.getElementById("search-field-name").innerText = "Phone Number";
+                        document.getElementById("search-field-icon").setAttribute("class", "fas fa-phone");
+                        document.getElementById("search-field").placeholder = "Phone Number";
+                    }
+                }
+            )
+            $('#recipient-radio').click(function () {
+                    document.getElementById("recipient-form").placeholder = document.getElementById("recipient-text").textContent.trim();
+                }
+            )
+            $('.transaction-final-form').submit(function () {
+                    let recipientId = $('input[id="recipient-radio"]:checked').val();
+                    $('#recipient-id').val(recipientId);
+                }
+            )
+        }
+    );
+</script>
+</body>
+
+<!-- END: Body-->
+
+</html>

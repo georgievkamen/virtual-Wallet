@@ -105,7 +105,7 @@ public class WalletMvcController {
     @PostMapping("/{id}/update")
     public String editWallet(@Valid @ModelAttribute("wallet") WalletDto walletDto, BindingResult result, HttpSession session, Model model, @PathVariable int id) {
         if (result.hasErrors()) {
-            model.addAttribute("walletIt", id);
+            model.addAttribute("walletId", id);
             return "wallet-update";
         }
 
