@@ -20,6 +20,8 @@ public interface TransactionService {
 
     void create(Transaction transaction, Optional<Integer> categoryId);
 
+    void moveMoneyToWallet(Transaction transaction, Optional<Integer> categoryId);
+
     void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId);
 
     void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId);

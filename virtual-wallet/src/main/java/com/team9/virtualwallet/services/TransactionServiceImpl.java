@@ -92,6 +92,33 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public void moveMoneyToWallet(Transaction transaction, Optional<Integer> categoryId) {
+        Wallet walletToMoveFrom = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
+        Wallet walletToMoveTo = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
+
+        verifyWalletOwnership(transaction, walletToMoveFrom);
+
+        if (walletToMoveTo.getId() == walletToMoveFrom.getId()) {
+            throw new IllegalArgumentException("Please select different wallet");
+        }
+        walletService.verifyEnoughBalance(walletToMoveFrom, transaction.getAmount());
+
+        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
+
+        walletToMoveFrom.withdrawBalance(transaction.getAmount());
+        walletToMoveTo.depositBalance(transaction.getAmount());
+
+        if (transaction.getAmount().compareTo(BigDecimal.valueOf(100000)) >= 0) {
+            transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
+        } else {
+            transaction.setTransactionType(TransactionType.SMALL_TRANSACTION);
+        }
+
+        repository.create(transaction, walletToMoveFrom, walletToMoveTo);
+    }
+
+
+    @Override
     public void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId) {
         Card cardToWithdraw = cardRepository.getById(transaction.getSenderPaymentMethod().getId());
         validateCardExpiryDate(cardToWithdraw);

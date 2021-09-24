@@ -3,6 +3,7 @@ package com.team9.virtualwallet.services.mappers;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
+import com.team9.virtualwallet.models.dtos.MoveToWalletTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
 import com.team9.virtualwallet.models.enums.TransactionType;
 import com.team9.virtualwallet.repositories.contracts.PaymentMethodRepository;
@@ -37,6 +38,21 @@ public class TransactionModelMapper {
         transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(recipient.getDefaultWallet().getId(), "Wallet"));
         transaction.setAmount(transactionDto.getAmount());
         transaction.setDescription(transactionDto.getDescription());
+        transaction.setTimestamp(Timestamp.valueOf(localDateTime));
+
+        return transaction;
+    }
+
+    public Transaction fromDtoMoveToWallet(User user, MoveToWalletTransactionDto moveToWalletTransactionDto) {
+        Transaction transaction = new Transaction();
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        transaction.setSender(user);
+        transaction.setRecipient(user);
+        transaction.setSenderPaymentMethod(paymentMethodRepository.getById(moveToWalletTransactionDto.getSelectedWalletId(), "Wallet"));
+        transaction.setRecipientPaymentMethod(paymentMethodRepository.getById(moveToWalletTransactionDto.getWalletToMoveToId(), "Wallet"));
+        transaction.setAmount(moveToWalletTransactionDto.getAmount());
+        transaction.setDescription(moveToWalletTransactionDto.getDescription());
         transaction.setTimestamp(Timestamp.valueOf(localDateTime));
 
         return transaction;

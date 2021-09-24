@@ -4,6 +4,7 @@ import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
+import com.team9.virtualwallet.models.dtos.MoveToWalletTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
@@ -67,6 +68,18 @@ public class TransactionRestController {
         //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromDto(user, transactionDto);
         service.create(transaction, categoryId);
+
+        return transaction;
+    }
+
+    @PostMapping("/internal/move")
+    public Transaction moveToWallet(@RequestHeader HttpHeaders headers, @RequestBody @Valid MoveToWalletTransactionDto moveToWalletTransactionDto, BindingResult result, @RequestParam(required = false) Optional<Integer> categoryId) {
+        checkFields(result);
+
+        User user = authenticationHelper.tryGetUser(headers);
+
+        Transaction transaction = modelMapper.fromDtoMoveToWallet(user, moveToWalletTransactionDto);
+        service.moveMoneyToWallet(transaction, categoryId);
 
         return transaction;
     }

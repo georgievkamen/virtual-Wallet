@@ -38,6 +38,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
         }
     }
 
+
     @Override
     public List<Transaction> getLastTransactions(User user, int count) {
         try (Session session = sessionFactory.openSession()) {
