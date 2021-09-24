@@ -67,14 +67,14 @@
           // If active element's top position is less than 2/3 (66%) of menu height than do not scroll
           if (activeElHeight > parseInt((menu.clientHeight * 2) / 3)) {
             var start = menu.scrollTop,
-                change = activeElHeight - start - parseInt(menu.clientHeight / 2);
+              change = activeElHeight - start - parseInt(menu.clientHeight / 2);
           }
           setTimeout(function () {
             $.app.menu.container.stop().animate(
-                {
-                  scrollTop: change
-                },
-                300
+              {
+                scrollTop: change
+              },
+              300
             );
             $('.main-menu').data('scroll-to-active', 'false');
           }, 300);
@@ -97,14 +97,14 @@
 
       updateHeight: function () {
         if (
-            ($body.data('menu') == 'vertical-menu' ||
-                $body.data('menu') == 'vertical-menu-modern' ||
-                $body.data('menu') == 'vertical-overlay-menu') &&
-            $('.main-menu').hasClass('menu-fixed')
+          ($body.data('menu') == 'vertical-menu' ||
+            $body.data('menu') == 'vertical-menu-modern' ||
+            $body.data('menu') == 'vertical-overlay-menu') &&
+          $('.main-menu').hasClass('menu-fixed')
         ) {
           $('.main-menu-content').css(
-              'height',
-              $(window).height() -
+            'height',
+            $(window).height() -
               $('.header-navbar').height() -
               $('.main-menu-header').outerHeight() -
               $('.main-menu-footer').outerHeight()
@@ -143,9 +143,9 @@
             break;
           case 'lg':
             if (
-                menuType === 'vertical-overlay-menu' ||
-                menuType === 'vertical-menu-modern' ||
-                menuType === 'horizontal-menu'
+              menuType === 'vertical-overlay-menu' ||
+              menuType === 'vertical-menu-modern' ||
+              menuType === 'horizontal-menu'
             ) {
               this.hide();
             } else {
@@ -177,16 +177,16 @@
       // ---------------------------------------------------------------
       if (currentBreakpoint.name == 'xl') {
         $('body[data-open="hover"] .main-menu-content .dropdown') // Use selector $('body[data-open="hover"] .header-navbar .dropdown') for menu and navbar DD open on hover
-            .on('mouseenter', function () {
-              if (!$(this).hasClass('show')) {
-                $(this).addClass('show');
-              } else {
-                $(this).removeClass('show');
-              }
-            })
-            .on('mouseleave', function (event) {
+          .on('mouseenter', function () {
+            if (!$(this).hasClass('show')) {
+              $(this).addClass('show');
+            } else {
               $(this).removeClass('show');
-            });
+            }
+          })
+          .on('mouseleave', function (event) {
+            $(this).removeClass('show');
+          });
         /* ? Uncomment to enable all DD open on hover
         $('body[data-open="hover"] .dropdown a').on('click', function (e) {
           if (menuType == 'horizontal-menu') {
@@ -235,20 +235,20 @@
           var dd = $(this).find('.dropdown-menu');
           if (dd) {
             var pageHeight = $(window).height(),
-                // ddTop = dd.offset().top,
-                ddTop = $(this).position().top,
-                ddLeft = dd.offset().left,
-                ddWidth = dd.width(),
-                ddHeight = dd.height();
+              // ddTop = dd.offset().top,
+              ddTop = $(this).position().top,
+              ddLeft = dd.offset().left,
+              ddWidth = dd.width(),
+              ddHeight = dd.height();
             if (pageHeight - ddTop - ddHeight - 28 < 1) {
               var maxHeight = pageHeight - ddTop - 170;
               $(this)
-                  .find('.dropdown-menu')
-                  .css({
-                    'max-height': maxHeight + 'px',
-                    'overflow-y': 'auto',
-                    'overflow-x': 'hidden'
-                  });
+                .find('.dropdown-menu')
+                .css({
+                  'max-height': maxHeight + 'px',
+                  'overflow-y': 'auto',
+                  'overflow-x': 'hidden'
+                });
               var menu_content = new PerfectScrollbar('li.dropdown-submenu.show .dropdown-menu', {
                 wheelPropagation: false
               });
@@ -315,63 +315,63 @@
 
     open: function () {
       this.transit(
-          function () {
-            $body.removeClass('menu-hide menu-collapsed').addClass('menu-open');
-            this.hidden = false;
-            this.expanded = true;
+        function () {
+          $body.removeClass('menu-hide menu-collapsed').addClass('menu-open');
+          this.hidden = false;
+          this.expanded = true;
 
-            if ($body.hasClass('vertical-overlay-menu')) {
-              $('.sidenav-overlay').addClass('show');
-              // $('.sidenav-overlay').removeClass('d-none').addClass('d-block');
-              // $('body').css('overflow', 'hidden');
-            }
-          },
-          function () {
-            if (!$('.main-menu').hasClass('menu-native-scroll') && $('.main-menu').hasClass('menu-fixed')) {
-              this.manualScroller.enable();
-              $('.main-menu-content').css(
-                  'height',
-                  $(window).height() -
-                  $('.header-navbar').height() -
-                  $('.main-menu-header').outerHeight() -
-                  $('.main-menu-footer').outerHeight()
-              );
-              // this.manualScroller.update();
-            }
-
-            if (!$body.hasClass('vertical-overlay-menu')) {
-              $('.sidenav-overlay').removeClass('show');
-              // $('.sidenav-overlay').removeClass('d-block d-none');
-              // $('body').css('overflow', 'auto');
-            }
+          if ($body.hasClass('vertical-overlay-menu')) {
+            $('.sidenav-overlay').addClass('show');
+            // $('.sidenav-overlay').removeClass('d-none').addClass('d-block');
+            // $('body').css('overflow', 'hidden');
           }
+        },
+        function () {
+          if (!$('.main-menu').hasClass('menu-native-scroll') && $('.main-menu').hasClass('menu-fixed')) {
+            this.manualScroller.enable();
+            $('.main-menu-content').css(
+              'height',
+              $(window).height() -
+                $('.header-navbar').height() -
+                $('.main-menu-header').outerHeight() -
+                $('.main-menu-footer').outerHeight()
+            );
+            // this.manualScroller.update();
+          }
+
+          if (!$body.hasClass('vertical-overlay-menu')) {
+            $('.sidenav-overlay').removeClass('show');
+            // $('.sidenav-overlay').removeClass('d-block d-none');
+            // $('body').css('overflow', 'auto');
+          }
+        }
       );
     },
 
     hide: function () {
       this.transit(
-          function () {
-            $body.removeClass('menu-open menu-expanded').addClass('menu-hide');
-            this.hidden = true;
-            this.expanded = false;
+        function () {
+          $body.removeClass('menu-open menu-expanded').addClass('menu-hide');
+          this.hidden = true;
+          this.expanded = false;
 
-            if ($body.hasClass('vertical-overlay-menu')) {
-              $('.sidenav-overlay').removeClass('show');
-              // $('.sidenav-overlay').removeClass('d-block').addClass('d-none');
-              // $('body').css('overflow', 'auto');
-            }
-          },
-          function () {
-            if (!$('.main-menu').hasClass('menu-native-scroll') && $('.main-menu').hasClass('menu-fixed')) {
-              this.manualScroller.enable();
-            }
-
-            if (!$body.hasClass('vertical-overlay-menu')) {
-              $('.sidenav-overlay').removeClass('show');
-              // $('.sidenav-overlay').removeClass('d-block d-none');
-              // $('body').css('overflow', 'auto');
-            }
+          if ($body.hasClass('vertical-overlay-menu')) {
+            $('.sidenav-overlay').removeClass('show');
+            // $('.sidenav-overlay').removeClass('d-block').addClass('d-none');
+            // $('body').css('overflow', 'auto');
           }
+        },
+        function () {
+          if (!$('.main-menu').hasClass('menu-native-scroll') && $('.main-menu').hasClass('menu-fixed')) {
+            this.manualScroller.enable();
+          }
+
+          if (!$body.hasClass('vertical-overlay-menu')) {
+            $('.sidenav-overlay').removeClass('show');
+            // $('.sidenav-overlay').removeClass('d-block d-none');
+            // $('body').css('overflow', 'auto');
+          }
+        }
       );
     },
 
@@ -379,41 +379,41 @@
       if (this.expanded === false) {
         if ($body.data('menu') == 'vertical-menu-modern') {
           $('.modern-nav-toggle')
-              .find('.collapse-toggle-icon')
-              .replaceWith(
-                  feather.icons['disc'].toSvg({class: 'd-none d-xl-block collapse-toggle-icon primary font-medium-4'})
-              );
+            .find('.collapse-toggle-icon')
+            .replaceWith(
+              feather.icons['disc'].toSvg({ class: 'd-none d-xl-block collapse-toggle-icon primary font-medium-4' })
+            );
         }
         this.transit(
-            function () {
-              $body.removeClass('menu-collapsed').addClass('menu-expanded');
-              this.collapsed = false;
-              this.expanded = true;
-              $('.sidenav-overlay').removeClass('show');
+          function () {
+            $body.removeClass('menu-collapsed').addClass('menu-expanded');
+            this.collapsed = false;
+            this.expanded = true;
+            $('.sidenav-overlay').removeClass('show');
 
-              // $('.sidenav-overlay').removeClass('d-block d-none');
-            },
-            function () {
-              if ($('.main-menu').hasClass('menu-native-scroll') || $body.data('menu') == 'horizontal-menu') {
-                this.manualScroller.disable();
-              } else {
-                if ($('.main-menu').hasClass('menu-fixed')) this.manualScroller.enable();
-              }
-
-              if (
-                  ($body.data('menu') == 'vertical-menu' || $body.data('menu') == 'vertical-menu-modern') &&
-                  $('.main-menu').hasClass('menu-fixed')
-              ) {
-                $('.main-menu-content').css(
-                    'height',
-                    $(window).height() -
-                    $('.header-navbar').height() -
-                    $('.main-menu-header').outerHeight() -
-                    $('.main-menu-footer').outerHeight()
-                );
-                // this.manualScroller.update();
-              }
+            // $('.sidenav-overlay').removeClass('d-block d-none');
+          },
+          function () {
+            if ($('.main-menu').hasClass('menu-native-scroll') || $body.data('menu') == 'horizontal-menu') {
+              this.manualScroller.disable();
+            } else {
+              if ($('.main-menu').hasClass('menu-fixed')) this.manualScroller.enable();
             }
+
+            if (
+              ($body.data('menu') == 'vertical-menu' || $body.data('menu') == 'vertical-menu-modern') &&
+              $('.main-menu').hasClass('menu-fixed')
+            ) {
+              $('.main-menu-content').css(
+                'height',
+                $(window).height() -
+                  $('.header-navbar').height() -
+                  $('.main-menu-header').outerHeight() -
+                  $('.main-menu-footer').outerHeight()
+              );
+              // this.manualScroller.update();
+            }
+          }
         );
       }
     },
@@ -422,36 +422,36 @@
       if (this.collapsed === false) {
         if ($body.data('menu') == 'vertical-menu-modern') {
           $('.modern-nav-toggle')
-              .find('.collapse-toggle-icon')
-              .replaceWith(
-                  feather.icons['circle'].toSvg({
-                    class: 'd-none d-xl-block collapse-toggle-icon primary font-medium-4'
-                  })
-              );
+            .find('.collapse-toggle-icon')
+            .replaceWith(
+              feather.icons['circle'].toSvg({
+                class: 'd-none d-xl-block collapse-toggle-icon primary font-medium-4'
+              })
+            );
         }
         this.transit(
-            function () {
-              $body.removeClass('menu-expanded').addClass('menu-collapsed');
-              this.collapsed = true;
-              this.expanded = false;
+          function () {
+            $body.removeClass('menu-expanded').addClass('menu-collapsed');
+            this.collapsed = true;
+            this.expanded = false;
 
-              $('.content-overlay').removeClass('d-block d-none');
-            },
-            function () {
-              if ($body.data('menu') == 'horizontal-menu' && $body.hasClass('vertical-overlay-menu')) {
-                if ($('.main-menu').hasClass('menu-fixed')) this.manualScroller.enable();
-              }
-              if (
-                  ($body.data('menu') == 'vertical-menu' || $body.data('menu') == 'vertical-menu-modern') &&
-                  $('.main-menu').hasClass('menu-fixed')
-              ) {
-                $('.main-menu-content').css('height', $(window).height() - $('.header-navbar').height());
-                // this.manualScroller.update();
-              }
-              if ($body.data('menu') == 'vertical-menu-modern') {
-                if ($('.main-menu').hasClass('menu-fixed')) this.manualScroller.enable();
-              }
+            $('.content-overlay').removeClass('d-block d-none');
+          },
+          function () {
+            if ($body.data('menu') == 'horizontal-menu' && $body.hasClass('vertical-overlay-menu')) {
+              if ($('.main-menu').hasClass('menu-fixed')) this.manualScroller.enable();
             }
+            if (
+              ($body.data('menu') == 'vertical-menu' || $body.data('menu') == 'vertical-menu-modern') &&
+              $('.main-menu').hasClass('menu-fixed')
+            ) {
+              $('.main-menu-content').css('height', $(window).height() - $('.header-navbar').height());
+              // this.manualScroller.update();
+            }
+            if ($body.data('menu') == 'vertical-menu-modern') {
+              if ($('.main-menu').hasClass('menu-fixed')) this.manualScroller.enable();
+            }
+          }
         );
       }
     },
@@ -487,12 +487,12 @@
       $('div[data-menu="menu-wrapper"]').html(menuWrapper_el);
 
       var menuWrapper = $('div[data-menu="menu-wrapper"]'),
-          menuContainer = $('div[data-menu="menu-container"]'),
-          menuNavigation = $('ul[data-menu="menu-navigation"]'),
-          /*megaMenu           = $('li[data-menu="megamenu"]'),
-          megaMenuCol        = $('li[data-mega-col]'),*/
-          dropdownMenu = $('li[data-menu="dropdown"]'),
-          dropdownSubMenu = $('li[data-menu="dropdown-submenu"]');
+        menuContainer = $('div[data-menu="menu-container"]'),
+        menuNavigation = $('ul[data-menu="menu-navigation"]'),
+        /*megaMenu           = $('li[data-menu="megamenu"]'),
+        megaMenuCol        = $('li[data-mega-col]'),*/
+        dropdownMenu = $('li[data-menu="dropdown"]'),
+        dropdownSubMenu = $('li[data-menu="dropdown-submenu"]');
 
       if (screen === 'xl') {
         // Change body classes
@@ -549,7 +549,7 @@
       }
 
       if (feather) {
-        feather.replace({width: 14, height: 14});
+        feather.replace({ width: 14, height: 14 });
       }
     },
 
@@ -644,114 +644,114 @@
       var menuObj = this;
 
       $('.navigation-main')
-          .on('mouseenter.app.menu', 'li', function () {
-            var $this = $(this);
-            // $('.hover', '.navigation-main').removeClass('hover');
+        .on('mouseenter.app.menu', 'li', function () {
+          var $this = $(this);
+          // $('.hover', '.navigation-main').removeClass('hover');
+          if ($body.hasClass('menu-collapsed') && $body.data('menu') != 'vertical-menu-modern') {
+            $('.main-menu-content').children('span.menu-title').remove();
+            $('.main-menu-content').children('a.menu-title').remove();
+            $('.main-menu-content').children('ul.menu-content').remove();
+
+            // Title
+            var menuTitle = $this.find('span.menu-title').clone(),
+              tempTitle,
+              tempLink;
+            if (!$this.hasClass('has-sub')) {
+              tempTitle = $this.find('span.menu-title').text();
+              tempLink = $this.children('a').attr('href');
+              if (tempTitle !== '') {
+                menuTitle = $('<a>');
+                menuTitle.attr('href', tempLink);
+                menuTitle.attr('title', tempTitle);
+                menuTitle.text(tempTitle);
+                menuTitle.addClass('menu-title');
+              }
+            }
+            // menu_header_height = ($('.main-menu-header').length) ? $('.main-menu-header').height() : 0,
+            // fromTop = menu_header_height + $this.position().top + parseInt($this.css( "border-top" ),10);
+            var fromTop;
+            if ($this.css('border-top')) {
+              fromTop = $this.position().top + parseInt($this.css('border-top'), 10);
+            } else {
+              fromTop = $this.position().top;
+            }
+            if ($body.data('menu') !== 'vertical-compact-menu') {
+              menuTitle.appendTo('.main-menu-content').css({
+                position: 'fixed',
+                top: fromTop
+              });
+            }
+
+            // Content
+            /* if ($this.hasClass('has-sub') && $this.hasClass('nav-item')) {
+              var menuContent = $this.children('ul:first');
+              menuObj.adjustSubmenu($this);
+            } */
+          }
+          // $this.addClass('hover');
+        })
+        .on('mouseleave.app.menu', 'li', function () {
+          // $(this).removeClass('hover');
+        })
+        .on('active.app.menu', 'li', function (e) {
+          $(this).addClass('active');
+          e.stopPropagation();
+        })
+        .on('deactive.app.menu', 'li.active', function (e) {
+          $(this).removeClass('active');
+          e.stopPropagation();
+        })
+        .on('open.app.menu', 'li', function (e) {
+          var $listItem = $(this);
+
+          menuObj.expand($listItem);
+          // $listItem.addClass('open');
+
+          // If menu collapsible then do not take any action
+          if ($('.main-menu').hasClass('menu-collapsible')) {
+            return false;
+          }
+          // If menu accordion then close all except clicked once
+          else {
+            $listItem.siblings('.open').find('li.open').trigger('close.app.menu');
+            $listItem.siblings('.open').trigger('close.app.menu');
+          }
+
+          e.stopPropagation();
+        })
+        .on('close.app.menu', 'li.open', function (e) {
+          var $listItem = $(this);
+
+          menuObj.collapse($listItem);
+          // $listItem.removeClass('open');
+
+          e.stopPropagation();
+        })
+        .on('click.app.menu', 'li', function (e) {
+          var $listItem = $(this);
+          if ($listItem.is('.disabled')) {
+            e.preventDefault();
+          } else {
             if ($body.hasClass('menu-collapsed') && $body.data('menu') != 'vertical-menu-modern') {
-              $('.main-menu-content').children('span.menu-title').remove();
-              $('.main-menu-content').children('a.menu-title').remove();
-              $('.main-menu-content').children('ul.menu-content').remove();
-
-              // Title
-              var menuTitle = $this.find('span.menu-title').clone(),
-                  tempTitle,
-                  tempLink;
-              if (!$this.hasClass('has-sub')) {
-                tempTitle = $this.find('span.menu-title').text();
-                tempLink = $this.children('a').attr('href');
-                if (tempTitle !== '') {
-                  menuTitle = $('<a>');
-                  menuTitle.attr('href', tempLink);
-                  menuTitle.attr('title', tempTitle);
-                  menuTitle.text(tempTitle);
-                  menuTitle.addClass('menu-title');
-                }
-              }
-              // menu_header_height = ($('.main-menu-header').length) ? $('.main-menu-header').height() : 0,
-              // fromTop = menu_header_height + $this.position().top + parseInt($this.css( "border-top" ),10);
-              var fromTop;
-              if ($this.css('border-top')) {
-                fromTop = $this.position().top + parseInt($this.css('border-top'), 10);
-              } else {
-                fromTop = $this.position().top;
-              }
-              if ($body.data('menu') !== 'vertical-compact-menu') {
-                menuTitle.appendTo('.main-menu-content').css({
-                  position: 'fixed',
-                  top: fromTop
-                });
-              }
-
-              // Content
-              /* if ($this.hasClass('has-sub') && $this.hasClass('nav-item')) {
-                var menuContent = $this.children('ul:first');
-                menuObj.adjustSubmenu($this);
-              } */
-            }
-            // $this.addClass('hover');
-          })
-          .on('mouseleave.app.menu', 'li', function () {
-            // $(this).removeClass('hover');
-          })
-          .on('active.app.menu', 'li', function (e) {
-            $(this).addClass('active');
-            e.stopPropagation();
-          })
-          .on('deactive.app.menu', 'li.active', function (e) {
-            $(this).removeClass('active');
-            e.stopPropagation();
-          })
-          .on('open.app.menu', 'li', function (e) {
-            var $listItem = $(this);
-
-            menuObj.expand($listItem);
-            // $listItem.addClass('open');
-
-            // If menu collapsible then do not take any action
-            if ($('.main-menu').hasClass('menu-collapsible')) {
-              return false;
-            }
-            // If menu accordion then close all except clicked once
-            else {
-              $listItem.siblings('.open').find('li.open').trigger('close.app.menu');
-              $listItem.siblings('.open').trigger('close.app.menu');
-            }
-
-            e.stopPropagation();
-          })
-          .on('close.app.menu', 'li.open', function (e) {
-            var $listItem = $(this);
-
-            menuObj.collapse($listItem);
-            // $listItem.removeClass('open');
-
-            e.stopPropagation();
-          })
-          .on('click.app.menu', 'li', function (e) {
-            var $listItem = $(this);
-            if ($listItem.is('.disabled')) {
               e.preventDefault();
             } else {
-              if ($body.hasClass('menu-collapsed') && $body.data('menu') != 'vertical-menu-modern') {
-                e.preventDefault();
-              } else {
-                if ($listItem.has('ul').length) {
-                  if ($listItem.is('.open')) {
-                    $listItem.trigger('close.app.menu');
-                  } else {
-                    $listItem.trigger('open.app.menu');
-                  }
+              if ($listItem.has('ul').length) {
+                if ($listItem.is('.open')) {
+                  $listItem.trigger('close.app.menu');
                 } else {
-                  if (!$listItem.is('.active')) {
-                    $listItem.siblings('.active').trigger('deactive.app.menu');
-                    $listItem.trigger('active.app.menu');
-                  }
+                  $listItem.trigger('open.app.menu');
+                }
+              } else {
+                if (!$listItem.is('.active')) {
+                  $listItem.siblings('.active').trigger('deactive.app.menu');
+                  $listItem.trigger('active.app.menu');
                 }
               }
             }
+          }
 
-            e.stopPropagation();
-          });
+          e.stopPropagation();
+        });
 
       $('.navbar-header, .main-menu').on('mouseenter', modernMenuExpand).on('mouseleave', modernMenuCollapse);
 
@@ -763,7 +763,7 @@
               $('.main-menu-content').find('li.active').parents('li').addClass('open');
             }
             var $listItem = $('.main-menu li.menu-collapsed-open'),
-                $subList = $listItem.children('ul');
+              $subList = $listItem.children('ul');
 
             $subList.hide().slideDown(200, function () {
               $(this).css('display', '');
@@ -782,7 +782,7 @@
               $('.main-menu, .navbar-header').removeClass('expanded');
               if ($body.hasClass('menu-collapsed')) {
                 var $listItem = $('.main-menu li.open'),
-                    $subList = $listItem.children('ul');
+                  $subList = $listItem.children('ul');
                 $listItem.addClass('menu-collapsed-open');
 
                 $subList.show().slideUp(200, function () {
@@ -859,8 +859,8 @@
     // Collapse Submenu With Transition (Height animation)
     collapse: function ($listItem, callback) {
       var subList = $listItem.children('ul'),
-          toggleLink = $listItem.children().first(),
-          linkHeight = $(toggleLink).outerHeight();
+        toggleLink = $listItem.children().first(),
+        linkHeight = $(toggleLink).outerHeight();
 
       $listItem.css({
         height: linkHeight + subList.outerHeight() + 'px',
@@ -885,8 +885,8 @@
     // Expand Submenu With Transition (Height animation)
     expand: function ($listItem, callback) {
       var subList = $listItem.children('ul'),
-          toggleLink = $listItem.children().first(),
-          linkHeight = $(toggleLink).outerHeight();
+        toggleLink = $listItem.children().first(),
+        linkHeight = $(toggleLink).outerHeight();
 
       $listItem.addClass('menu-item-animating');
 
@@ -926,7 +926,7 @@
       });
 
       el._menuAnimationEndEventTimeout = setTimeout(function () {
-        cb({target: el});
+        cb({ target: el });
       }, duration + 50);
     },
 

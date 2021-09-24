@@ -74,7 +74,7 @@ public class WalletServiceImpl implements WalletService {
     public void delete(User user, int id) {
         Wallet wallet = repository.getById(id);
         verifyOwnership(user, wallet, "You can only delete your own wallets!");
-        verifyUserHasOtherWalletsAndNotDefault(user, wallet);
+        verifyNotDefaultWallet(user, wallet);
 
         if (wallet.getBalance().compareTo(BigDecimal.valueOf(0)) == 0) {
             repository.delete(wallet);
@@ -105,10 +105,6 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void setDefaultWallet(User user, Wallet wallet) {
-        //TODO Това май не ни трябва? Няма смисъл да спамим грешки.
-        if (user.getDefaultWallet().getId() == wallet.getId()) {
-            throw new IllegalArgumentException("This is already your default wallet");
-        }
         user.setDefaultWallet(wallet);
         userRepository.update(user);
     }
@@ -134,9 +130,9 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
-    private void verifyUserHasOtherWalletsAndNotDefault(User user, Wallet wallet) {
-        if (getAll(user).size() == 1 || user.getDefaultWallet().getId() == wallet.getId()) {
-            throw new IllegalArgumentException("You must have at least one default wallet at your account!");
+    private void verifyNotDefaultWallet(User user, Wallet wallet) {
+        if (user.getDefaultWallet().getId() == wallet.getId()) {
+            throw new IllegalArgumentException("You can't delete your default wallet!");
         }
     }
 }

@@ -119,7 +119,7 @@ window.colors = {
       }
       // Block Element
       block_ele.block({
-        message: feather.icons['refresh-cw'].toSvg({class: 'font-medium-1 spinner text-primary'}),
+        message: feather.icons['refresh-cw'].toSvg({ class: 'font-medium-1 spinner text-primary' }),
         timeout: 2000, //unblock after 2 seconds
         overlayCSS: {
           backgroundColor: reloadActionOverlay,
@@ -140,7 +140,7 @@ window.colors = {
 
     $('.card .heading-elements a[data-action="collapse"]').on('click', function () {
       var $this = $(this),
-          card = $this.closest('.card');
+        card = $this.closest('.card');
       var cardHeight;
 
       if (parseInt(card[0].style.height, 10) > 0) {
@@ -176,8 +176,8 @@ window.colors = {
 
     //  Dynamic height for the chartjs div for the chart animations to work
     var chartjsDiv = $('.chartjs'),
-        canvasHeight = chartjsDiv.children('canvas').attr('height'),
-        mainMenu = $('.main-menu');
+      canvasHeight = chartjsDiv.children('canvas').attr('height'),
+      mainMenu = $('.main-menu');
     chartjsDiv.css('height', canvasHeight);
 
     if ($body.hasClass('boxed-layout')) {
@@ -210,8 +210,8 @@ window.colors = {
     */
     function checkTextAreaMaxLength(textBox, e) {
       var maxLength = parseInt($(textBox).data('length')),
-          counterValue = $('.textarea-counter-value'),
-          charTextarea = $('.char-textarea');
+        counterValue = $('.textarea-counter-value'),
+        charTextarea = $('.char-textarea');
 
       if (!checkSpecialKeys(e)) {
         if (textBox.value.length < maxLength - 1) textBox.value = textBox.value.substring(0, maxLength);
@@ -285,8 +285,8 @@ window.colors = {
 
     // Swipe menu gesture
     var swipeInElement = document.querySelector('.drag-target'),
-        swipeInAction = 'panright',
-        swipeOutAction = 'panleft';
+      swipeInAction = 'panright',
+      swipeOutAction = 'panleft';
 
     if (rtl === true) {
       swipeInAction = 'panleft';
@@ -385,14 +385,14 @@ window.colors = {
     e.preventDefault();
     e.stopPropagation();
     var $this = $(this),
-        href = $this.attr('href');
+      href = $this.attr('href');
     var offset = $(href).offset();
     var scrollto = offset.top - 80; // minus fixed header height
     $('html, body').animate(
-        {
-          scrollTop: scrollto
-        },
-        0
+      {
+        scrollTop: scrollto
+      },
+      0
     );
     setTimeout(function () {
       $this.parent('.nav-item').siblings('.nav-item').children('.nav-link').removeClass('active');
@@ -409,29 +409,29 @@ window.colors = {
     if (language !== null) {
       // get the selected flag class
       var selectedLang = $('.dropdown-language')
-          .find('a[data-language=' + language + ']')
-          .text();
+        .find('a[data-language=' + language + ']')
+        .text();
       var selectedFlag = $('.dropdown-language')
-          .find('a[data-language=' + language + '] .flag-icon')
-          .attr('class');
+        .find('a[data-language=' + language + '] .flag-icon')
+        .attr('class');
       // set the class in button
       $('#dropdown-flag .selected-language').text(selectedLang);
       $('#dropdown-flag .flag-icon').removeClass().addClass(selectedFlag);
     }
   } else {
     i18next.use(window.i18nextXHRBackend).init(
-        {
-          debug: false,
-          fallbackLng: 'en',
-          backend: {
-            loadPath: assetPath + 'data/locales/{{lng}}.json'
-          },
-          returnObjects: true
+      {
+        debug: false,
+        fallbackLng: 'en',
+        backend: {
+          loadPath: assetPath + 'data/locales/{{lng}}.json'
         },
-        function (err, t) {
-          // resources have been loaded
-          jqueryI18next.init(i18next, $);
-        }
+        returnObjects: true
+      },
+      function (err, t) {
+        // resources have been loaded
+        jqueryI18next.init(i18next, $);
+      }
     );
 
     // change language according to data-language of dropdown item
@@ -451,17 +451,17 @@ window.colors = {
   }
 
   /********************* Bookmark & Search ***********************/
-      // This variable is used for mouseenter and mouseleave events of search list
+  // This variable is used for mouseenter and mouseleave events of search list
   var $filename = $('.search-input input').data('search'),
-      bookmarkWrapper = $('.bookmark-wrapper'),
-      bookmarkStar = $('.bookmark-wrapper .bookmark-star'),
-      bookmarkInput = $('.bookmark-wrapper .bookmark-input'),
-      navLinkSearch = $('.nav-link-search'),
-      searchInput = $('.search-input'),
-      searchInputInputfield = $('.search-input input'),
-      searchList = $('.search-input .search-list'),
-      appContent = $('.app-content'),
-      bookmarkSearchList = $('.bookmark-input .search-list');
+    bookmarkWrapper = $('.bookmark-wrapper'),
+    bookmarkStar = $('.bookmark-wrapper .bookmark-star'),
+    bookmarkInput = $('.bookmark-wrapper .bookmark-input'),
+    navLinkSearch = $('.nav-link-search'),
+    searchInput = $('.search-input'),
+    searchInputInputfield = $('.search-input input'),
+    searchList = $('.search-input .search-list'),
+    appContent = $('.app-content'),
+    bookmarkSearchList = $('.bookmark-input .search-list');
 
   // Bookmark icon click
   bookmarkStar.on('click', function (e) {
@@ -473,8 +473,8 @@ window.colors = {
     bookmarkWrapper.find('.search-list').addClass('show');
 
     var arrList = $('ul.nav.navbar-nav.bookmark-icons li'),
-        $arrList = '',
-        $activeItemClass = '';
+      $arrList = '',
+      $activeItemClass = '';
 
     $('ul.search-list li').remove();
 
@@ -486,7 +486,7 @@ window.colors = {
       }
 
       var iconName = '',
-          className = '';
+        className = '';
       if ($(arrList[i].firstChild.firstChild).hasClass('feather')) {
         var classString = arrList[i].firstChild.firstChild.getAttribute('class');
         iconName = classString.split('feather-')[1].split(' ')[0];
@@ -494,21 +494,21 @@ window.colors = {
       }
 
       $arrList +=
-          '<li class="auto-suggestion ' +
-          $activeItemClass +
-          '">' +
-          '<a class="d-flex align-items-center justify-content-between w-100" href=' +
-          arrList[i].firstChild.href +
-          '>' +
-          '<div class="d-flex justify-content-start align-items-center">' +
-          feather.icons[iconName].toSvg({class: 'me-75 ' + className}) +
-          '<span>' +
-          arrList[i].firstChild.dataset.bsOriginalTitle +
-          '</span>' +
-          '</div>' +
-          feather.icons['star'].toSvg({class: 'text-warning bookmark-icon float-end'}) +
-          '</a>' +
-          '</li>';
+        '<li class="auto-suggestion ' +
+        $activeItemClass +
+        '">' +
+        '<a class="d-flex align-items-center justify-content-between w-100" href=' +
+        arrList[i].firstChild.href +
+        '>' +
+        '<div class="d-flex justify-content-start align-items-center">' +
+        feather.icons[iconName].toSvg({ class: 'me-75 ' + className }) +
+        '<span>' +
+        arrList[i].firstChild.dataset.bsOriginalTitle +
+        '</span>' +
+        '</div>' +
+        feather.icons['star'].toSvg({ class: 'text-warning bookmark-icon float-end' }) +
+        '</a>' +
+        '</li>';
     }
     $('ul.search-list').append($arrList);
   });
@@ -526,7 +526,7 @@ window.colors = {
   // Navigation Search area Close
   $('.search-input-close').on('click', function () {
     var $this = $(this),
-        searchInput = $(this).closest('.search-input');
+      searchInput = $(this).closest('.search-input');
     if (searchInput.hasClass('open')) {
       searchInput.removeClass('open');
       searchInputInputfield.val('');
@@ -570,9 +570,9 @@ window.colors = {
 
       // Define variables
       var value = $(this).val().toLowerCase(), //get values of input on keyup
-          activeClass = '',
-          bookmark = false,
-          liList = $('ul.search-list li'); // get all the list items of the search
+        activeClass = '',
+        bookmark = false,
+        liList = $('ul.search-list li'); // get all the list items of the search
       liList.remove();
       // To check if current is bookmark input
       if ($(this).parent().hasClass('bookmark-input')) {
@@ -596,19 +596,19 @@ window.colors = {
         }
 
         var $startList = '',
-            $otherList = '',
-            $htmlList = '',
-            $bookmarkhtmlList = '',
-            $pageList =
-                '<li class="d-flex align-items-center">' +
-                '<a href="#">' +
-                '<h6 class="section-label mt-75 mb-0">Pages</h6>' +
-                '</a>' +
-                '</li>',
-            $activeItemClass = '',
-            $bookmarkIcon = '',
-            $defaultList = '',
-            a = 0;
+          $otherList = '',
+          $htmlList = '',
+          $bookmarkhtmlList = '',
+          $pageList =
+            '<li class="d-flex align-items-center">' +
+            '<a href="#">' +
+            '<h6 class="section-label mt-75 mb-0">Pages</h6>' +
+            '</a>' +
+            '</li>',
+          $activeItemClass = '',
+          $bookmarkIcon = '',
+          $defaultList = '',
+          a = 0;
 
         // getting json data from file for search results
         $.getJSON(assetPath + 'data/' + $filename + '.json', function (data) {
@@ -622,7 +622,7 @@ window.colors = {
             if (bookmark === true) {
               activeClass = ''; // resetting active bookmark class
               var arrList = $('ul.nav.navbar-nav.bookmark-icons li'),
-                  $arrList = '';
+                $arrList = '';
               // Loop to check if current seach value match with the bookmarks already there in navbar
               for (var j = 0; j < arrList.length; j++) {
                 if (data.listItems[i].name === arrList[j].firstChild.dataset.bsOriginalTitle) {
@@ -633,7 +633,7 @@ window.colors = {
                 }
               }
 
-              $bookmarkIcon = feather.icons['star'].toSvg({class: 'bookmark-icon float-end' + activeClass});
+              $bookmarkIcon = feather.icons['star'].toSvg({ class: 'bookmark-icon float-end' + activeClass });
             }
             // Search list item start with entered letters and create list
             if (data.listItems[i].name.toLowerCase().indexOf(value) == 0 && a < 5) {
@@ -643,21 +643,21 @@ window.colors = {
                 $activeItemClass = '';
               }
               $startList +=
-                  '<li class="auto-suggestion ' +
-                  $activeItemClass +
-                  '">' +
-                  '<a class="d-flex align-items-center justify-content-between w-100" href=' +
-                  data.listItems[i].url +
-                  '>' +
-                  '<div class="d-flex justify-content-start align-items-center">' +
-                  feather.icons[data.listItems[i].icon].toSvg({class: 'me-75 '}) +
-                  '<span>' +
-                  data.listItems[i].name +
-                  '</span>' +
-                  '</div>' +
-                  $bookmarkIcon +
-                  '</a>' +
-                  '</li>';
+                '<li class="auto-suggestion ' +
+                $activeItemClass +
+                '">' +
+                '<a class="d-flex align-items-center justify-content-between w-100" href=' +
+                data.listItems[i].url +
+                '>' +
+                '<div class="d-flex justify-content-start align-items-center">' +
+                feather.icons[data.listItems[i].icon].toSvg({ class: 'me-75 ' }) +
+                '<span>' +
+                data.listItems[i].name +
+                '</span>' +
+                '</div>' +
+                $bookmarkIcon +
+                '</a>' +
+                '</li>';
               a++;
             }
           }
@@ -665,7 +665,7 @@ window.colors = {
             if (bookmark === true) {
               activeClass = ''; // resetting active bookmark class
               var arrList = $('ul.nav.navbar-nav.bookmark-icons li'),
-                  $arrList = '';
+                $arrList = '';
               // Loop to check if current search value match with the bookmarks already there in navbar
               for (var j = 0; j < arrList.length; j++) {
                 if (data.listItems[i].name === arrList[j].firstChild.dataset.bsOriginalTitle) {
@@ -675,13 +675,13 @@ window.colors = {
                 }
               }
 
-              $bookmarkIcon = feather.icons['star'].toSvg({class: 'bookmark-icon float-end' + activeClass});
+              $bookmarkIcon = feather.icons['star'].toSvg({ class: 'bookmark-icon float-end' + activeClass });
             }
             // Search list item not start with letters and create list
             if (
-                !(data.listItems[i].name.toLowerCase().indexOf(value) == 0) &&
-                data.listItems[i].name.toLowerCase().indexOf(value) > -1 &&
-                a < 5
+              !(data.listItems[i].name.toLowerCase().indexOf(value) == 0) &&
+              data.listItems[i].name.toLowerCase().indexOf(value) > -1 &&
+              a < 5
             ) {
               if (a === 0) {
                 $activeItemClass = 'current_item';
@@ -689,21 +689,21 @@ window.colors = {
                 $activeItemClass = '';
               }
               $otherList +=
-                  '<li class="auto-suggestion ' +
-                  $activeItemClass +
-                  '">' +
-                  '<a class="d-flex align-items-center justify-content-between w-100" href=' +
-                  data.listItems[i].url +
-                  '>' +
-                  '<div class="d-flex justify-content-start align-items-center">' +
-                  feather.icons[data.listItems[i].icon].toSvg({class: 'me-75 '}) +
-                  '<span>' +
-                  data.listItems[i].name +
-                  '</span>' +
-                  '</div>' +
-                  $bookmarkIcon +
-                  '</a>' +
-                  '</li>';
+                '<li class="auto-suggestion ' +
+                $activeItemClass +
+                '">' +
+                '<a class="d-flex align-items-center justify-content-between w-100" href=' +
+                data.listItems[i].url +
+                '>' +
+                '<div class="d-flex justify-content-start align-items-center">' +
+                feather.icons[data.listItems[i].icon].toSvg({ class: 'me-75 ' }) +
+                '<span>' +
+                data.listItems[i].name +
+                '</span>' +
+                '</div>' +
+                $bookmarkIcon +
+                '</a>' +
+                '</li>';
               a++;
             }
           }
@@ -725,7 +725,7 @@ window.colors = {
       } else {
         if (bookmark === true) {
           var arrList = $('ul.nav.navbar-nav.bookmark-icons li'),
-              $arrList = '';
+            $arrList = '';
           for (var i = 0; i < arrList.length; i++) {
             if (i === 0) {
               $activeItemClass = 'current_item';
@@ -734,26 +734,26 @@ window.colors = {
             }
 
             var iconName = '',
-                className = '';
+              className = '';
             if ($(arrList[i].firstChild.firstChild).hasClass('feather')) {
               var classString = arrList[i].firstChild.firstChild.getAttribute('class');
               iconName = classString.split('feather-')[1].split(' ')[0];
               className = classString.split('feather-')[1].split(' ')[1];
             }
             $arrList +=
-                '<li class="auto-suggestion">' +
-                '<a class="d-flex align-items-center justify-content-between w-100" href=' +
-                arrList[i].firstChild.href +
-                '>' +
-                '<div class="d-flex justify-content-start align-items-center">' +
-                feather.icons[iconName].toSvg({class: 'me-75 '}) +
-                '<span>' +
-                arrList[i].firstChild.dataset.bsOriginalTitle +
-                '</span>' +
-                '</div>' +
-                feather.icons['star'].toSvg({class: 'text-warning bookmark-icon float-end'}) +
-                '</a>' +
-                '</li>';
+              '<li class="auto-suggestion">' +
+              '<a class="d-flex align-items-center justify-content-between w-100" href=' +
+              arrList[i].firstChild.href +
+              '>' +
+              '<div class="d-flex justify-content-start align-items-center">' +
+              feather.icons[iconName].toSvg({ class: 'me-75 ' }) +
+              '<span>' +
+              arrList[i].firstChild.dataset.bsOriginalTitle +
+              '</span>' +
+              '</div>' +
+              feather.icons['star'].toSvg({ class: 'text-warning bookmark-icon float-end' }) +
+              '</a>' +
+              '</li>';
           }
           $('ul.search-list').append($arrList);
           // Feather Icons
@@ -818,24 +818,24 @@ window.colors = {
       $(this).addClass('text-warning');
       e.preventDefault();
       var $url = $(this).parent()[0].href,
-          $name = $(this).parent()[0].innerText,
-          $listItem = '',
-          $listItemDropdown = '',
-          iconName = $(this).parent()[0].firstChild.firstChild.dataset.icon;
+        $name = $(this).parent()[0].innerText,
+        $listItem = '',
+        $listItemDropdown = '',
+        iconName = $(this).parent()[0].firstChild.firstChild.dataset.icon;
       if ($($(this).parent()[0].firstChild.firstChild).hasClass('feather')) {
         var classString = $(this).parent()[0].firstChild.firstChild.getAttribute('class');
         iconName = classString.split('feather-')[1].split(' ')[0];
       }
       $listItem =
-          '<li class="nav-item d-none d-lg-block">' +
-          '<a class="nav-link" href="' +
-          $url +
-          '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="' +
-          $name +
-          '">' +
-          feather.icons[iconName].toSvg({class: 'ficon'}) +
-          '</a>' +
-          '</li>';
+        '<li class="nav-item d-none d-lg-block">' +
+        '<a class="nav-link" href="' +
+        $url +
+        '" data-bs-toggle="tooltip" data-bs-placement="bottom" title="' +
+        $name +
+        '">' +
+        feather.icons[iconName].toSvg({ class: 'ficon' }) +
+        '</a>' +
+        '</li>';
       $('ul.nav.bookmark-icons').append($listItem);
       $('[data-bs-toggle="tooltip"]').tooltip();
     }
@@ -844,8 +844,8 @@ window.colors = {
   // If we use up key(38) Down key (40) or Enter key(13)
   $(window).on('keydown', function (e) {
     var $current = $('.search-list li.current_item'),
-        $next,
-        $prev;
+      $next,
+      $prev;
     if (e.keyCode === 40) {
       $next = $current.next();
       $current.removeClass('current_item');
@@ -866,8 +866,8 @@ window.colors = {
   // Waves Effect
   Waves.init();
   Waves.attach(
-      ".btn:not([class*='btn-relief-']):not([class*='btn-gradient-']):not([class*='btn-outline-']):not([class*='btn-flat-'])",
-      ['waves-float', 'waves-light']
+    ".btn:not([class*='btn-relief-']):not([class*='btn-gradient-']):not([class*='btn-outline-']):not([class*='btn-flat-'])",
+    ['waves-float', 'waves-light']
   );
   Waves.attach("[class*='btn-outline-']");
   Waves.attach("[class*='btn-flat-']");
@@ -875,19 +875,19 @@ window.colors = {
   $('.form-password-toggle .input-group-text').on('click', function (e) {
     e.preventDefault();
     var $this = $(this),
-        inputGroupText = $this.closest('.form-password-toggle'),
-        formPasswordToggleIcon = $this,
-        formPasswordToggleInput = inputGroupText.find('input');
+      inputGroupText = $this.closest('.form-password-toggle'),
+      formPasswordToggleIcon = $this,
+      formPasswordToggleInput = inputGroupText.find('input');
 
     if (formPasswordToggleInput.attr('type') === 'text') {
       formPasswordToggleInput.attr('type', 'password');
       if (feather) {
-        formPasswordToggleIcon.find('svg').replaceWith(feather.icons['eye'].toSvg({class: 'font-small-4'}));
+        formPasswordToggleIcon.find('svg').replaceWith(feather.icons['eye'].toSvg({ class: 'font-small-4' }));
       }
     } else if (formPasswordToggleInput.attr('type') === 'password') {
       formPasswordToggleInput.attr('type', 'text');
       if (feather) {
-        formPasswordToggleIcon.find('svg').replaceWith(feather.icons['eye-off'].toSvg({class: 'font-small-4'}));
+        formPasswordToggleIcon.find('svg').replaceWith(feather.icons['eye-off'].toSvg({ class: 'font-small-4' }));
       }
     }
   });
@@ -932,7 +932,7 @@ window.colors = {
 
   // Click event to scroll to top
   $('.scroll-top').on('click', function () {
-    $('html, body').animate({scrollTop: 0}, 75);
+    $('html, body').animate({ scrollTop: 0 }, 75);
   });
 
   function getCurrentLayout() {
@@ -955,8 +955,8 @@ window.colors = {
   // Navbar Dark / Light Layout Toggle Switch
   $('.nav-link-style').on('click', function () {
     var currentLayout = getCurrentLayout(),
-        switchToLayout = '',
-        prevLayout = localStorage.getItem(dataLayout + '-prev-skin', currentLayout);
+      switchToLayout = '',
+      prevLayout = localStorage.getItem(dataLayout + '-prev-skin', currentLayout);
 
     // If currentLayout is not dark layout
     if (currentLayout !== 'dark-layout') {
@@ -992,15 +992,15 @@ window.colors = {
 
   // Set layout on screen load
   //? Comment it if you don't want to sync layout with local db
-  // setLayout(currentLocalStorageLayout);
+  setLayout(currentLocalStorageLayout);
 
   function setLayout(currentLocalStorageLayout) {
     var navLinkStyle = $('.nav-link-style'),
-        currentLayout = getCurrentLayout(),
-        mainMenu = $('.main-menu'),
-        navbar = $('.header-navbar'),
-        // Witch to local storage layout if we have else current layout
-        switchToLayout = currentLocalStorageLayout ? currentLocalStorageLayout : currentLayout;
+      currentLayout = getCurrentLayout(),
+      mainMenu = $('.main-menu'),
+      navbar = $('.header-navbar'),
+      // Witch to local storage layout if we have else current layout
+      switchToLayout = currentLocalStorageLayout ? currentLocalStorageLayout : currentLayout;
 
     $html.removeClass('semi-dark-layout dark-layout bordered-layout');
 
@@ -1008,22 +1008,22 @@ window.colors = {
       $html.addClass('dark-layout');
       mainMenu.removeClass('menu-light').addClass('menu-dark');
       navbar.removeClass('navbar-light').addClass('navbar-dark');
-      navLinkStyle.find('.ficon').replaceWith(feather.icons['sun'].toSvg({class: 'ficon'}));
+      navLinkStyle.find('.ficon').replaceWith(feather.icons['sun'].toSvg({ class: 'ficon' }));
     } else if (switchToLayout === 'bordered-layout') {
       $html.addClass('bordered-layout');
       mainMenu.removeClass('menu-dark').addClass('menu-light');
       navbar.removeClass('navbar-dark').addClass('navbar-light');
-      navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({class: 'ficon'}));
+      navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({ class: 'ficon' }));
     } else if (switchToLayout === 'semi-dark-layout') {
       $html.addClass('semi-dark-layout');
       mainMenu.removeClass('menu-dark').addClass('menu-light');
       navbar.removeClass('navbar-dark').addClass('navbar-light');
-      navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({class: 'ficon'}));
+      navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({ class: 'ficon' }));
     } else {
       $html.addClass('light-layout');
       mainMenu.removeClass('menu-dark').addClass('menu-light');
       navbar.removeClass('navbar-dark').addClass('navbar-light');
-      navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({class: 'ficon'}));
+      navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({ class: 'ficon' }));
     }
     // Set radio in customizer if we have
     if ($('input:radio[data-layout=' + switchToLayout + ']').length > 0) {
@@ -1040,7 +1040,7 @@ function featherSVG(iconSize) {
   if (iconSize == undefined) {
     iconSize = '14';
   }
-  return feather.replace({width: iconSize, height: iconSize});
+  return feather.replace({ width: iconSize, height: iconSize });
 }
 
 // jQuery Validation Global Defaults
@@ -1049,9 +1049,9 @@ if (typeof jQuery.validator === 'function') {
     errorElement: 'span',
     errorPlacement: function (error, element) {
       if (
-          element.parent().hasClass('input-group') ||
-          element.hasClass('select2') ||
-          element.attr('type') === 'checkbox'
+        element.parent().hasClass('input-group') ||
+        element.hasClass('select2') ||
+        element.attr('type') === 'checkbox'
       ) {
         error.insertAfter(element.parent());
       } else if (element.hasClass('form-check-input')) {

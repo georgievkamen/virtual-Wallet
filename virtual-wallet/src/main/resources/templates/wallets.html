@@ -31,6 +31,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-sweet-alerts.css}">
     <!-- END: Page CSS-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
@@ -106,6 +107,7 @@
                                             </tr>
                                             </tbody>
                                         </table>
+                                        <button type="button" class="btn btn-outline-danger" id="type-error">Error</button>
                                     </div>
                                 </div>
                             </div>
@@ -146,6 +148,8 @@
 
 <!-- BEGIN: Page JS-->
 <script th:src="@{/js/scripts/pages/homepage.js}"></script>
+<script th:src="@{/vendors/js/extensions/sweetalert2.all.min.js}"></script>
+<script th:src="@{/js/scripts/extensions/ext-component-sweet-alerts.js}"></script>
 <!-- END: Page JS-->
 
 <script>
