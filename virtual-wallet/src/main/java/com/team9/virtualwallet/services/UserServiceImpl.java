@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
         repository.update(user);
     }
 
+
     @Override
     public void updateProfilePhoto(User user, MultipartFile multipartFile) {
         repository.updateProfilePhoto(user, multipartFile);
@@ -120,6 +121,15 @@ public class UserServiceImpl implements UserService {
     public List<User> search(User user, String searchTerm) {
 
         return repository.search(searchTerm, user.getId());
+    }
+
+    @Override
+    public User getByField(User user, String fieldName, String searchTerm) {
+
+        if (searchTerm.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Please input a correct %s", fieldName));
+        }
+        return repository.getByFieldNotDeleted(fieldName, searchTerm, user.getId());
     }
 
     @Override

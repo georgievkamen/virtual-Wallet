@@ -90,6 +90,19 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
+    public User getByFieldNotDeleted(String fieldName, String searchTerm, int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<User> query = session.createQuery(String.format("from User where %s = :value and isDeleted = false and id != :userId", fieldName), User.class)
+                    .setParameter("value", searchTerm)
+                    .setParameter("userId", userId);
+            if (query.list().isEmpty()) {
+                throw new EntityNotFoundException("User", fieldName, searchTerm);
+            }
+            return query.list().get(0);
+        }
+    }
+
+    @Override
     public List<User> search(String searchTerm, int userId) {
         try (Session session = sessionFactory.openSession()) {
             String baseQuery = "from User where isDeleted = false and (username like :term or phoneNumber like :term or email like :term) and id != :id";

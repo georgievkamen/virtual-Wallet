@@ -42,6 +42,15 @@ public class UserRestController {
         service.delete(userExecuting);
     }
 
+    @GetMapping("/search/field")
+    public User find(@RequestHeader HttpHeaders headers,
+                     @RequestParam String fieldName,
+                     @RequestParam String searchTerm) {
+        User userExecuting = authenticationHelper.tryGetUser(headers);
+
+        return service.getByField(userExecuting, fieldName, searchTerm);
+    }
+
     @GetMapping("/search")
     public List<User> search(@RequestHeader HttpHeaders headers,
                              @RequestParam(defaultValue = "1") int page,

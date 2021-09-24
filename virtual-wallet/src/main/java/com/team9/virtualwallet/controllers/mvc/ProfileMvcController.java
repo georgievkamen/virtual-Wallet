@@ -131,6 +131,4 @@ public class ProfileMvcController {
             return "redirect:/auth/login";
         }
     }
-
-
 }

@@ -13,6 +13,8 @@ public interface UserService {
 
     User getByUsername(String username);
 
+    User getByField(User user, String fieldName, String searchTerm);
+
     void create(User user);
 
     void update(User userExecuting, User user, int id);

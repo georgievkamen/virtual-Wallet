@@ -14,4 +14,6 @@ public interface UserRepository extends BaseRepository<User> {
 
     List<User> search(String searchTerm, int userId);
 
+    User getByFieldNotDeleted(String fieldName, String searchTerm, int userId);
+
 }
