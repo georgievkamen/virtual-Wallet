@@ -32,8 +32,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     @Override
     public List<Transaction> getAll(User user) {
         try (Session session = sessionFactory.openSession()) {
-            //TODO Check if it works correctly
-            Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id", Transaction.class);
+            Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id order by timestamp desc", Transaction.class);
             query.setParameter("id", user.getId());
             return query.list();
         }

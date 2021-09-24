@@ -18,7 +18,7 @@ public interface TransactionService {
 
     Transaction getById(User user, int id);
 
-    void create(Transaction transaction, int selectedWalletId, Optional<Integer> categoryId);
+    void create(Transaction transaction, Optional<Integer> categoryId);
 
     void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId);
 

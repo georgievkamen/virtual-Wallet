@@ -15,7 +15,7 @@ public abstract class BaseTransactionDto {
     private BigDecimal amount;
 
     @NotNull(message = "You must provide a description!")
-    @Size(min = 2, max = 50, message = "Description must be between 2 and 50 characters long!")
+    @Size(min = 2, max = 30, message = "Description must be between 2 and 30 characters long!")
     private String description;
 
     public BaseTransactionDto() {

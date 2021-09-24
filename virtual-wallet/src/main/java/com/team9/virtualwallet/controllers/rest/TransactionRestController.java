@@ -66,7 +66,7 @@ public class TransactionRestController {
 
         //TODO Do we need create a transaction by username//email//phone number
         Transaction transaction = modelMapper.fromDto(user, transactionDto);
-        service.create(transaction, transactionDto.getSelectedWalletId(), categoryId);
+        service.create(transaction, categoryId);
 
         return transaction;
     }

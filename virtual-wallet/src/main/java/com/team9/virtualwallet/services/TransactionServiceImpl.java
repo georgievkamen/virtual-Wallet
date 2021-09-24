@@ -63,8 +63,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void create(Transaction transaction, int selectedWalletId, Optional<Integer> categoryId) {
-        Wallet senderWallet = walletRepository.getById(selectedWalletId);
+    public void create(Transaction transaction, Optional<Integer> categoryId) {
+        Wallet senderWallet = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
         Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
 
         verifyWalletOwnership(transaction, senderWallet);
