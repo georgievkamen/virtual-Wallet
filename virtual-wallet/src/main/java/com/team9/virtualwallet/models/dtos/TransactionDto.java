@@ -10,12 +10,11 @@ public class TransactionDto extends BaseTransactionDto {
     public TransactionDto() {
     }
 
-    public int getRecipientId() {
+    public Integer getRecipientId() {
         return recipientId;
     }
 
-    public void setRecipientId(int recipientId) {
+    public void setRecipientId(Integer recipientId) {
         this.recipientId = recipientId;
     }
-
 }

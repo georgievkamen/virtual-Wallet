@@ -10,12 +10,11 @@ public class ExternalTransactionDto extends BaseTransactionDto {
     public ExternalTransactionDto() {
     }
 
-    public int getSelectedCardId() {
+    public Integer getSelectedCardId() {
         return selectedCardId;
     }
 
-    public void setSelectedCardId(int selectedCardId) {
+    public void setSelectedCardId(Integer selectedCardId) {
         this.selectedCardId = selectedCardId;
     }
-
 }

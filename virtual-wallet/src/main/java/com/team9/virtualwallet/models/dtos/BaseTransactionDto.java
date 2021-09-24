@@ -21,11 +21,11 @@ public abstract class BaseTransactionDto {
     public BaseTransactionDto() {
     }
 
-    public int getSelectedWalletId() {
+    public Integer getSelectedWalletId() {
         return selectedWalletId;
     }
 
-    public void setSelectedWalletId(int selectedWalletId) {
+    public void setSelectedWalletId(Integer selectedWalletId) {
         this.selectedWalletId = selectedWalletId;
     }
 
