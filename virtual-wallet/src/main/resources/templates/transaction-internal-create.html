@@ -142,8 +142,7 @@
                         <div class="card-body">
                             <form class="validate-form transaction-final-form" th:action="@{/panel/transactions/create}"
                                   th:object="${transaction}" method="post">
-                                <input th:if="${user != null}" type="hidden" th:value="${user.id}" name="recipientId"/>
-                                <input th:if="${user == null}" type="hidden" id="recipient-id-contacts" name="recipientId"/>
+                                <input type="hidden" th:value="${user?.id}" id="recipient-id-contacts" name="recipientId"/>
                                 <div class="mb-1">
                                     <label class="form-label" for="recipient-id">Recipient</label>
                                     <input type="text" id="recipient-id" class="form-control"

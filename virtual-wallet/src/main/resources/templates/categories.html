@@ -91,13 +91,12 @@
                                                 <td>[[${category.name}]]</td>
                                                 <td>
                                                     <a th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${category.id})}">
-                                                        <button type="button" class="btn btn-relief-primary">Edit
+                                                        <button type="button" class="btn btn-relief-primary">
+                                                            Edit
                                                         </button>
                                                     </a>
-                                                    <a th:href="@{__${#httpServletRequest.requestURI}__/{id}/default(id=${category.id})}">
-                                                        <button type="button"
-                                                                class="btn btn-relief-danger"
-                                                                onclick="showErrorModal()">
+                                                    <a th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${category.id})}">
+                                                        <button type="button" class="btn btn-relief-danger">
                                                             Delete
                                                         </button>
                                                     </a>

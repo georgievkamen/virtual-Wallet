@@ -50,7 +50,7 @@ public class CategoriesMvcController {
     }
 
     @GetMapping
-    public String showContactsPage(HttpSession session, Model model) {
+    public String showCategoriesPage(HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
             List<Category> categories = service.getAll(user);
@@ -111,7 +111,7 @@ public class CategoriesMvcController {
     }
 
     @PostMapping("/{id}/update")
-    public String editWallet(@Valid @ModelAttribute("category")
+    public String editCategory(@Valid @ModelAttribute("category")
                                      CategoryDto categoryDto,
                              BindingResult result,
                              HttpSession session, Model model, @PathVariable int id) {
