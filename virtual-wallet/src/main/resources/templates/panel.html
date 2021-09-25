@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/vendors.min.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/charts/apexcharts.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/extensions/toastr.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/extensions/plyr.min.css}">
     <!-- END: Vendor CSS-->
 
     <!-- BEGIN: Theme CSS-->
@@ -28,9 +29,10 @@
 
     <!-- BEGIN: Page CSS-->
     <link rel="stylesheet" type="text/css" th:href="@{/css/core/menu/menu-types/horizontal-menu.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pages/dashboard-ecommerce.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-media-player.css}">
     <!-- END: Page CSS-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
@@ -71,16 +73,35 @@
                                 <h3 class="mb-75 mt-2 pt-50">
                                     <a href="#">[[${totalBalance}]] BGN</a>
                                 </h3>
-                                <a href="#">
+                                <a href="/panel/wallets">
                                     <button type="button" class="btn btn-primary">View Wallets</button>
                                 </a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#large">
+                                    I'm feeling down
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade text-start" id="large" tabindex="-1" aria-labelledby="myModalLabel16" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title text-primary" id="myModalLabel16">Remember - Winners Never Give Up!</h4>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="video-player" id="plyr-video-player">
+                                                    <iframe src="https://www.youtube.com/embed/wnHW6o8WMas" allowfullscreen allow="autoplay"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <!--/ Medal Card -->
 
                     <!-- Transaction Card -->
-                    <div class="col-xl-6 col-lg-4 col-md-8 col-12">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-12">
                         <div class="card card-transaction">
                             <div class="card-header">
                                 <h4 class="card-title">Last 10 Transactions</h4>
@@ -148,22 +169,26 @@
 
 
 <!-- BEGIN: Vendor JS-->
-<script th:src="@{vendors/js/vendors.min.js}"></script>
+<script th:src="@{/vendors/js/vendors.min.js}"></script>
 <!-- BEGIN Vendor JS-->
 
 <!-- BEGIN: Page Vendor JS-->
-<script th:src="@{vendors/js/ui/jquery.sticky.js}"></script>
-<script th:src="@{vendors/js/charts/apexcharts.min.js}"></script>
-<script th:src="@{vendors/js/extensions/toastr.min.js}"></script>
+<script th:src="@{/vendors/js/ui/jquery.sticky.js}"></script>
+<script th:src="@{/vendors/js/charts/apexcharts.min.js}"></script>
+<script th:src="@{/vendors/js/extensions/toastr.min.js}"></script>
+<script th:src="@{/vendors/js/extensions/plyr.min.js}"></script>
+<script th:src="@{/vendors/js/extensions/plyr.polyfilled.min.js}"></script>
 <!-- END: Page Vendor JS-->
 
 <!-- BEGIN: Theme JS-->
-<script th:src="@{js/core/app.js}"></script>
-<script th:src="@{js/core/app-menu.js}"></script>
+<script th:src="@{/js/core/app.js}"></script>
+<script th:src="@{/js/core/app-menu.js}"></script>
 <!-- END: Theme JS-->
 
 <!-- BEGIN: Page JS-->
-<script th:src="@{js/scripts/pages/homepage.js}"></script>
+<script th:src="@{/js/scripts/pages/dashboard-ecommerce.js}"></script>
+<script th:src="@{/js/scripts/components/components-modals.js}"></script>
+<script th:src="@{/js/scripts/extensions/ext-component-media-player.js}"></script>
 <!-- END: Page JS-->
 
 <script>
