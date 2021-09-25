@@ -71,7 +71,7 @@
                         <div class="card-header">
                             <h4 class="card-title text-secondary">Find contact</h4>
                         </div>
-                        <div class="card-body border-bottom">
+                        <div class="card-body">
                             <form th:action="@{/panel/contacts/add}" class="validate-form" method="get">
                                 <div class="row mb-2">
                                     <div class="radio-buttons col-12">
@@ -117,23 +117,32 @@
                                 <button type="submit" class="btn btn-primary me-1 mt-1 mb-2">Search</button>
 
                                 <div th:if="${user != null}">
-                                    <h4 class="card-title text-secondary">Username</h4>
-                                    <div th:if="${!currentLoggedUser.isFriend(user.getUsername())}">
-                                        <td> [[${user.getUsername}]]</td>
-                                        <td>
-                                            <a class="btn btn-relief-success"
-                                               th:href="@{__${#httpServletRequest.requestURI}__/{id}(id=${user.id})}">Add
-                                                Contact</a>
-                                        </td>
-                                    </div>
-                                    <div th:if="${currentLoggedUser.isFriend(user.getUsername())}">
-                                        <td> [[${user.getUsername}]]</td>
-                                        <td>
-                                            <a class="btn btn-relief-danger"
-                                               th:href="@{/panel/contacts/{id}/delete(id=${user.id})}"
-                                            >Delete</a>
-                                        </td>
-                                    </div>
+
+                                    <table class="table table-borderless">
+                                        <thead>
+                                        <tr class="text-center">
+                                            <th>Username</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="text-center">
+                                            <td>[[${user.getUsername}]]</td>
+                                            <td>
+                                                <a th:if="${!currentLoggedUser.isFriend(user.getUsername())}" th:href="@{/panel/contacts/{id}/add(id=${user.id})}">
+                                                    <button type="button" class="btn btn-relief-success">
+                                                        Add Contact
+                                                    </button>
+                                                </a>
+                                                <a th:if="${currentLoggedUser.isFriend(user.getUsername())}" th:href="@{/panel/contacts/{id}/delete(id=${user.id})}">
+                                                    <button type="button" class="btn btn-relief-danger">
+                                                        Delete Contact
+                                                    </button>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
 
                                 </div>
                             </form>

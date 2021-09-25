@@ -72,11 +72,8 @@ public class ContactsMvcController {
         }
     }
 
-    @GetMapping("/add/{id}")
-    public String addContact(@PathVariable int id,
-                             HttpSession session,
-                             Model model) {
-
+    @GetMapping("/{id}/add")
+    public String addContact(@PathVariable int id, HttpSession session) {
         try {
             User user = authenticationHelper.tryGetUser(session);
             service.addContact(user, id);
