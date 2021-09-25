@@ -99,7 +99,8 @@
                                                 Phone Number
                                             </label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline"
+                                             th:classappend="${currentLoggedUser.contacts.isEmpty()} ? 'hidden' : ''">
                                             <label class="form-check-label">
                                                 <input class="form-check-input radio" type="radio" name="fieldName"
                                                        id="contacts"
@@ -125,10 +126,11 @@
                                 <div class="mb-1 hidden" id="contacts-dropdown">
                                     <label class="form-label" for="search-field"
                                            id="contacts-dropdown-label">Contacts</label>
-                                    <div class="input-group input-group-merge"
-                                         th:classappend="${notFound != null} ? 'is-invalid' : ''">
-                                        WORKs!
-                                    </div>
+                                    <select class="select2 select2-basic form-select" id="contacts-dropdown-select">
+                                        <option th:each="contact : ${currentLoggedUser.contacts}"
+                                                th:value="${contact.id}"
+                                                th:text="${contact.username}"></option>
+                                    </select>
                                 </div>
                                 <button type="submit" id="search-btn" class="btn btn-primary me-1 mt-1 mb-2">Search
                                 </button>
@@ -141,6 +143,7 @@
                             <form class="validate-form transaction-final-form" th:action="@{/panel/transactions/create}"
                                   th:object="${transaction}" method="post">
                                 <input th:if="${user != null}" type="hidden" th:value="${user.id}" name="recipientId"/>
+                                <input th:if="${user == null}" type="hidden" id="recipient-id-contacts" name="recipientId"/>
                                 <div class="mb-1">
                                     <label class="form-label" for="recipient-id">Recipient</label>
                                     <input type="text" id="recipient-id" class="form-control"
@@ -227,55 +230,51 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        const searchForm = document.getElementById("search-form");
-        const contactsDropdown = document.getElementById('contacts-dropdown');
-        const searchName = document.getElementById("search-field-name");
-        const searchIcon = document.getElementById("search-field-icon");
-        const searchField = document.getElementById("search-field");
-        const searchBtn = document.getElementById("search-btn");
-        const radioContacts = document.getElementById("contacts");
-        const recipientSelect = document.getElementById("recipient-select");
+            const searchForm = document.getElementById("search-form");
+            const contactsDropdown = document.getElementById('contacts-dropdown');
+            const searchName = document.getElementById("search-field-name");
+            const searchIcon = document.getElementById("search-field-icon");
+            const searchField = document.getElementById("search-field");
+            const searchBtn = document.getElementById("search-btn");
+            const radioContacts = document.getElementById("contacts");
+            const usernameRadio = document.getElementById("username");
+            const emailRadio = document.getElementById("email");
+            const phoneNumber = document.getElementById("phone-number");
+            const contactsDropdownSelect = document.getElementById("contacts-dropdown-select");
 
-        const hideShowSearchFormIfContactsChecked = function () {
-            const hiddenClass = "hidden"
-            if (radioContacts.checked) {
-                searchForm.classList.add(hiddenClass);
-                searchBtn.classList.add(hiddenClass);
-                contactsDropdown.classList.remove(hiddenClass);
-                recipientSelect.classList.add(hiddenClass);
-            } else {
-                searchForm.classList.remove(hiddenClass);
-                searchBtn.classList.remove(hiddenClass);
-                contactsDropdown.classList.add(hiddenClass);
-                recipientSelect.classList.remove(hiddenClass);
-            }
-        }
-        const setSearchProps = function (innerText, cssClass) {
-            searchName.innerText = innerText;
-            searchIcon.setAttribute("class", cssClass);
-            searchField.placeholder = innerText;
-        }
-
-        $('.radio').click(function () {
-                hideShowSearchFormIfContactsChecked();
-
-                if (document.getElementById("username").checked) {
-                    setSearchProps("Username", "far fa-user");
-                } else if (document.getElementById("email").checked) {
-                    setSearchProps("Email", "far fa-envelope");
-                } else if (document.getElementById("phone-number").checked) {
-                    setSearchProps("Phone Number", "fas fa-phone");
-                } else if (radioContacts.checked) {
+            const hideShowSearchFormIfContactsChecked = function () {
+                const hiddenClass = "hidden"
+                if (radioContacts.checked) {
+                    searchForm.classList.add(hiddenClass);
+                    searchBtn.classList.add(hiddenClass);
+                    contactsDropdown.classList.remove(hiddenClass);
+                } else {
+                    searchForm.classList.remove(hiddenClass);
+                    searchBtn.classList.remove(hiddenClass);
+                    contactsDropdown.classList.add(hiddenClass);
                 }
             }
-            )
-            $('#recipient-radio').click(function () {
-                    document.getElementById("recipient-form").placeholder = document.getElementById("recipient-text").textContent.trim();
+            const setSearchProps = function (innerText, cssClass) {
+                searchName.innerText = innerText;
+                searchIcon.setAttribute("class", cssClass);
+                searchField.placeholder = innerText;
+            }
+            $('.radio').click(function () {
+                    hideShowSearchFormIfContactsChecked();
+                    if (usernameRadio.checked) {
+                        setSearchProps("Username", "far fa-user");
+                    } else if (emailRadio.checked) {
+                        setSearchProps("Email", "far fa-envelope");
+                    } else if (phoneNumber.checked) {
+                        setSearchProps("Phone Number", "fas fa-phone");
+                    } else if (radioContacts.checked) {
+                        document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
+                        document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").value;
+                    }
                 }
             )
-            $('.transaction-final-form').submit(function () {
-                    let recipientId = $('input[id="recipient-radio"]:checked').val();
-                    $('#recipient-id').val(recipientId);
+            $('#contacts-dropdown-select').change(function () {
+                document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
                 }
             )
         }
