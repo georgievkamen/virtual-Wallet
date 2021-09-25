@@ -74,40 +74,38 @@
                         <div class="card-body border-bottom">
                             <form th:action="@{/panel/transactions/create}" class="validate-form" method="get">
                                 <div class="row mb-2">
-                                    <div class="radio-buttons col-12">
-                                        <div class="form-check form-check-inline">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input radio" type="radio" name="fieldName"
-                                                       id="username"
-                                                       value="username" checked>
-                                                Username
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input radio" type="radio" name="fieldName"
-                                                       id="email"
-                                                       value="email">
-                                                Email
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input radio" type="radio" name="fieldName"
-                                                       id="phone-number"
-                                                       value="phoneNumber">
-                                                Phone Number
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-check-inline"
-                                             th:classappend="${currentLoggedUser.contacts.isEmpty()} ? 'hidden' : ''">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input radio" type="radio" name="fieldName"
-                                                       id="contacts"
-                                                       value="contacts">
-                                                Contacts
-                                            </label>
-                                        </div>
+                                    <div class="form-check col-lg-6 col-md-6">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input radio" type="radio" name="fieldName"
+                                                   id="username"
+                                                   value="username" checked>
+                                            Username
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-lg-6 col-md-6">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input radio" type="radio" name="fieldName"
+                                                   id="email"
+                                                   value="email">
+                                            Email
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-lg-6 col-md-6">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input radio" type="radio" name="fieldName"
+                                                   id="phone-number"
+                                                   value="phoneNumber">
+                                            Phone Number
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-lg-6 col-md-6"
+                                         th:classappend="${currentLoggedUser.contacts.isEmpty()} ? 'hidden' : ''">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input radio" type="radio" name="fieldName"
+                                                   id="contacts"
+                                                   value="contacts">
+                                            Contacts
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="mb-1" id="search-form">
@@ -142,7 +140,8 @@
                         <div class="card-body">
                             <form class="validate-form transaction-final-form" th:action="@{/panel/transactions/create}"
                                   th:object="${transaction}" method="post">
-                                <input type="hidden" th:value="${user?.id}" id="recipient-id-contacts" name="recipientId"/>
+                                <input type="hidden" th:value="${user?.id}" id="recipient-id-contacts"
+                                       name="recipientId"/>
                                 <div class="mb-1">
                                     <label class="form-label" for="recipient-id">Recipient</label>
                                     <input type="text" id="recipient-id" class="form-control"
@@ -283,8 +282,8 @@
                 }
             )
             $('#contacts-dropdown-select').change(function () {
-                document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
-                document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").val();
+                    document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
+                    document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").val();
                 }
             )
         }
