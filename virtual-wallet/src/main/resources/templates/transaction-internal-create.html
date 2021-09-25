@@ -133,17 +133,6 @@
                                 <button type="submit" id="search-btn" class="btn btn-primary me-1 mt-1 mb-2">Search
                                 </button>
 
-                                <div th:if="${user != null}">
-                                    <h4 class="card-title text-secondary">Select recipient</h4>
-                                    <div class="form-check form-check-inline recipient-radio">
-                                        <label class="form-check-label" id="recipient-text">
-                                            <input class="form-check-input recipient-radio" type="radio"
-                                                   id="recipient-radio"
-                                                   th:value="${user.id}">
-                                            [[${user.username}]]
-                                        </label>
-                                    </div>
-                                </div>
                             </form>
                         </div>
                     </div>
@@ -151,12 +140,13 @@
                         <div class="card-body">
                             <form class="validate-form transaction-final-form" th:action="@{/panel/transactions/create}"
                                   th:object="${transaction}" method="post">
-                                <input type="hidden" id="recipient-id" th:field="*{recipientId}">
+                                <input th:if="${user != null}" type="hidden" th:value="${user.id}" name="recipientId"/>
                                 <div class="mb-1">
                                     <label class="form-label" for="recipient-id">Recipient</label>
-                                    <input type="text" id="recipient-form" class="form-control"
+                                    <input type="text" id="recipient-id" class="form-control"
                                            th:classappend="${#fields.hasErrors('recipientId')} ? 'is-invalid' : ''"
-                                           placeholder="No Recipient" disabled/>
+                                           th:placeholder="${user != null} ? ${user.username} : 'No Recipient'"
+                                           disabled/>
                                     <div th:if="${#fields.hasErrors('recipientId')}" class="invalid-feedback"
                                          th:errors="*{recipientId}"></div>
                                 </div>
@@ -244,6 +234,7 @@
         const searchField = document.getElementById("search-field");
         const searchBtn = document.getElementById("search-btn");
         const radioContacts = document.getElementById("contacts");
+        const recipientSelect = document.getElementById("recipient-select");
 
         const hideShowSearchFormIfContactsChecked = function () {
             const hiddenClass = "hidden"
@@ -251,10 +242,12 @@
                 searchForm.classList.add(hiddenClass);
                 searchBtn.classList.add(hiddenClass);
                 contactsDropdown.classList.remove(hiddenClass);
+                recipientSelect.classList.add(hiddenClass);
             } else {
                 searchForm.classList.remove(hiddenClass);
                 searchBtn.classList.remove(hiddenClass);
                 contactsDropdown.classList.add(hiddenClass);
+                recipientSelect.classList.remove(hiddenClass);
             }
         }
         const setSearchProps = function (innerText, cssClass) {
