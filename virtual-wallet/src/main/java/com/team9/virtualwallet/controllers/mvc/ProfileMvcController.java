@@ -107,12 +107,35 @@ public class ProfileMvcController {
         }
     }
 
-
     @GetMapping("/panel/account-security")
     public String showUserSecurity(Model model, HttpSession session) {
         try {
             authenticationHelper.tryGetUser(session);
             model.addAttribute("userPassword", new PasswordDto());
+            return "account-security";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    //TODO FIX NOT WORKING
+    @PostMapping("/panel/account-security")
+    public String updateSecurity(@Valid @ModelAttribute("userPassword") PasswordDto passwordDto,
+                                 BindingResult errors, HttpSession session) {
+        if (errors.hasErrors()) {
+            return "account-security";
+        }
+
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+
+            if (!passwordDto.getOldPassword().equals(user.getPassword())) {
+                errors.rejectValue("oldPassword", "old_password_error", "Current password is incorrect!");
+                return "account-security";
+            }
+
+            user.setPassword(passwordDto.getNewPassword());
+            service.update(user, user, user.getId());
             return "account-security";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";

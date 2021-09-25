@@ -71,9 +71,9 @@
                                         <h4 class="card-title text-primary ms-1">Wallets</h4>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <a class="btn btn-relief-success m-1"
-                                           th:href="@{__${#httpServletRequest.requestURI}__/add}">Add
-                                            Wallet</a>
+                                        <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
+                                            <button type="button" class="btn btn-relief-success m-1">Add Wallet</button>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="card-body pt-1">
@@ -91,28 +91,35 @@
                                                 <td>[[${wallet.name}]]</td>
                                                 <td>[[${wallet.balance}]] BGN</td>
                                                 <td>
-                                                    <a class="btn btn-relief-primary"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${wallet.id})}">Edit</a>
+                                                    <a th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${wallet.id})}">
+                                                        <button type="button" class="btn btn-relief-primary">Edit
+                                                        </button>
+                                                    </a>
                                                     <button type="button"
                                                             th:if="${wallet.id == currentLoggedUser.defaultWallet.id}"
-                                                            class="btn btn-relief-danger" onclick="showErrorModal()">Delete
+                                                            class="btn btn-relief-danger" onclick="showErrorModal()">
+                                                        Delete
                                                     </button>
                                                     <a th:if="${wallet.id != currentLoggedUser.defaultWallet.id}"
-                                                       class="btn btn-relief-danger"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${wallet.id})}">Delete</a>
-                                                    <a class="btn btn-relief-success"
-                                                       th:if="${wallet.id == currentLoggedUser.defaultWallet.id}"
-                                                       href="#">Default Wallet</a>
-                                                    <a class="btn btn-relief-info"
-                                                       style="padding-left: 24.594px; padding-right: 24.595px"
-                                                       th:if="${wallet.id != currentLoggedUser.defaultWallet.id}"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/default(id=${wallet.id})}">Make
-                                                        Default</a>
+                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${wallet.id})}">
+                                                        <button type="button" class="btn btn-relief-danger">
+                                                            Delete
+                                                        </button>
+                                                    </a>
+                                                    <button th:if="${wallet.id == currentLoggedUser.defaultWallet.id}"
+                                                            type="button" class="btn btn-relief-success">Default Wallet
+                                                    </button>
+                                                    <a th:if="${wallet.id != currentLoggedUser.defaultWallet.id}"
+                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/default(id=${wallet.id})}">
+                                                        <button type="button" class="btn btn-relief-info"
+                                                                style="padding-left: 24.594px; padding-right: 24.595px">
+                                                            Make Default
+                                                        </button>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
-                                        <!--                                        <button type="button" class="btn btn-outline-danger" id="type-error">Error</button>-->
                                     </div>
                                 </div>
                             </div>

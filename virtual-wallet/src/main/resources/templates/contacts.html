@@ -70,9 +70,11 @@
                                         <h4 class="card-title text-primary ms-1">Contacts</h4>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <a class="btn btn-relief-success m-1"
-                                           th:href="@{__${#httpServletRequest.requestURI}__/add}">Add
-                                            Contact</a>
+                                        <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
+                                            <button type="submit" class="btn btn-relief-success m-1">
+                                                Add Contact
+                                            </button>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="card-body pt-1">
@@ -88,8 +90,11 @@
                                             <tr class="text-center" th:each="user : ${contacts}">
                                                 <td>[[${user.getUsername}]]</td>
                                                 <td>
-                                                    <a class="btn btn-relief-danger"
-                                                       th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${user.id})}">Delete</a>
+                                                    <a th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${user.id})}">
+                                                        <button type="submit" class="btn btn-relief-danger">
+                                                            Delete
+                                                        </button>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             </tbody>
