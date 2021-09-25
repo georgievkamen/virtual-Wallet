@@ -15,6 +15,14 @@ public class CategoryModelMapper {
         this.repository = repository;
     }
 
+    public CategoryDto toDto(Category category) {
+        CategoryDto categoryDto = new CategoryDto();
+
+        categoryDto.setName(category.getName());
+
+        return categoryDto;
+    }
+
     public Category fromDto(User user, CategoryDto categoryDto) {
         Category category = new Category();
 

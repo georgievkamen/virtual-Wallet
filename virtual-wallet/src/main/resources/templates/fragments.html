@@ -177,6 +177,13 @@
                 </li>
 
                 <li class="dropdown nav-item">
+                    <a class="nav-link d-flex align-items-center" href="/panel/categories">
+                        <i class="fas fa-tags"></i>
+                        <span>Categories</span>
+                    </a>
+                </li>
+
+                <li class="dropdown nav-item">
                     <a class="nav-link d-flex align-items-center" href="/panel/secret">
                         <i class="fas fa-lock"></i>
                         <span>Secret</span>
@@ -249,6 +256,23 @@
     </div>
 </form>
 <!-- END: Wallet Form -->
+
+<!-- START: Category Form-->
+<form th:fragment="category-form" class="validate-form" th:action="@{__${#httpServletRequest.requestURI}__}"
+      th:object="${category}" method="post">
+    <div class="mb-1">
+        <label class="form-label" for="category-name">Category Name</label>
+        <input type="text" class="form-control" id="category-name" th:field="*{name}"
+               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+               placeholder="Category name"/>
+        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback"
+             th:errors="*{name}"></div>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary me-1 mt-1">Save changes</button>
+    </div>
+</form>
+<!-- END: Category Form -->
 
 <!-- BEGIN: Footer-->
 <div th:fragment="footer" id="footer">

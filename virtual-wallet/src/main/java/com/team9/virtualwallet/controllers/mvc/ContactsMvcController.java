@@ -6,7 +6,6 @@ import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.services.contracts.UserService;
-import com.team9.virtualwallet.services.mappers.UserModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +19,11 @@ public class ContactsMvcController {
 
     private final AuthenticationHelper authenticationHelper;
     private final UserService service;
-    private final UserModelMapper mapper;
 
     public ContactsMvcController(AuthenticationHelper authenticationHelper,
-                                 UserService service,
-                                 UserModelMapper mapper) {
+                                 UserService service) {
         this.authenticationHelper = authenticationHelper;
         this.service = service;
-        this.mapper = mapper;
     }
 
     @ModelAttribute("currentLoggedUser")
