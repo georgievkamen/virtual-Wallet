@@ -93,7 +93,12 @@
                                                 <td>
                                                     <a class="btn btn-relief-primary"
                                                        th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${wallet.id})}">Edit</a>
-                                                    <a class="btn btn-relief-danger"
+                                                    <button type="button"
+                                                            th:if="${wallet.id == currentLoggedUser.defaultWallet.id}"
+                                                            class="btn btn-relief-danger" onclick="showErrorModal()">Delete
+                                                    </button>
+                                                    <a th:if="${wallet.id != currentLoggedUser.defaultWallet.id}"
+                                                       class="btn btn-relief-danger"
                                                        th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${wallet.id})}">Delete</a>
                                                     <a class="btn btn-relief-success"
                                                        th:if="${wallet.id == currentLoggedUser.defaultWallet.id}"
@@ -107,7 +112,7 @@
                                             </tr>
                                             </tbody>
                                         </table>
-                                        <button type="button" class="btn btn-outline-danger" id="type-error">Error</button>
+                                        <!--                                        <button type="button" class="btn btn-outline-danger" id="type-error">Error</button>-->
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +165,22 @@
                 height: 14
             });
         }
-    })
+    });
+</script>
+<script>
+    const showErrorModal = function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'You can\'t delete your default wallet!',
+            type: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        })
+    };
 </script>
 </body>
 
