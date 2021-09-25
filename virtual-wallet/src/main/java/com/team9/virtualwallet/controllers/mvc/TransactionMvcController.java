@@ -3,13 +3,11 @@ package com.team9.virtualwallet.controllers.mvc;
 import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
+import com.team9.virtualwallet.models.Category;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
-import com.team9.virtualwallet.services.contracts.CardService;
-import com.team9.virtualwallet.services.contracts.TransactionService;
-import com.team9.virtualwallet.services.contracts.UserService;
-import com.team9.virtualwallet.services.contracts.WalletService;
+import com.team9.virtualwallet.services.contracts.*;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,14 +29,16 @@ public class TransactionMvcController {
     private final CardService cardService;
     private final WalletService walletService;
     private final UserService userService;
+    private final CategoryService categoryService;
 
-    public TransactionMvcController(AuthenticationHelper authenticationHelper, TransactionService service, TransactionModelMapper modelMapper, CardService cardService, WalletService walletService, UserService userService) {
+    public TransactionMvcController(AuthenticationHelper authenticationHelper, TransactionService service, TransactionModelMapper modelMapper, CardService cardService, WalletService walletService, UserService userService, CategoryService categoryService) {
         this.authenticationHelper = authenticationHelper;
         this.service = service;
         this.modelMapper = modelMapper;
         this.cardService = cardService;
         this.walletService = walletService;
         this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     //TODO Think about moving this to BaseAuthenticationController
@@ -72,8 +72,11 @@ public class TransactionMvcController {
     public String showInternalTransactionPage(HttpSession session, Model model, @RequestParam(name = "fieldName", required = false) String fieldName, @RequestParam(name = "search-field", required = false) String searchTerm) {
         try {
             User user = authenticationHelper.tryGetUser(session);
+            List<Category> categories = categoryService.getAll(user);
             model.addAttribute("transaction", new TransactionDto());
             model.addAttribute("userWallets", walletService.getAll(user));
+            model.addAttribute("categories", categories);
+            model.addAttribute("categoriesExist", !categories.isEmpty());
             if (fieldName != null && searchTerm != null) {
                 model.addAttribute("user", userService.getByField(user, fieldName, searchTerm));
             }
@@ -94,10 +97,13 @@ public class TransactionMvcController {
             if (result.hasErrors()) {
                 return "transaction-internal-create";
             }
-
+            Optional<Integer> category = Optional.empty();
+            if (categoryId.isPresent()) {
+                category = categoryId.get() != -1 ? categoryId : Optional.empty();
+            }
             model.addAttribute("transaction", new TransactionDto());
             Transaction transaction = modelMapper.fromDto(user, transactionDto);
-            service.create(transaction, categoryId);
+            service.create(transaction, category);
             return "redirect:/panel/transactions";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";

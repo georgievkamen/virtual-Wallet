@@ -183,6 +183,16 @@
                                     <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback"
                                          th:errors="*{description}"></div>
                                 </div>
+
+                                <div th:if="${categoriesExist}" class="mb-1">
+                                    <label class="form-label" for="category">Category</label>
+                                    <select class="select2 select2-basic form-select" id="category" name="categoryId">
+                                        <option selected value="-1">No Category</option>
+                                        <option th:each="category : ${categories}"
+                                                th:value="${category.id}"
+                                                th:text="${category.name}"></option>
+                                    </select>
+                                </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary me-1 mt-1">Create Transaction</button>
                                 </div>
