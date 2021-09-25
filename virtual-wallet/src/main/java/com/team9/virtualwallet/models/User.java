@@ -205,6 +205,13 @@ public class User {
         this.contacts = contacts.stream().filter(user -> !user.getUsername().equals(username)).collect(Collectors.toSet());
     }
 
+    public boolean isFriend(String username) {
+        return this
+                .getContacts()
+                .stream()
+                .anyMatch(user -> user.getUsername().equals(username));
+    }
+
     public boolean isEmployee() {
         return this
                 .getRoles()
