@@ -269,12 +269,13 @@
                         setSearchProps("Phone Number", "fas fa-phone");
                     } else if (radioContacts.checked) {
                         document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
-                        document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").value;
+                        document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").val();
                     }
                 }
             )
             $('#contacts-dropdown-select').change(function () {
                 document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
+                document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").val();
                 }
             )
         }
