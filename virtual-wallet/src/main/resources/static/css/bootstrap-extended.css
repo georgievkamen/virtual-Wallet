@@ -2755,3 +2755,7 @@ a:hover {
 
 .pointer-events-none {
   pointer-events: none; }
+
+body.swal2-shown.swal2-height-auto {
+  height: 100% !important;
+}
