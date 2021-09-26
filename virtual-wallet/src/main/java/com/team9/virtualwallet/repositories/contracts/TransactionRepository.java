@@ -22,12 +22,10 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
     void createExternal(Transaction transaction, Wallet wallet);
 
     List<Transaction> filter(int userId,
+                             Direction direction,
                              Optional<Date> startDate,
                              Optional<Date> endDate,
-                             Optional<Integer> categoryId,
-                             Optional<Integer> senderId,
-                             Optional<Integer> recipientId,
-                             Optional<Direction> direction,
+                             Optional<Integer> searchedPersonId,
                              Optional<SortAmount> amount,
                              Optional<SortDate> date);
 }

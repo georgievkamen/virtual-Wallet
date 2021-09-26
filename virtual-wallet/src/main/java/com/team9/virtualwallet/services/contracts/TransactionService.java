@@ -27,12 +27,10 @@ public interface TransactionService {
     void createExternalWithdraw(Transaction transaction);
 
     List<Transaction> filter(User user,
+                             Direction direction,
                              Optional<Date> startDate,
                              Optional<Date> endDate,
-                             Optional<Integer> categoryId,
-                             Optional<Integer> senderId,
-                             Optional<Integer> recipientId,
-                             Optional<Direction> direction,
+                             Optional<String> searchedPersonUsername,
                              Optional<SortAmount> amount,
                              Optional<SortDate> date);
 }

@@ -11,6 +11,7 @@ import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.models.enums.TransactionType;
 import com.team9.virtualwallet.repositories.contracts.CardRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
+import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
 import com.team9.virtualwallet.services.contracts.CategoryService;
 import com.team9.virtualwallet.services.contracts.TransactionService;
@@ -32,13 +33,15 @@ public class TransactionServiceImpl implements TransactionService {
     private final CardRepository cardRepository;
     private final WalletService walletService;
     private final CategoryService categoryService;
+    private final UserRepository userRepository;
 
-    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardRepository cardRepository, WalletService walletService, CategoryService categoryService) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardRepository cardRepository, WalletService walletService, CategoryService categoryService, UserRepository userRepository) {
         this.repository = repository;
         this.walletRepository = walletRepository;
         this.cardRepository = cardRepository;
         this.walletService = walletService;
         this.categoryService = categoryService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -143,16 +146,23 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transaction> filter(User user,
+                                    Direction direction,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
-                                    Optional<Integer> categoryId,
-                                    Optional<Integer> senderId,
-                                    Optional<Integer> recipientId,
-                                    Optional<Direction> direction,
+                                    Optional<String> searchedPersonUsername,
                                     Optional<SortAmount> amount,
                                     Optional<SortDate> date) {
 
-        return repository.filter(user.getId(), startDate, endDate, categoryId, senderId, recipientId, direction, amount, date);
+        int userId = user.getId();
+        Optional<Integer> searchedPersonId = checkAndSetIfPresent(searchedPersonUsername, userId);
+        return repository.filter(userId, direction, startDate, endDate, searchedPersonId, amount, date);
+    }
+
+    private Optional<Integer> checkAndSetIfPresent(Optional<String> searchedPersonUsername, int userId) {
+        if (searchedPersonUsername.isPresent()) {
+            return Optional.of(userRepository.getByFieldNotDeleted("username", searchedPersonUsername.get(), userId).getId());
+        }
+        return Optional.empty();
     }
 
 

@@ -124,19 +124,17 @@ public class TransactionRestController {
     public List<Transaction> filter(@RequestHeader HttpHeaders headers,
                                     @RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "5") int size,
+                                    @RequestParam Direction direction,
                                     @RequestParam(required = false)
                                                 Optional<Date> startDate,
                                     Optional<Date> endDate,
-                                    Optional<Integer> categoryId,
-                                    Optional<Integer> senderId,
-                                    Optional<Integer> recipientId,
-                                    Optional<Direction> direction,
+                                    Optional<String> username,
                                     Optional<SortAmount> amount,
                                     Optional<SortDate> date) {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return getPage(service.filter(user, startDate, endDate, categoryId, senderId, recipientId, direction, amount, date), page, size);
+        return getPage(service.filter(user, direction, startDate, endDate, username, amount, date), page, size);
     }
 
 }

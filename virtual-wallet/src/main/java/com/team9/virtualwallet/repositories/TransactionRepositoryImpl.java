@@ -72,19 +72,33 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
 
     @Override
     public List<Transaction> filter(int userId,
+                                    Direction direction,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
-                                    Optional<Integer> categoryId,
-                                    Optional<Integer> senderId,
-                                    Optional<Integer> recipientId,
-                                    Optional<Direction> direction,
+                                    Optional<Integer> searchedPersonId,
                                     Optional<SortAmount> amount,
                                     Optional<SortDate> date) {
 
         try (Session session = sessionFactory.openSession()) {
-            var baseQuery = "select t from Transaction t join Category c on t.category.id = c.id";
+            var baseQuery = "select t from Transaction t";
             List<String> filters = new ArrayList<>();
             List<String> sortType = new ArrayList<>();
+
+
+            switch (direction.toString()) {
+                case "Incoming":
+                    if (searchedPersonId.isPresent()) {
+                        filters.add("t.sender.id = :searchedId");
+                    }
+                    filters.add("t.recipient.id = :userId");
+                    break;
+                case "Outgoing":
+                    if (searchedPersonId.isPresent()) {
+                        filters.add("t.recipient.id = :searchedId");
+                    }
+                    filters.add("t.sender.id = :userId");
+                    break;
+            }
 
             if (startDate.isPresent()) {
                 filters.add(" t.timestamp > :startDate");
@@ -94,48 +108,22 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                 filters.add(" t.timestamp < :endDate");
             }
 
-            if (categoryId.isPresent()) {
-                filters.add(" c.id = :categoryId");
-            }
-
-            if (senderId.isPresent()) {
-                filters.add("t.sender.id = :senderId");
-            }
-
-            if (recipientId.isPresent()) {
-                filters.add("t.recipient.id = :recipientId");
-            }
-
-            if (direction.isPresent()) {
-                switch (direction.get().toString()) {
-                    case "Incoming":
-                        filters.add("t.recipient.id = :userId");
-                        break;
-                    case "Outgoing":
-                        filters.add("t.sender.id = :userId");
-                        break;
-                }
-            }
 
             amount.ifPresent(sortAmount -> sortType.add(String.format(" %s ", sortAmount)));
             date.ifPresent(sortDate -> sortType.add(String.format(" %s ", sortDate.toString().replaceAll("Date", "timestamp"))));
 
-            if (!filters.isEmpty()) {
-                baseQuery += " where " + String.join(" and ", filters);
-            }
+            baseQuery += " where " + String.join(" and ", filters);
 
             if (!sortType.isEmpty()) {
                 baseQuery += " order by " + String.join(" , ", sortType);
             }
 
             Query<Transaction> query = session.createQuery(baseQuery, Transaction.class);
+            query.setParameter("userId", userId);
 
             startDate.ifPresent(value -> query.setParameter("startDate", value));
             endDate.ifPresent(value -> query.setParameter("endDate", value));
-            categoryId.ifPresent(integer -> query.setParameter("categoryId", integer));
-            senderId.ifPresent(integer -> query.setParameter("senderId", integer));
-            recipientId.ifPresent(integer -> query.setParameter("recipientId", integer));
-            direction.ifPresent(integer -> query.setParameter("userId", userId));
+            searchedPersonId.ifPresent(integer -> query.setParameter("searchedId", integer));
 
             return query.list();
         }
