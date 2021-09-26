@@ -1,6 +1,7 @@
 package com.team9.virtualwallet.services;
 
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
+import com.team9.virtualwallet.exceptions.InsufficientBalanceException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.PaymentMethod;
 import com.team9.virtualwallet.models.User;
@@ -99,7 +100,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public void verifyEnoughBalance(Wallet wallet, BigDecimal funds) {
         if (wallet.getBalance().compareTo(funds) < 0) {
-            throw new IllegalArgumentException("You do not have enough money in the selected wallet!");
+            throw new InsufficientBalanceException("You do not have enough money in the selected wallet!");
         }
     }
 
