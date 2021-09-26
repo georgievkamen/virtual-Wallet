@@ -70,8 +70,14 @@
                                         <h4 class="card-title text-primary ms-1">Cards</h4>
                                     </div>
                                     <div class="col-6 text-end">
+                                        <a th:href="@{/panel/transactions/create/deposit}">
+                                            <button type="button" class="btn btn-relief-success">Deposit</button>
+                                        </a>
+                                        <a th:href="@{/panel/transactions/create/withdraw}">
+                                            <button type="button" class="btn btn-relief-danger">Withdraw</button>
+                                        </a>
                                         <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
-                                            <button type="button" class="btn btn-relief-info m-1">Add Card</button>
+                                            <button type="button" class="btn btn-relief-info">Add Card</button>
                                         </a>
                                     </div>
                                 </div>

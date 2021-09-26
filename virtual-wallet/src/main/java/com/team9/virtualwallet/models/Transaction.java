@@ -5,6 +5,7 @@ import com.team9.virtualwallet.models.enums.TransactionType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "transactions")
@@ -64,8 +65,9 @@ public class Transaction {
 
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public String getTimestamp() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy");
+        return dtf.format(timestamp.toLocalDateTime());
     }
 
     public void setTimestamp(Timestamp timestamp) {

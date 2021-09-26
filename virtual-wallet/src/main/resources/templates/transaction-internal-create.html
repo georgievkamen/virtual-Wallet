@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
-    <title>Virtual Wallet | Creating Wallet</title>
+    <title>Virtual Wallet | Creating Transaction</title>
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/ico/favicon.ico}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
           rel="stylesheet">
@@ -68,13 +68,11 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title text-secondary">Find recipient</h4>
-                        </div>
-                        <div class="card-body border-bottom">
-                            <form th:action="@{/panel/transactions/create}" class="validate-form" method="get">
-                                <div class="row mb-2">
-                                    <div class="form-check col-lg-6 col-md-6">
+                        <div class="card-body">
+                            <form th:action="@{/panel/transactions/create/internal}" class="validate-form" method="get">
+                                <h4 class="text-secondary">Find recipient</h4>
+                                <div class="row mb-1 ps-1">
+                                    <div class="form-check col-lg-6 col-md-6 pb-1">
                                         <label class="form-check-label">
                                             <input class="form-check-input radio" type="radio" name="fieldName"
                                                    id="username"
@@ -82,7 +80,7 @@
                                             Username
                                         </label>
                                     </div>
-                                    <div class="form-check col-lg-6 col-md-6">
+                                    <div class="form-check col-lg-6 col-md-6 pb-1">
                                         <label class="form-check-label">
                                             <input class="form-check-input radio" type="radio" name="fieldName"
                                                    id="email"
@@ -134,11 +132,7 @@
                                 </button>
 
                             </form>
-                        </div>
-                    </div>
-                    <div class="card" id="final-form">
-                        <div class="card-body">
-                            <form class="validate-form transaction-final-form" th:action="@{/panel/transactions/create}"
+                            <form class="validate-form" th:action="@{/panel/transactions/create/internal}"
                                   th:object="${transaction}" method="post">
                                 <input type="hidden" th:value="${user?.id}" id="recipient-id-contacts"
                                        name="recipientId"/>
@@ -152,13 +146,13 @@
                                          th:errors="*{recipientId}"></div>
                                 </div>
                                 <div class="mb-1">
-                                    <label class="form-label" for="select2-basic">Wallet</label>
-                                    <select class="select2 form-select" id="select2-basic"
-                                            th:field="*{selectedWalletId}"
+                                    <label class="form-label" for="selectedWalletId">Wallet</label>
+                                    <select class="select2 form-select" id="selectedWalletId" name="selectedWalletId"
                                             th:classappend="${#fields.hasErrors('selectedWalletId')} ? 'is-invalid' : ''">
                                         <option th:each="wallet : ${userWallets}"
                                                 th:value="${wallet.id}"
-                                                th:text="${wallet.name}"></option>
+                                                th:text="${wallet.name}"
+                                                th:selected="${wallet.id == currentLoggedUser.defaultWallet.id}"></option>
                                     </select>
                                     <div th:if="${#fields.hasErrors('selectedWalletId')}" class="invalid-feedback"
                                          th:errors="*{selectedWalletId}"></div>

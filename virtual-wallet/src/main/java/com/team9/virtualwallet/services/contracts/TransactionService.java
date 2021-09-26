@@ -20,11 +20,11 @@ public interface TransactionService {
 
     void create(Transaction transaction, Optional<Integer> categoryId);
 
-    void moveMoneyToWallet(Transaction transaction, Optional<Integer> categoryId);
+    void createWalletToWallet(Transaction transaction);
 
-    void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId);
+    void createExternalDeposit(Transaction transaction);
 
-    void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId);
+    void createExternalWithdraw(Transaction transaction);
 
     List<Transaction> filter(User user,
                              Optional<Date> startDate,

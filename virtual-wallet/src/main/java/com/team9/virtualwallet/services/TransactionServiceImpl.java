@@ -92,34 +92,28 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void moveMoneyToWallet(Transaction transaction, Optional<Integer> categoryId) {
+    public void createWalletToWallet(Transaction transaction) {
         Wallet walletToMoveFrom = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
         Wallet walletToMoveTo = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
-        verifyWalletOwnership(transaction, walletToMoveFrom);
+        verifyWalletsOwnership(transaction, walletToMoveFrom, walletToMoveTo);
 
         if (walletToMoveTo.getId() == walletToMoveFrom.getId()) {
-            throw new IllegalArgumentException("Please select different wallet");
+            throw new IllegalArgumentException("You must select a different wallet!");
         }
         walletService.verifyEnoughBalance(walletToMoveFrom, transaction.getAmount());
-
-        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
         walletToMoveFrom.withdrawBalance(transaction.getAmount());
         walletToMoveTo.depositBalance(transaction.getAmount());
 
-        if (transaction.getAmount().compareTo(BigDecimal.valueOf(100000)) >= 0) {
-            transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
-        } else {
-            transaction.setTransactionType(TransactionType.SMALL_TRANSACTION);
-        }
+        transaction.setTransactionType(TransactionType.WALLET_TO_WALLET);
 
         repository.create(transaction, walletToMoveFrom, walletToMoveTo);
     }
 
 
     @Override
-    public void createExternalDeposit(Transaction transaction, Optional<Integer> categoryId) {
+    public void createExternalDeposit(Transaction transaction) {
         Card cardToWithdraw = cardRepository.getById(transaction.getSenderPaymentMethod().getId());
         validateCardExpiryDate(cardToWithdraw);
         Wallet walletToDeposit = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
@@ -128,14 +122,12 @@ public class TransactionServiceImpl implements TransactionService {
 
         verifyCardOwnership(transaction, cardToWithdraw);
 
-        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
-
         walletToDeposit.depositBalance(transaction.getAmount());
         repository.createExternal(transaction, walletToDeposit);
     }
 
     @Override
-    public void createExternalWithdraw(Transaction transaction, Optional<Integer> categoryId) {
+    public void createExternalWithdraw(Transaction transaction) {
         Wallet walletToWithdraw = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
         Card cardToDeposit = cardRepository.getById(transaction.getRecipientPaymentMethod().getId());
         validateCardExpiryDate(cardToDeposit);
@@ -144,8 +136,6 @@ public class TransactionServiceImpl implements TransactionService {
         verifyCardOwnership(transaction, cardToDeposit);
 
         walletService.verifyEnoughBalance(walletToWithdraw, transaction.getAmount());
-
-        categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
         walletToWithdraw.withdrawBalance(transaction.getAmount());
         repository.createExternal(transaction, walletToWithdraw);
@@ -176,6 +166,12 @@ public class TransactionServiceImpl implements TransactionService {
     private void verifyWalletOwnership(Transaction transaction, Wallet wallet) {
         if (transaction.getSender().getId() != wallet.getUser().getId()) {
             throw new IllegalArgumentException("You are not the owner of this wallet!");
+        }
+    }
+
+    private void verifyWalletsOwnership(Transaction transaction, Wallet walletToMoveFrom, Wallet walletToMoveTo) {
+        if (transaction.getSender().getId() != walletToMoveFrom.getUser().getId() || transaction.getSender().getId() != walletToMoveTo.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of these wallets!");
         }
     }
 

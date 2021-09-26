@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- BEGIN: Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
+    <title>Virtual Wallet | Moving Balance</title>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/ico/favicon.ico}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
+          rel="stylesheet">
+
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/vendors.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/charts/apexcharts.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/extensions/toastr.min.css}">
+    <!-- END: Vendor CSS-->
+
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-extended.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/colors.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/components.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/dark-layout.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/bordered-layout.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/semi-dark-layout.css}">
+
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/core/menu/menu-types/horizontal-menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <!-- END: Page CSS-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+            crossorigin="anonymous"></script>
+
+</head>
+<!-- END: Head-->
+
+<!-- BEGIN: Body-->
+
+<body class="horizontal-layout horizontal-menu navbar-floating footer-static" data-open="hover"
+      data-menu="horizontal-menu" data-col="">
+
+<!--BEGIN: Header-->
+<nav th:replace="fragments :: header"></nav>
+<!--END: Header-->
+
+<!-- BEGIN: Main Menu-->
+<div th:replace="fragments :: menu"></div>
+<!-- END: Main Menu-->
+
+<!-- BEGIN: Content-->
+<div class="app-content content ">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper container-xxl p-0">
+        <div class="content-body">
+            <div class="row d-flex justify-content-center">
+
+                <!-- Wallet Card -->
+                <div class="card col-lg-5 col-md-5 col-sm-12">
+                    <div class="card-header border-bottom">
+                        <h4 class="card-title text-primary">Moving Balance</h4>
+                    </div>
+                    <div class="card-body pt-1">
+                        <!-- form -->
+                        <form class="validate-form" th:action="@{/panel/transactions/create/wallet}"
+                              th:object="${transaction}" method="post">
+                            <div class="mb-1">
+                                <label class="form-label" for="selectedWalletId">Select Wallet To Move From</label>
+                                <select class="select2 form-select" id="selectedWalletId" name="selectedWalletId"
+                                        th:classappend="${#fields.hasErrors('selectedWalletId')} ? 'is-invalid' : ''">
+                                    <option th:each="wallet : ${userWallets}"
+                                            th:value="${wallet.id}"
+                                            th:text="${wallet.name}"
+                                            th:selected="${wallet.id} == ${currentLoggedUser.defaultWallet.id}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('selectedWalletId')}" class="invalid-feedback"
+                                     th:errors="*{selectedWalletId}"></div>
+                            </div>
+                            <div class="mb-1">
+                                <label class="form-label" for="walletToMoveTo">Select Wallet To Move To</label>
+                                <select class="select2 form-select" id="walletToMoveTo"
+                                        th:field="*{walletToMoveToId}"
+                                        th:classappend="${#fields.hasErrors('walletToMoveToId')} ? 'is-invalid' : ''">
+                                    <option th:each="wallet : ${userWallets}"
+                                            th:value="${wallet.id}"
+                                            th:text="${wallet.name}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('walletToMoveToId')}" class="invalid-feedback"
+                                     th:errors="*{walletToMoveToId}"></div>
+                            </div>
+                            <div class="mb-1">
+                                <label class="form-label" for="amount">Amount</label>
+                                <input type="number" step=".01" class="form-control" id="amount"
+                                       th:field="*{amount}"
+                                       th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid' : ''"
+                                       placeholder="499.99"/>
+                                <div th:if="${#fields.hasErrors('amount')}" class="invalid-feedback"
+                                     th:errors="*{amount}"></div>
+                            </div>
+                            <div class="mb-1">
+                                <label class="form-label" for="description">Description</label>
+                                <input type="text" class="form-control" id="description" th:field="*{description}"
+                                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                                       placeholder="Description"/>
+                                <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback"
+                                     th:errors="*{description}"></div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary me-1 mt-1">Move Balance</button>
+                            </div>
+                        </form>
+                        <!--/ form -->
+                    </div>
+                </div>
+                <!--/ Wallet Card -->
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+<div class="sidenav-overlay"></div>
+<div class="drag-target"></div>
+
+<!-- BEGIN: Footer-->
+<div th:replace="fragments :: footer"></div>
+<!-- END: Footer-->
+
+
+<!-- BEGIN: Vendor JS-->
+<script th:src="@{/vendors/js/vendors.min.js}"></script>
+<!-- BEGIN Vendor JS-->
+
+<!-- BEGIN: Page Vendor JS-->
+<script th:src="@{/vendors/js/ui/jquery.sticky.js}"></script>
+<script th:src="@{/vendors/js/charts/apexcharts.min.js}"></script>
+<script th:src="@{/vendors/js/extensions/toastr.min.js}"></script>
+<!-- END: Page Vendor JS-->
+
+<!-- BEGIN: Theme JS-->
+<script th:src="@{/js/core/app.js}"></script>
+<script th:src="@{/js/core/app-menu.js}"></script>
+<!-- END: Theme JS-->
+
+<!-- BEGIN: Page JS-->
+<script th:src="@{/js/scripts/pages/homepage.js}"></script>
+<!-- END: Page JS-->
+
+<script>
+    $(window).on('load', function () {
+        if (feather) {
+            feather.replace({
+                width: 14,
+                height: 14
+            });
+        }
+    })
+</script>
+</body>
+
+<!-- END: Body-->
+
+</html>

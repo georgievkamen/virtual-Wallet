@@ -79,7 +79,7 @@ public class TransactionRestController {
         User user = authenticationHelper.tryGetUser(headers);
 
         Transaction transaction = modelMapper.fromDtoMoveToWallet(user, moveToWalletTransactionDto);
-        service.moveMoneyToWallet(transaction, categoryId);
+        service.createWalletToWallet(transaction);
 
         return transaction;
     }
@@ -97,7 +97,7 @@ public class TransactionRestController {
         }
 
         Transaction transaction = modelMapper.fromExternalDepositDto(user, externalTransactionDto);
-        service.createExternalDeposit(transaction, categoryId);
+        service.createExternalDeposit(transaction);
 
         return transaction;
     }
@@ -115,7 +115,7 @@ public class TransactionRestController {
         }
 
         Transaction transaction = modelMapper.fromExternalWithdrawDto(user, externalTransactionDto);
-        service.createExternalWithdraw(transaction, categoryId);
+        service.createExternalWithdraw(transaction);
 
         return transaction;
     }

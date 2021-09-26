@@ -71,8 +71,11 @@
                                         <h4 class="card-title text-primary ms-1">Wallets</h4>
                                     </div>
                                     <div class="col-6 text-end">
+                                        <a th:href="@{/panel/transactions/create/wallet}">
+                                            <button type="button" class="btn btn-relief-primary">Move Balance</button>
+                                        </a>
                                         <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
-                                            <button type="button" class="btn btn-relief-success m-1">Add Wallet</button>
+                                            <button type="button" class="btn btn-relief-success">Add Wallet</button>
                                         </a>
                                     </div>
                                 </div>
