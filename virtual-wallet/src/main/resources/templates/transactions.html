@@ -90,33 +90,62 @@
                                             </thead>
                                             <tbody>
                                             <tr class="text-center" th:each="transaction : ${transactions}">
-                                                <td>
-                                                    <div class="avatar rounded float-start"
-                                                         th:classappend="${transaction.sender.id != transaction.recipient.id} ? (${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success') : (${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'bg-light-info' : 'bg-light-warning')">
+
+                                                <!-- Icon -->
+                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}">
+                                                    <div class="avatar rounded float-start bg-light-primary">
                                                         <div class="avatar-content">
-                                                            <i th:if="${transaction.sender.id == transaction.recipient.id}"
-                                                               class="avatar-icon font-medium-3"
-                                                               th:classappend="${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'far fa-credit-card' : 'fas fa-university '"></i>
-                                                            <i th:if="${transaction.sender.id != transaction.recipient.id}"
-                                                               class="fas fa-user-friends avatar-icon font-medium-3"></i>
+                                                            <i class="fas fa-wallet avatar-icon font-medium-3"></i>
                                                         </div>
                                                     </div>
                                                 </td>
+
+                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD'}">
+                                                    <div class="avatar rounded float-start bg-light-warning">
+                                                        <div class="avatar-content">
+                                                            <i class="fas fa-university avatar-icon font-medium-3"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET'}">
+                                                    <div class="avatar rounded float-start bg-light-info">
+                                                        <div class="avatar-content">
+                                                            <i class="far fa-credit-card avatar-icon font-medium-3"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td th:if="${transaction.transactionType.name() == 'SMALL_TRANSACTION' or transaction.transactionType.name() == 'LARGE_TRANSACTION'}">
+                                                    <div class="avatar rounded float-start" th:classappend="${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success'">
+                                                        <div class="avatar-content">
+                                                            <i class="fas fa-user-friends avatar-icon font-medium-3"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <!-- Icon -->
+
+
+                                                <!-- Timestamp -->
                                                 <td>[[${transaction.timestamp}]]</td>
-                                                <td th:if="${transaction.sender.id == transaction.recipient.id}"
-                                                    th:classappend="${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'text-success' : 'text-danger'">
-                                                    [[${transaction.senderPaymentMethod.type ==
-                                                    T(com.team9.virtualwallet.models.enums.Type).CARD} ? '+' :
-                                                    '-']][[${transaction.amount}]] BGN
-                                                <td th:if="${transaction.sender.id != transaction.recipient.id}"
-                                                    th:classappend="${transaction.sender.id == currentLoggedUser.id} ? 'text-danger' : 'text-success'">
-                                                    [[${transaction.sender.id == currentLoggedUser.id} ? '-' :
-                                                    '+']][[${transaction.amount}]] BGN
-                                                </td>
+
+                                                <!-- Balance -->
+                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id)}"
+                                                    class="text-danger">
+                                                    -[[${transaction.amount}]]
                                                 </td>
 
-                                                <!-- Start Sender-->
+                                                <td th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id)}"
+                                                    class="text-success">
+                                                    +[[${transaction.amount}]]
+                                                </td>
 
+                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}"
+                                                    class="text-primary">
+                                                    [[${transaction.amount}]]
+                                                </td>
+
+                                                <!-- Sender -->
                                                 <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.sender.id == currentLoggedUser.id}">
                                                     [[${transaction.sender.username}]]/[[${walletService.getById(currentLoggedUser,
                                                     transaction.senderPaymentMethod.id).name}]]
@@ -124,20 +153,18 @@
                                                 <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.sender.id != currentLoggedUser.id}">
                                                     [[${transaction.sender.username}]]
                                                 </td>
-                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD}">
+                                                <td th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET'}">
                                                     [[${transaction.sender.username}]]/[[${cardService.getById(currentLoggedUser,
                                                     transaction.senderPaymentMethod.id).getMaskedCardNumber}]]
                                                 </td>
-                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).WALLET}">
+                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD' or transaction.transactionType.name() == 'WALLET_TO_WALLET'}">
                                                     [[${transaction.sender.username}]]/[[${walletService.getById(currentLoggedUser,
                                                     transaction.senderPaymentMethod.id).name}]]
                                                 </td>
+                                                <!-- Sender -->
 
-                                                <!-- End Sender-->
 
-
-                                                <!-- Start Recipient-->
-
+                                                <!-- Recipient -->
                                                 <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.recipient.id == currentLoggedUser.id}">
                                                     [[${transaction.recipient.username}]]/[[${walletService.getById(currentLoggedUser,
                                                     transaction.recipientPaymentMethod.id).name}]]
@@ -145,17 +172,17 @@
                                                 <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.recipient.id != currentLoggedUser.id}">
                                                     [[${transaction.recipient.username}]]
                                                 </td>
-                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.recipientPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD}">
+                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD'}">
                                                     [[${transaction.recipient.username}]]/[[${cardService.getById(currentLoggedUser,
                                                     transaction.recipientPaymentMethod.id).getMaskedCardNumber}]]
                                                 </td>
-                                                <td th:if="${transaction.sender.id == transaction.recipient.id and transaction.recipientPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).WALLET}">
+                                                <td th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET' or transaction.transactionType.name() == 'WALLET_TO_WALLET'}">
                                                     [[${transaction.recipient.username}]]/[[${walletService.getById(currentLoggedUser,
                                                     transaction.recipientPaymentMethod.id).name}]]
                                                 </td>
+                                                <!-- Recipient-->
 
-                                                <!-- End Recipient-->
-
+                                                <!-- Description-->
                                                 <td>[[${transaction.description}]]</td>
                                             </tr>
                                             </tbody>

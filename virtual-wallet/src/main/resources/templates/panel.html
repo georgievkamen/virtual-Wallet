@@ -64,7 +64,7 @@
         <div class="content-body">
             <!-- Dashboard Ecommerce Starts -->
             <section id="dashboard-ecommerce">
-                <div class="row d-flex justify-content-center">
+                <div class="row">
                     <!-- Medal Card -->
                     <div class="col-xl-4 col-md-4 col-12">
                         <div class="card">
@@ -76,20 +76,25 @@
                                 <a href="/panel/wallets">
                                     <button type="button" class="btn btn-primary">View Wallets</button>
                                 </a>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#large">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#large">
                                     I'm feeling down
                                 </button>
                                 <!-- Modal -->
-                                <div class="modal fade text-start" id="large" tabindex="-1" aria-labelledby="myModalLabel16" aria-hidden="true">
+                                <div class="modal fade text-start" id="large" tabindex="-1"
+                                     aria-labelledby="myModalLabel16" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h4 class="modal-title text-primary" id="myModalLabel16">Remember - Winners Never Give Up!</h4>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <h4 class="modal-title text-primary" id="myModalLabel16">Remember -
+                                                    Winners Never Give Up!</h4>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="video-player" id="plyr-video-player">
-                                                    <iframe src="https://www.youtube.com/embed/wnHW6o8WMas" allowfullscreen allow="autoplay"></iframe>
+                                                    <iframe src="https://www.youtube.com/embed/wnHW6o8WMas"
+                                                            allowfullscreen allow="autoplay"></iframe>
                                                 </div>
                                             </div>
                                         </div>
@@ -101,7 +106,7 @@
                     <!--/ Medal Card -->
 
                     <!-- Transaction Card -->
-                    <div class="col-xl-8 col-lg-8 col-md-8 col-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-12">
                         <div class="card card-transaction">
                             <div class="card-header">
                                 <h4 class="card-title">Last 10 Transactions</h4>
@@ -110,35 +115,58 @@
 
                                 <div th:each="transaction : ${lastTransactions}" class="transaction-item">
                                     <div class="d-flex">
-                                        <div class="avatar rounded float-start"
-                                             th:classappend="${transaction.sender.id != transaction.recipient.id} ? (${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success') : (${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'bg-light-info' : 'bg-light-warning')">
+                                        <!-- Icon -->
+                                        <div th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}"
+                                             class="avatar rounded float-start bg-light-primary">
                                             <div class="avatar-content">
-                                                <i th:if="${transaction.sender.id == transaction.recipient.id}"
-                                                   class="avatar-icon font-medium-3"
-                                                   th:classappend="${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'far fa-credit-card' : 'fas fa-university '"></i>
-                                                <i th:if="${transaction.sender.id != transaction.recipient.id}"
-                                                   class="fas fa-user-friends avatar-icon font-medium-3"></i>
+                                                <i class="fas fa-wallet avatar-icon font-medium-3"></i>
                                             </div>
                                         </div>
+
+                                        <div th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD'}"
+                                             class="avatar rounded float-start bg-light-warning">
+                                            <div class="avatar-content">
+                                                <i class="fas fa-university avatar-icon font-medium-3"></i>
+                                            </div>
+                                        </div>
+
+                                        <div th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET'}"
+                                             class="avatar rounded float-start bg-light-info">
+                                            <div class="avatar-content">
+                                                <i class="far fa-credit-card avatar-icon font-medium-3"></i>
+                                            </div>
+                                        </div>
+
+                                        <div th:if="${transaction.transactionType.name() == 'SMALL_TRANSACTION' or transaction.transactionType.name() == 'LARGE_TRANSACTION'}"
+                                             class="avatar rounded float-start"
+                                             th:classappend="${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success'">
+                                            <div class="avatar-content">
+                                                <i class="fas fa-user-friends avatar-icon font-medium-3"></i>
+                                            </div>
+                                        </div>
+                                        <!-- Icon -->
                                         <div class="transaction-percentage">
                                             <h6 class="transaction-title">[[${transaction.description}]]</h6>
-                                            <small th:if="${transaction.sender.id == transaction.recipient.id}">[[${transaction.transactionType
-                                                ==
-                                                T(com.team9.virtualwallet.models.enums.TransactionType).CARD_TO_WALLET}
-                                                ? 'Deposit' : 'Withdrawal']]</small>
-                                            <small th:if="${transaction.sender.id != transaction.recipient.id}">Transfer</small>
+                                            <small th:if="${transaction.transactionType.name() == 'SMALL_TRANSACTION' or transaction.transactionType.name() == 'LARGE_TRANSACTION'}">Transfer</small>
+                                            <small th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET'}">Deposit</small>
+                                            <small th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD'}">Withdraw</small>
+                                            <small th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}">Wallet to Wallet</small>
                                         </div>
                                     </div>
-                                    <div th:if="${transaction.sender.id == transaction.recipient.id}" class="fw-bolder"
-                                         th:classappend="${transaction.senderPaymentMethod.type == T(com.team9.virtualwallet.models.enums.Type).CARD} ? 'text-success' : 'text-danger'">
-                                        [[${transaction.senderPaymentMethod.type ==
-                                        T(com.team9.virtualwallet.models.enums.Type).CARD} ? '+' :
-                                        '-']][[${transaction.amount}]] BGN
+
+                                    <div th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id)}"
+                                        class="fw-bolder text-danger">
+                                        -[[${transaction.amount}]]
                                     </div>
-                                    <div th:if="${transaction.sender.id != transaction.recipient.id}" class="fw-bolder"
-                                         th:classappend="${transaction.sender.id == currentLoggedUser.id} ? 'text-danger' : 'text-success'">
-                                        [[${transaction.sender.id == currentLoggedUser.id} ? '-' :
-                                        '+']][[${transaction.amount}]] BGN
+
+                                    <div th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id)}"
+                                        class="fw-bolder text-success">
+                                        +[[${transaction.amount}]]
+                                    </div>
+
+                                    <div th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}"
+                                        class="fw-bolder text-primary">
+                                        [[${transaction.amount}]]
                                     </div>
                                 </div>
 
