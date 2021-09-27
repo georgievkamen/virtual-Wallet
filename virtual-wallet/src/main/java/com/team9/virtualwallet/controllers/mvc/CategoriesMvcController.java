@@ -10,6 +10,7 @@ import com.team9.virtualwallet.models.dtos.CategoryDto;
 import com.team9.virtualwallet.services.contracts.CategoryService;
 import com.team9.virtualwallet.services.contracts.UserService;
 import com.team9.virtualwallet.services.mappers.CategoryModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/panel/categories")
@@ -147,5 +150,28 @@ public class CategoriesMvcController {
             return "redirect:/panel/wallets";
         }
     }
+
+    @GetMapping("/reports")
+    public String showSpendingsPage(HttpSession session, Model model,
+                                    @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
+                                    @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            List<Category> categories = service.getAll(user);
+            if (startDate.isPresent()) {
+                model.addAttribute("startDate", startDate.get());
+            }
+            if (endDate.isPresent()) {
+                model.addAttribute("endDate", endDate.get());
+            }
+            model.addAttribute("service", service);
+            model.addAttribute("categories", categories);
+            model.addAttribute("categoriesExist", !categories.isEmpty());
+            return "categories-reports";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
 
 }

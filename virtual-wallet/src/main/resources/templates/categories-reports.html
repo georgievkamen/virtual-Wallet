@@ -62,55 +62,60 @@
 
                 <!-- Cards Card -->
                 <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
-                    <div class="row" id="table-borderless">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header row">
-                                    <div class="col-6 text-start">
-                                        <h4 class="card-title text-primary ms-1">Categories</h4>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="col-6 text-start">
+                                <h4 class="card-title text-primary">Category Spendings</h4>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <form method="get" th:action="@{__${#httpServletRequest.requestURI}__}">
+                                <div class="row">
+                                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                                        <label class="form-label" for="startDate">Start Date</label>
+                                        <input type="date" class="form-control" id="startDate"
+                                               name="startDate"/>
                                     </div>
-                                    <div class="col-6 text-end">
-                                        <a th:href="@{__${#httpServletRequest.requestURI}__/reports}">
-                                            <button type="button" class="btn btn-relief-info">
-                                                Reports
-                                            </button>
-                                        </a>
-                                        <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
-                                            <button type="button" class="btn btn-relief-success">
-                                                Add Category
-                                            </button>
-                                        </a>
+
+                                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                                        <label class="form-label" for="endDate">End Date</label>
+                                        <input type="date" class="form-control" id="endDate" name="endDate"/>
                                     </div>
-                                </div>
-                                <div class="card-body pt-1">
-                                    <div th:if="${categoriesExist}" class="table-responsive">
-                                        <table class="table table-borderless">
-                                            <thead>
-                                            <tr class="text-center">
-                                                <th>Name</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr class="text-center" th:each="category : ${categories}">
-                                                <td>[[${category.name}]]</td>
-                                                <td>
-                                                    <a th:href="@{__${#httpServletRequest.requestURI}__/{id}/update(id=${category.id})}">
-                                                        <button type="button" class="btn btn-relief-primary">
-                                                            Edit
-                                                        </button>
-                                                    </a>
-                                                    <a th:href="@{__${#httpServletRequest.requestURI}__/{id}/delete(id=${category.id})}">
-                                                        <button type="button" class="btn btn-relief-danger">
-                                                            Delete
-                                                        </button>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+
+                                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                        <label class="form-label" for="endDate"></label>
+                                        <button type="submit" class="btn btn-relief-primary mt-2">Calculate</button>
                                     </div>
                                 </div>
+                            </form>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${categoriesExist}" class="table-responsive">
+                                <table class="table table-borderless">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th>Category</th>
+                                        <th th:if="${startDate != null}">Start Date</th>
+                                        <th th:if="${endDate != null}">End Date</th>
+                                        <th>Spendings</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="text-center" th:each="category : ${categories}">
+                                        <td>[[${category.name}]]</td>
+                                        <td th:if="${startDate != null}">[[${#dates.format(startDate,
+                                            'dd-MM-yyyy')}]]
+                                        </td>
+                                        <td th:if="${endDate != null}">[[${#dates.format(endDate,
+                                            'dd-MM-yyyy')}]]
+                                        </td>
+                                        <td>[[${service.calculateSpendings(currentLoggedUser, category,
+                                            startDate, endDate)}]] BGN
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
