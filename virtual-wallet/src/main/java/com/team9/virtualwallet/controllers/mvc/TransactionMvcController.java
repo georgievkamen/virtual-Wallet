@@ -11,8 +11,6 @@ import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
 import com.team9.virtualwallet.models.dtos.MoveToWalletTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.SortAmount;
-import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.services.contracts.*;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,16 +48,6 @@ public class TransactionMvcController {
         this.categoryService = categoryService;
     }
 
-    @ModelAttribute("sortDate")
-    public List<SortDate> populateSortDate() {
-        return Arrays.asList(SortDate.values());
-    }
-
-    @ModelAttribute("sortAmount")
-    public List<SortAmount> populateSortAmount() {
-        return Arrays.asList(SortAmount.values());
-    }
-
     @ModelAttribute("direction")
     public List<Direction> populateDirection() {
         return Arrays.asList(Direction.values());
@@ -86,6 +74,7 @@ public class TransactionMvcController {
             model.addAttribute("transactionsExist", !transactions.isEmpty());
             model.addAttribute("cardService", cardService);
             model.addAttribute("walletService", walletService);
+            model.addAttribute("filtered", false);
             return "transactions";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
@@ -259,9 +248,7 @@ public class TransactionMvcController {
                                      @RequestParam(name = "direction") String direction,
                                      @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
                                      @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
-                                     @RequestParam(name = "username", required = false) Optional<String> username,
-                                     @RequestParam(name = "sortAmount") String sortAmount,
-                                     @RequestParam(name = "sortDate") String sortDate) {
+                                     @RequestParam(name = "username", required = false) Optional<String> username) {
 
         try {
             User user = authenticationHelper.tryGetUser(session);
@@ -271,10 +258,12 @@ public class TransactionMvcController {
                     startDate,
                     endDate,
                     username.isEmpty() ? username : Optional.empty(),
-                    Optional.of(SortAmount.getEnum(sortAmount)),
-                    Optional.of(SortDate.getEnum(sortDate)));
+                    Optional.empty(),
+                    Optional.empty());
             model.addAttribute("transactions", filtered);
             model.addAttribute("transactionsExist", !filtered.isEmpty());
+            model.addAttribute("cardService", cardService);
+            model.addAttribute("walletService", walletService);
             model.addAttribute("filtered", true);
             return "transactions";
         } catch (AuthenticationFailureException e) {
