@@ -10,9 +10,11 @@ public interface UserRepository extends BaseRepository<User> {
 
     void updateProfilePhoto(User user, MultipartFile multipartFile);
 
-    List<User> filter(Optional<String> userName, Optional<String> phoneNumber, Optional<String> email, int userId);
+    List<User> filter(Optional<String> userName, Optional<String> phoneNumber, Optional<String> email);
 
     List<User> search(String searchTerm, int userId);
+
+    User getByIdBlocked(int id);
 
     User getByFieldNotDeleted(String fieldName, String searchTerm, int userId);
 

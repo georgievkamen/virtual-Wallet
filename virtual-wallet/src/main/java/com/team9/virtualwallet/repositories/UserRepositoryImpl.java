@@ -55,7 +55,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     @Override
     public List<User> getAll() {
         try (Session session = sessionFactory.openSession()) {
-            Query<User> query = session.createQuery("from User where isDeleted = false ", User.class);
+            Query<User> query = session.createQuery("from User ", User.class);
             return query.list();
         }
     }
@@ -65,6 +65,17 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
         try (Session session = sessionFactory.openSession()) {
             User user = session.get(User.class, id);
             if (user == null || user.isDeleted()) {
+                throw new EntityNotFoundException("User", id);
+            }
+            return user;
+        }
+    }
+
+    @Override
+    public User getByIdBlocked(int id) {
+        try (Session session = sessionFactory.openSession()) {
+            User user = session.get(User.class, id);
+            if (user == null) {
                 throw new EntityNotFoundException("User", id);
             }
             return user;
@@ -118,11 +129,10 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     @Override
     public List<User> filter(Optional<String> userName,
                              Optional<String> phoneNumber,
-                             Optional<String> email,
-                             int userId) {
+                             Optional<String> email) {
 
         try (Session session = sessionFactory.openSession()) {
-            var baseQuery = "select u from User u where u.id != :id";
+            var baseQuery = "select u from User u ";
             List<String> filters = new ArrayList<>();
 
             if (userName.isPresent()) {
@@ -138,11 +148,10 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
             }
 
             if (!filters.isEmpty()) {
-                baseQuery += " and " + String.join(" and ", filters);
+                baseQuery += " where " + String.join(" and ", filters);
             }
 
             Query<User> query = session.createQuery(baseQuery, User.class);
-            query.setParameter("id", userId);
 
             userName.ifPresent(s -> query.setParameter("username", s));
             phoneNumber.ifPresent(s -> query.setParameter("phoneNumber", s));

@@ -113,13 +113,19 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException("Only employees can filter all users");
         }
 
-        return repository.filter(userName, phoneNumber, email, user.getId());
+        return repository.filter(verifyOptionalNotEmpty(userName), verifyOptionalNotEmpty(phoneNumber), verifyOptionalNotEmpty(email));
 
+    }
+
+    private Optional<String> verifyOptionalNotEmpty(Optional<String> optional) {
+        if (optional.isPresent() && !optional.get().isEmpty()) {
+            return optional;
+        }
+        return Optional.empty();
     }
 
     @Override
     public List<User> search(User user, String searchTerm) {
-
         return repository.search(searchTerm, user.getId());
     }
 
@@ -179,7 +185,7 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "block", "users"));
         }
 
-        User user = repository.getById(id);
+        User user = repository.getByIdBlocked(id);
         user.setBlocked(true);
 
         repository.update(user);
@@ -191,7 +197,7 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "unblock", "users"));
         }
 
-        User user = repository.getById(id);
+        User user = repository.getByIdBlocked(id);
         user.setBlocked(false);
 
         repository.update(user);
