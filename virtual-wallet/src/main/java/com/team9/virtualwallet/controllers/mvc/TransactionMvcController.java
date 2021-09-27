@@ -10,8 +10,12 @@ import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
 import com.team9.virtualwallet.models.dtos.MoveToWalletTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
+import com.team9.virtualwallet.models.enums.Direction;
+import com.team9.virtualwallet.models.enums.SortAmount;
+import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.services.contracts.*;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +48,21 @@ public class TransactionMvcController {
         this.walletService = walletService;
         this.userService = userService;
         this.categoryService = categoryService;
+    }
+
+    @ModelAttribute("sortDate")
+    public List<SortDate> populateSortDate() {
+        return Arrays.asList(SortDate.values());
+    }
+
+    @ModelAttribute("sortAmount")
+    public List<SortAmount> populateSortAmount() {
+        return Arrays.asList(SortAmount.values());
+    }
+
+    @ModelAttribute("direction")
+    public List<Direction> populateDirection() {
+        return Arrays.asList(Direction.values());
     }
 
     //TODO Think about moving this to BaseAuthenticationController
@@ -72,7 +93,9 @@ public class TransactionMvcController {
     }
 
     @GetMapping("/create/internal")
-    public String showInternalTransactionPage(HttpSession session, Model model, @RequestParam(name = "fieldName", required = false) String fieldName, @RequestParam(name = "search-field", required = false) String searchTerm) {
+    public String showInternalTransactionPage(HttpSession session, Model model,
+                                              @RequestParam(name = "fieldName", required = false) String fieldName,
+                                              @RequestParam(name = "search-field", required = false) String searchTerm) {
         try {
             User user = authenticationHelper.tryGetUser(session);
             List<Category> categories = categoryService.getAll(user);
@@ -208,7 +231,10 @@ public class TransactionMvcController {
     }
 
     @PostMapping("/create/withdraw")
-    public String createWithdrawTransaction(@Valid @ModelAttribute("transaction") ExternalTransactionDto externalTransactionDto, BindingResult result, HttpSession session, Model model) {
+    public String createWithdrawTransaction(@Valid
+                                            @ModelAttribute("transaction")
+                                                    ExternalTransactionDto externalTransactionDto,
+                                            BindingResult result, HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
             model.addAttribute("userWallets", walletService.getAll(user));
@@ -227,4 +253,38 @@ public class TransactionMvcController {
         }
     }
 
+    @PostMapping("/filter")
+    public String filterTransactions(HttpSession session,
+                                     Model model,
+                                     @RequestParam(name = "direction") String direction,
+                                     @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
+                                     @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
+                                     @RequestParam(name = "username", required = false) Optional<String> username,
+                                     @RequestParam(name = "sortAmount") String sortAmount,
+                                     @RequestParam(name = "sortDate") String sortDate) {
+
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+
+            List<Transaction> filtered = service.filter(user,
+                    Direction.getEnum(direction),
+                    startDate,
+                    endDate,
+                    username.isEmpty() ? username : Optional.empty(),
+                    Optional.of(SortAmount.getEnum(sortAmount)),
+                    Optional.of(SortDate.getEnum(sortDate)));
+            model.addAttribute("transactions", filtered);
+            model.addAttribute("transactionsExist", !filtered.isEmpty());
+            model.addAttribute("filtered", true);
+            return "transactions";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "not-found";
+
+        }
+    }
 }
+
+

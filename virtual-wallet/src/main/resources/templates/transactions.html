@@ -70,8 +70,50 @@
                                         <h4 class="card-title text-primary ms-1">Transactions</h4>
                                     </div>
                                     <div class="col-6 text-end">
+
+                                        <form method="post"
+                                              th:action="@{/panel/transactions/filter}">
+
+                                            <label class="form-label" for="startDate">Start Date</label>
+                                            <input type="date" class="form-control" id="startDate" name="startDate"/>
+
+                                            <label class="form-label" for="endDate">End Date</label>
+                                            <input type="date" class="form-control" id="endDate" name="endDate"/>
+
+                                            <label class="form-label">Username</label>
+                                            <input type="text" class="form-control" name="username"/>
+
+                                            <select class="form-select form-control" name="direction">
+                                                <option th:each="direction : ${direction}"
+                                                        th:value="${direction}"
+                                                        th:text="${direction}">
+                                                    Direction
+                                                </option>
+                                            </select>
+
+                                            <select class="form-select form-control" name="sortAmount">
+                                                <option th:each="sortAmount : ${sortAmount}"
+                                                        th:value="${sortAmount}"
+                                                        th:text="${sortAmount}">
+                                                    Sort By Amount
+                                                </option>
+                                            </select>
+
+                                            <select class="form-select form-control" name="sortDate">
+                                                <option th:each="sortDate : ${sortDate}"
+                                                        th:value="${sortDate}"
+                                                        th:text="${sortDate}">
+                                                    Sort By Date
+                                                </option>
+                                            </select>
+                                            <a>
+                                                <button type="submit" class="btn btn-relief-primary">Filter</button>
+                                            </a>
+                                        </form>
+
                                         <a th:href="@{__${#httpServletRequest.requestURI}__/create/internal}">
-                                            <button type="button" class="btn btn-relief-success">Create Transaction</button>
+                                            <button type="button" class="btn btn-relief-success">Create Transaction
+                                            </button>
                                         </a>
                                     </div>
                                 </div>
@@ -117,7 +159,8 @@
                                                 </td>
 
                                                 <td th:if="${transaction.transactionType.name() == 'SMALL_TRANSACTION' or transaction.transactionType.name() == 'LARGE_TRANSACTION'}">
-                                                    <div class="avatar rounded float-start" th:classappend="${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success'">
+                                                    <div class="avatar rounded float-start"
+                                                         th:classappend="${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success'">
                                                         <div class="avatar-content">
                                                             <i class="fas fa-user-friends avatar-icon font-medium-3"></i>
                                                         </div>

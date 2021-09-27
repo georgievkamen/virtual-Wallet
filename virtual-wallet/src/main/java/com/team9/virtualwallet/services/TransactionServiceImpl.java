@@ -153,16 +153,25 @@ public class TransactionServiceImpl implements TransactionService {
                                     Optional<SortAmount> amount,
                                     Optional<SortDate> date) {
 
-        int userId = user.getId();
-        Optional<Integer> searchedPersonId = checkAndSetIfPresent(searchedPersonUsername, userId);
+        Optional<Integer> searchedPersonId = checkAndSetIfPresent(searchedPersonUsername);
+        return repository.filter(user.getId(), direction, startDate, endDate, searchedPersonId, amount, date);
+    }
+
+    public List<Transaction> employeeFilter(String username,
+                                            Direction direction,
+                                            Optional<Date> startDate,
+                                            Optional<Date> endDate,
+                                            Optional<String> searchedPersonUsername,
+                                            Optional<SortAmount> amount,
+                                            Optional<SortDate> date) {
+
+        int userId = userRepository.getByField("username", username).getId();
+        Optional<Integer> searchedPersonId = checkAndSetIfPresent(searchedPersonUsername);
         return repository.filter(userId, direction, startDate, endDate, searchedPersonId, amount, date);
     }
 
-    private Optional<Integer> checkAndSetIfPresent(Optional<String> searchedPersonUsername, int userId) {
-        if (searchedPersonUsername.isPresent()) {
-            return Optional.of(userRepository.getByFieldNotDeleted("username", searchedPersonUsername.get(), userId).getId());
-        }
-        return Optional.empty();
+    private Optional<Integer> checkAndSetIfPresent(Optional<String> searchedPersonUsername) {
+        return searchedPersonUsername.map(s -> userRepository.getByField("username", s).getId());
     }
 
 
