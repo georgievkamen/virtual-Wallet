@@ -190,6 +190,27 @@
                     </a>
                 </li>
 
+                <li th:if="${currentLoggedUser.isEmployee}" class="dropdown nav-item" data-menu="dropdown">
+                    <a class="dropdown-toggle nav-link d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin Panel</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li data-menu="">
+                            <a class="dropdown-item d-flex align-items-center" href="/panel/admin/users">
+                                <i class="fas fa-users"></i>
+                                <span>Users</span>
+                            </a>
+                        </li>
+                        <li data-menu="">
+                            <a class="dropdown-item d-flex align-items-center" href="/panel/admin/transactions">
+                                <i class="fas fa-money-check"></i>
+                                <span>Transactions</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
         </div>
     </div>

@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "block", "users"));
         }
 
-        User user = repository.getByIdBlocked(id);
+        User user = repository.getById(id);
         user.setBlocked(true);
 
         repository.update(user);
@@ -197,7 +197,7 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "unblock", "users"));
         }
 
-        User user = repository.getByIdBlocked(id);
+        User user = repository.getById(id);
         user.setBlocked(false);
 
         repository.update(user);

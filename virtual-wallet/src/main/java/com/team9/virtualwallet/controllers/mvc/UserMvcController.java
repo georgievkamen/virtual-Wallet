@@ -47,6 +47,8 @@ public class UserMvcController {
             return "users";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
+        } catch (UnauthorizedOperationException e) {
+            return "redirect:/panel";
         }
     }
 
@@ -55,11 +57,11 @@ public class UserMvcController {
         try {
             User user = authenticationHelper.tryGetUser(session);
             service.unblockUser(user, id);
-            return "redirect:/panel/admin/users";
+            return "users";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (UnauthorizedOperationException e) {
-            return "redirect:/panel/admin/users";
+            return "redirect:/panel";
         }
     }
 
@@ -68,11 +70,11 @@ public class UserMvcController {
         try {
             User user = authenticationHelper.tryGetUser(session);
             service.blockUser(user, id);
-            return "redirect:/panel/admin/users";
+            return "users";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (UnauthorizedOperationException e) {
-            return "redirect:/panel/admin/users";
+            return "redirect:/panel";
         }
     }
 
@@ -94,7 +96,8 @@ public class UserMvcController {
         } catch (EntityNotFoundException e) {
             model.addAttribute("error", e.getMessage());
             return "not-found";
-
+        } catch (UnauthorizedOperationException e) {
+            return "redirect:/panel";
         }
     }
 

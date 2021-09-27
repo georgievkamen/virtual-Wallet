@@ -61,28 +61,6 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
-    public User getById(int id) {
-        try (Session session = sessionFactory.openSession()) {
-            User user = session.get(User.class, id);
-            if (user == null || user.isDeleted()) {
-                throw new EntityNotFoundException("User", id);
-            }
-            return user;
-        }
-    }
-
-    @Override
-    public User getByIdBlocked(int id) {
-        try (Session session = sessionFactory.openSession()) {
-            User user = session.get(User.class, id);
-            if (user == null) {
-                throw new EntityNotFoundException("User", id);
-            }
-            return user;
-        }
-    }
-
-    @Override
     public void delete(User user) {
         user.setDeleted(true);
         user.setEmail("0");

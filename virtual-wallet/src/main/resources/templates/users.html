@@ -70,23 +70,30 @@
                                     <div class="col-6 text-start">
                                         <h4 class="card-title text-primary ms-1">Users</h4>
                                     </div>
-                                    <div class="col-6 text-end">
-                                        <form method="post"
-                                              th:action="@{/panel/admin/users/filter}">
+                                </div>
+                                <div class="card-body">
+                                    <form method="post" th:action="@{/panel/admin/users/filter}">
+                                        <div class="row pb-1">
+                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                                <label class="form-label">Username</label>
+                                                <input type="text" class="form-control" name="username"/>
+                                            </div>
 
-                                            <label class="form-label">Username</label>
-                                            <input type="text" class="form-control" name="username"/>
+                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                                <label class="form-label">Phone Number</label>
+                                                <input type="text" class="form-control" name="phoneNumber"/>
+                                            </div>
 
-                                            <label class="form-label">Phone Number</label>
-                                            <input type="text" class="form-control" name="phoneNumber"/>
+                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                                <label class="form-label">Email</label>
+                                                <input type="text" class="form-control" name="email"/>
+                                            </div>
 
-                                            <label class="form-label">Email</label>
-                                            <input type="text" class="form-control" name="email"/>
-
-                                            <button type="submit" class="btn btn-relief-primary">Search</button>
-                                            </a>
-                                        </form>
-                                    </div>
+                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 mt-2 text-end">
+                                                <button type="submit" class="btn btn-relief-primary">Search</button>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                                 <div th:if="${usersExist}" class="card-body pt-1">
                                     <div class="table-responsive">
