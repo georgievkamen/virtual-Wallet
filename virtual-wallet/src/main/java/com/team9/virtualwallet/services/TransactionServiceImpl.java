@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.team9.virtualwallet.services.utils.Helpers.validateCardExpiryDate;
+import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZED_ACTION;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -149,25 +150,28 @@ public class TransactionServiceImpl implements TransactionService {
                                     Direction direction,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
-                                    Optional<String> searchedPersonUsername,
+                                    Optional<String> counterparty,
                                     Optional<SortAmount> amount,
                                     Optional<SortDate> date) {
 
-        Optional<Integer> searchedPersonId = checkAndSetIfPresent(searchedPersonUsername);
-        return repository.filter(user.getId(), direction, startDate, endDate, searchedPersonId, amount, date);
+        Optional<Integer> counterpartyId = checkAndSetIfPresent(counterparty);
+        return repository.filter(user.getId(), direction, startDate, endDate, counterpartyId, amount, date);
     }
 
-    public List<Transaction> employeeFilter(String username,
+    public List<Transaction> employeeFilter(User userExecuting,
+                                            String username,
                                             Direction direction,
                                             Optional<Date> startDate,
                                             Optional<Date> endDate,
-                                            Optional<String> searchedPersonUsername,
+                                            Optional<String> counterparty,
                                             Optional<SortAmount> amount,
                                             Optional<SortDate> date) {
-
+        if (!userExecuting.isEmployee()) {
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "remove", "employee"));
+        }
         int userId = userRepository.getByField("username", username).getId();
-        Optional<Integer> searchedPersonId = checkAndSetIfPresent(searchedPersonUsername);
-        return repository.filter(userId, direction, startDate, endDate, searchedPersonId, amount, date);
+        Optional<Integer> counterpartyId = checkAndSetIfPresent(counterparty);
+        return repository.filter(userId, direction, startDate, endDate, counterpartyId, amount, date);
     }
 
     private Optional<Integer> checkAndSetIfPresent(Optional<String> searchedPersonUsername) {

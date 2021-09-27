@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
-    <title>Virtual Wallet | Home</title>
+    <title>Virtual Wallet | Transactions</title>
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/ico/favicon.ico}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
           rel="stylesheet">
@@ -31,6 +31,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-sweet-alerts.css}">
     <!-- END: Page CSS-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
@@ -70,18 +71,17 @@
                                     <div class="col-6 text-start">
                                         <h4 class="card-title text-primary">Transactions</h4>
                                     </div>
-                                    <div class="col-6 text-end">
-                                        <a th:href="@{__${#httpServletRequest.requestURI}__/create/internal}">
-                                            <button type="button" class="btn btn-relief-success">
-                                                Create Transaction
-                                            </button>
-                                        </a>
-                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <form method="post" th:action="@{/panel/transactions/filter}">
+                                    <form method="get" th:action="@{/panel/admin/transactions}">
                                         <div class="row pb-1">
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                                <label class="form-label" for="username">Username</label>
+                                                <input type="text" class="form-control" id="username" name="username" th:classappend="${error != null} ? 'is-invalid' : ''"/>
+                                                <div th:if="${error != null}" class="invalid-feedback" th:text="${error}"></div>
+                                            </div>
+
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
                                                 <label class="form-label" for="counterparty">Counterparty</label>
                                                 <input type="text" class="form-control" id="counterparty" name="counterparty"/>
                                             </div>
@@ -97,7 +97,7 @@
                                                 <input type="date" class="form-control" id="endDate" name="endDate"/>
                                             </div>
 
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
                                                 <label class="form-label" for="direction">Direction</label>
                                                 <select class="form-select form-control" id="direction"
                                                         name="direction">
@@ -110,7 +110,7 @@
                                             </div>
 
                                             <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 mt-2 text-end">
-                                                <button type="submit" class="btn btn-relief-primary">Filter</button>
+                                                <button type="submit" class="btn btn-relief-primary" onclick="return checkUsername()">Filter</button>
                                             </div>
                                         </div>
                                     </form>
@@ -157,8 +157,7 @@
                                                 </td>
 
                                                 <td th:if="${transaction.transactionType.name() == 'SMALL_TRANSACTION' or transaction.transactionType.name() == 'LARGE_TRANSACTION'}">
-                                                    <div class="avatar rounded float-start"
-                                                         th:classappend="${transaction.sender.id == currentLoggedUser.id} ? 'bg-light-danger' : 'bg-light-success'">
+                                                    <div class="avatar rounded float-start bg-light-danger">
                                                         <div class="avatar-content">
                                                             <i class="fas fa-user-friends avatar-icon font-medium-3"></i>
                                                         </div>
@@ -171,56 +170,18 @@
                                                 <td>[[${transaction.timestamp}]]</td>
 
                                                 <!-- Balance -->
-                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id)}"
-                                                    class="text-danger">
-                                                    -[[${transaction.amount}]]
-                                                </td>
 
-                                                <td th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id)}"
-                                                    class="text-success">
-                                                    +[[${transaction.amount}]]
-                                                </td>
-
-                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}"
-                                                    class="text-primary">
+                                                <td class="text-danger">
                                                     [[${transaction.amount}]]
                                                 </td>
 
                                                 <!-- Sender -->
-                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.sender.id == currentLoggedUser.id}">
-                                                    [[${transaction.sender.username}]]/[[${walletService.getById(currentLoggedUser,
-                                                    transaction.senderPaymentMethod.id).name}]]
-                                                </td>
-                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.sender.id != currentLoggedUser.id}">
-                                                    [[${transaction.sender.username}]]
-                                                </td>
-                                                <td th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET'}">
-                                                    [[${transaction.sender.username}]]/[[${cardService.getById(currentLoggedUser,
-                                                    transaction.senderPaymentMethod.id).getMaskedCardNumber}]]
-                                                </td>
-                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD' or transaction.transactionType.name() == 'WALLET_TO_WALLET'}">
-                                                    [[${transaction.sender.username}]]/[[${walletService.getById(currentLoggedUser,
-                                                    transaction.senderPaymentMethod.id).name}]]
-                                                </td>
+                                                <td>[[${transaction.sender.username}]]</td>
                                                 <!-- Sender -->
 
 
                                                 <!-- Recipient -->
-                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.recipient.id == currentLoggedUser.id}">
-                                                    [[${transaction.recipient.username}]]/[[${walletService.getById(currentLoggedUser,
-                                                    transaction.recipientPaymentMethod.id).name}]]
-                                                </td>
-                                                <td th:if="${transaction.sender.id != transaction.recipient.id and transaction.recipient.id != currentLoggedUser.id}">
-                                                    [[${transaction.recipient.username}]]
-                                                </td>
-                                                <td th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD'}">
-                                                    [[${transaction.recipient.username}]]/[[${cardService.getById(currentLoggedUser,
-                                                    transaction.recipientPaymentMethod.id).getMaskedCardNumber}]]
-                                                </td>
-                                                <td th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET' or transaction.transactionType.name() == 'WALLET_TO_WALLET'}">
-                                                    [[${transaction.recipient.username}]]/[[${walletService.getById(currentLoggedUser,
-                                                    transaction.recipientPaymentMethod.id).name}]]
-                                                </td>
+                                                <td>[[${transaction.recipient.username}]]</td>
                                                 <!-- Recipient-->
 
                                                 <!-- Description-->
@@ -268,17 +229,32 @@
 
 <!-- BEGIN: Page JS-->
 <script th:src="@{/js/scripts/pages/homepage.js}"></script>
+<script th:src="@{/vendors/js/extensions/sweetalert2.all.min.js}"></script>
+<script th:src="@{/js/scripts/extensions/ext-component-sweet-alerts.js}"></script>
 <!-- END: Page JS-->
 
 <script>
-    $(window).on('load', function () {
-        if (feather) {
-            feather.replace({
-                width: 14,
-                height: 14
-            });
+    function checkUsername() {
+        let x = document.getElementById("username").value;
+        if (x === "") {
+            showErrorModal('You must enter an username!');
+            return false;
         }
-    })
+    }
+
+    const showErrorModal = function (text) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: text,
+            type: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        })
+    };
 </script>
 </body>
 

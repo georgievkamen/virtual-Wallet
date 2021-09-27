@@ -248,7 +248,7 @@ public class TransactionMvcController {
                                      @RequestParam(name = "direction") String direction,
                                      @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
                                      @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
-                                     @RequestParam(name = "username", required = false) Optional<String> username) {
+                                     @RequestParam(name = "counterparty", required = false) Optional<String> counterparty) {
 
         try {
             User user = authenticationHelper.tryGetUser(session);
@@ -257,7 +257,7 @@ public class TransactionMvcController {
                     Direction.getEnum(direction),
                     startDate,
                     endDate,
-                    username.isEmpty() ? username : Optional.empty(),
+                    counterparty.isEmpty() ? counterparty : Optional.empty(),
                     Optional.empty(),
                     Optional.empty());
             model.addAttribute("transactions", filtered);

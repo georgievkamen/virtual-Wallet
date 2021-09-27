@@ -30,7 +30,16 @@ public interface TransactionService {
                              Direction direction,
                              Optional<Date> startDate,
                              Optional<Date> endDate,
-                             Optional<String> searchedPersonUsername,
+                             Optional<String> counterparty,
                              Optional<SortAmount> amount,
                              Optional<SortDate> date);
+
+    List<Transaction> employeeFilter(User userExecuting,
+                                     String username,
+                                     Direction direction,
+                                     Optional<Date> startDate,
+                                     Optional<Date> endDate,
+                                     Optional<String> counterparty,
+                                     Optional<SortAmount> amount,
+                                     Optional<SortDate> date);
 }
