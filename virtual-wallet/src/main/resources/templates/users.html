@@ -109,20 +109,28 @@
                                             <tr class="text-center" th:each="user : ${users}">
                                                 <td>[[${user.username}]]</td>
                                                 <td>[[${user.isDeleted}]]</td>
-                                                <td>
-                                                    <a th:if="${!user.isBlocked}"
-                                                       th:href="@{/panel/admin/users/{id}/block(id=${user.id})}">
-                                                        <button type="button" class="btn btn-danger"
-                                                                style="padding-left: 24.594px; padding-right: 24.595px">
+                                                <td th:if="${!user.isBlocked}">
+                                                    <a th:href="@{/panel/admin/users/{id}/block(id=${user.id})}">
+                                                        <button type="button" class="btn btn-relief-danger">
                                                             Block
                                                         </button>
                                                     </a>
-
                                                     <a th:if="${user.isBlocked}"
                                                        th:href="@{/panel/admin/users/{id}/unblock(id=${user.id})}">
-                                                        <button type="button" class="btn btn-success"
-                                                                style="padding-left: 24.594px; padding-right: 24.595px">
+                                                        <button type="button" class="btn btn-relief-success">
                                                             Unblock
+                                                        </button>
+                                                    </a>
+                                                    <a th:if="${!user.isEmployee}"
+                                                       th:href="@{/panel/admin/users/{id}/employee(id=${user.id})}">
+                                                        <button type="button" class="btn btn-relief-primary" style="padding-left: 30.9115px; padding-right: 30.9115px;">
+                                                            Make Employee
+                                                        </button>
+                                                    </a>
+                                                    <a th:if="${user.isEmployee}"
+                                                       th:href="@{/panel/admin/users/{id}/employee/remove(id=${user.id})}">
+                                                        <button type="button" class="btn btn-relief-danger">
+                                                            Remove Employee
                                                         </button>
                                                     </a>
                                                 </td>

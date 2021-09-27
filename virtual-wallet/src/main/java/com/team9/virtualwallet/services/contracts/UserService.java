@@ -33,6 +33,10 @@ public interface UserService {
 
     List<User> getContacts(User user);
 
+    void makeEmployee(User userExecuting, int userId);
+
+    void removeEmployee(User userExecuting, int userId);
+
     void blockUser(User userExecuting, int id);
 
     void unblockUser(User userExecuting, int id);

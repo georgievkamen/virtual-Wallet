@@ -7,6 +7,7 @@ import com.team9.virtualwallet.models.ConfirmationToken;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.repositories.contracts.ConfirmationTokenRepository;
+import com.team9.virtualwallet.repositories.contracts.RoleRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.services.contracts.UserService;
 import com.team9.virtualwallet.services.contracts.WalletService;
@@ -28,13 +29,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final WalletService walletService;
+    private final RoleRepository roleRepository;
     private final SendEmailServiceImpl sendEmailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, WalletService walletService, SendEmailServiceImpl sendEmailService) {
+    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, WalletService walletService, RoleRepository roleRepository, SendEmailServiceImpl sendEmailService) {
         this.repository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.walletService = walletService;
+        this.roleRepository = roleRepository;
         this.sendEmailService = sendEmailService;
     }
 
@@ -176,6 +179,26 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setEmailVerified(true);
+        repository.update(user);
+    }
+
+    @Override
+    public void makeEmployee(User userExecuting, int userId) {
+        if (!userExecuting.isEmployee()) {
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "make", "employee"));
+        }
+        User user = repository.getById(userId);
+        user.addRole(roleRepository.getById(2));
+        repository.update(user);
+    }
+
+    @Override
+    public void removeEmployee(User userExecuting, int userId) {
+        if (!userExecuting.isEmployee()) {
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "remove", "employee"));
+        }
+        User user = repository.getById(userId);
+        user.removeRole(roleRepository.getById(2));
         repository.update(user);
     }
 

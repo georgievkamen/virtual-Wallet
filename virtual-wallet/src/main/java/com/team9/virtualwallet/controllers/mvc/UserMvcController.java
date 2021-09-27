@@ -52,12 +52,38 @@ public class UserMvcController {
         }
     }
 
+    @GetMapping("/{id}/employee")
+    public String makeEmployee(HttpSession session, @PathVariable int id) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            service.makeEmployee(user, id);
+            return "redirect:/panel/admin/users";
+        } catch (UnauthorizedOperationException e) {
+            return "redirect:/panel";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @GetMapping("/{id}/employee/remove")
+    public String removeEmployee(HttpSession session, @PathVariable int id) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            service.removeEmployee(user, id);
+            return "redirect:/panel/admin/users";
+        } catch (UnauthorizedOperationException e) {
+            return "redirect:/panel";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
     @GetMapping("/{id}/unblock")
     public String unblockUser(HttpSession session, @PathVariable int id) {
         try {
             User user = authenticationHelper.tryGetUser(session);
             service.unblockUser(user, id);
-            return "users";
+            return "redirect:/panel/admin/users";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (UnauthorizedOperationException e) {
@@ -70,7 +96,7 @@ public class UserMvcController {
         try {
             User user = authenticationHelper.tryGetUser(session);
             service.blockUser(user, id);
-            return "users";
+            return "redirect:/panel/admin/users";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (UnauthorizedOperationException e) {
