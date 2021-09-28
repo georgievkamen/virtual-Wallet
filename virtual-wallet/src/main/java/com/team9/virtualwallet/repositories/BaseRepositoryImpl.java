@@ -5,6 +5,7 @@ import com.team9.virtualwallet.repositories.contracts.BaseRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -19,9 +20,11 @@ public class BaseRepositoryImpl<E> implements BaseRepository<E> {
     }
 
     @Override
-    public List<E> getAll() {
+    public List<E> getAll(Pageable pageable) {
         try (Session session = sessionFactory.openSession()) {
             Query<E> query = session.createQuery("from " + clazz.getSimpleName(), clazz);
+            query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
             return query.list();
         }
     }

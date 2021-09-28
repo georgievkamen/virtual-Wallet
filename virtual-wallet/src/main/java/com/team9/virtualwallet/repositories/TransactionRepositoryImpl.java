@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     }
 
     @Override
-    public List<Transaction> getAll(User user) {
+    public List<Transaction> getAll(User user, Pageable pageable) {
         try (Session session = sessionFactory.openSession()) {
             Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id order by timestamp desc", Transaction.class);
             query.setParameter("id", user.getId());
+            query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
             return query.list();
         }
     }
@@ -77,7 +80,8 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                                     Optional<Date> endDate,
                                     Optional<Integer> searchedPersonId,
                                     Optional<SortAmount> amount,
-                                    Optional<SortDate> date) {
+                                    Optional<SortDate> date,
+                                    Pageable pageable) {
 
         try (Session session = sessionFactory.openSession()) {
             var baseQuery = "select t from Transaction t";
@@ -124,6 +128,8 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
             startDate.ifPresent(value -> query.setParameter("startDate", value));
             endDate.ifPresent(value -> query.setParameter("endDate", value));
             searchedPersonId.ifPresent(integer -> query.setParameter("searchedId", integer));
+            query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
 
             return query.list();
         }

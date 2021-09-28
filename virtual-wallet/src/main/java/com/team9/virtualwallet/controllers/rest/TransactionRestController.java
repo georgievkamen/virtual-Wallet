@@ -12,6 +12,8 @@ import com.team9.virtualwallet.models.enums.SortDate;
 import com.team9.virtualwallet.services.contracts.TransactionService;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,6 @@ import java.util.Optional;
 
 import static com.team9.virtualwallet.configs.RestResponseEntityExceptionHandler.checkFields;
 import static com.team9.virtualwallet.utils.DummyHelper.validateDummy;
-import static com.team9.virtualwallet.utils.PagingHelper.getPage;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -43,11 +44,10 @@ public class TransactionRestController {
 
     @GetMapping
     public List<Transaction> getAll(@RequestHeader HttpHeaders headers,
-                                    @RequestParam(defaultValue = "1") int page,
-                                    @RequestParam(defaultValue = "5") int size) {
+                                    @PageableDefault(page = 1) Pageable pageable) {
         User user = authenticationHelper.tryGetUser(headers);
 
-        return getPage(service.getAll(user), page, size);
+        return service.getAll(user, pageable);
     }
 
     @GetMapping("/{id}")
@@ -110,8 +110,7 @@ public class TransactionRestController {
 
     @GetMapping("/filter")
     public List<Transaction> filter(@RequestHeader HttpHeaders headers,
-                                    @RequestParam(defaultValue = "1") int page,
-                                    @RequestParam(defaultValue = "5") int size,
+                                    @PageableDefault(page = 1) Pageable pageable,
                                     @RequestParam Direction direction,
                                     @RequestParam(required = false)
                                                 Optional<Date> startDate,
@@ -122,7 +121,7 @@ public class TransactionRestController {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return getPage(service.filter(user, direction, startDate, endDate, username, amount, date), page, size);
+        return service.filter(user, direction, startDate, endDate, username, amount, date, pageable);
     }
 
 }

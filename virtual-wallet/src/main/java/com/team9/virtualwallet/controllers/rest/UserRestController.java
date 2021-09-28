@@ -4,13 +4,13 @@ import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
-import static com.team9.virtualwallet.utils.PagingHelper.getPage;
 
 
 @RestController
@@ -28,11 +28,10 @@ public class UserRestController {
 
     @GetMapping()
     public List<User> getAll(@RequestHeader HttpHeaders headers,
-                             @RequestParam(defaultValue = "1") int page,
-                             @RequestParam(defaultValue = "5") int size) {
+                             @PageableDefault(page = 1) Pageable pageable) {
         User userExecuting = authenticationHelper.tryGetUser(headers);
 
-        return getPage(service.getAll(userExecuting), page, size);
+        return service.getAll(userExecuting, pageable);
     }
 
     @DeleteMapping
@@ -51,21 +50,9 @@ public class UserRestController {
         return service.getByField(userExecuting, fieldName, searchTerm);
     }
 
-    @GetMapping("/search")
-    public List<User> search(@RequestHeader HttpHeaders headers,
-                             @RequestParam(defaultValue = "1") int page,
-                             @RequestParam(defaultValue = "5") int size,
-                             @RequestParam String searchTerm) {
-
-        User user = authenticationHelper.tryGetUser(headers);
-
-        return getPage(service.search(user, searchTerm), page, size);
-    }
-
     @GetMapping("/filter")
     public List<User> filter(@RequestHeader HttpHeaders headers,
-                             @RequestParam(defaultValue = "1") int page,
-                             @RequestParam(defaultValue = "5") int size,
+                             @PageableDefault(page = 1) Pageable pageable,
                              @RequestParam(required = false)
                                      Optional<String> username,
                              Optional<String> phoneNumber,
@@ -73,7 +60,7 @@ public class UserRestController {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return getPage(service.filter(user, username, phoneNumber, email), page, size);
+        return service.filter(user, username, phoneNumber, email, pageable);
     }
 
     @GetMapping("/{id}/block")

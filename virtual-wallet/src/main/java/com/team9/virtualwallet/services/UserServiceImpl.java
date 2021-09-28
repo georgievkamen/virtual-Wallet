@@ -13,6 +13,7 @@ import com.team9.virtualwallet.services.contracts.UserService;
 import com.team9.virtualwallet.services.contracts.WalletService;
 import com.team9.virtualwallet.services.emails.SendEmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,11 +43,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll(User user) {
+    public List<User> getAll(User user, Pageable pageable) {
         if (!user.isEmployee()) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "view all", "users"));
         }
-        return repository.getAll();
+        return repository.getAll(pageable);
     }
 
     @Override
@@ -81,10 +82,6 @@ public class UserServiceImpl implements UserService {
         }
         User userToUpdate = repository.getById(user.getId());
 
-        //TODO Can be removed because we don't have username in DTO
-        if (!userToUpdate.getUsername().equals(user.getUsername())) {
-            throw new IllegalArgumentException("You cannot modify username");
-        }
         verifyNotDuplicate(user);
         repository.update(user);
     }
@@ -110,13 +107,14 @@ public class UserServiceImpl implements UserService {
     public List<User> filter(User user,
                              Optional<String> userName,
                              Optional<String> phoneNumber,
-                             Optional<String> email) {
+                             Optional<String> email,
+                             Pageable pageable) {
 
         if (!user.isEmployee()) {
             throw new UnauthorizedOperationException("Only employees can filter all users");
         }
 
-        return repository.filter(verifyOptionalNotEmpty(userName), verifyOptionalNotEmpty(phoneNumber), verifyOptionalNotEmpty(email));
+        return repository.filter(verifyOptionalNotEmpty(userName), verifyOptionalNotEmpty(phoneNumber), verifyOptionalNotEmpty(email), pageable);
 
     }
 
@@ -125,11 +123,6 @@ public class UserServiceImpl implements UserService {
             return optional;
         }
         return Optional.empty();
-    }
-
-    @Override
-    public List<User> search(User user, String searchTerm) {
-        return repository.search(searchTerm, user.getId());
     }
 
     @Override

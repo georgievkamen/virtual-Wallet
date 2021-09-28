@@ -16,6 +16,7 @@ import com.team9.virtualwallet.repositories.contracts.WalletRepository;
 import com.team9.virtualwallet.services.contracts.CategoryService;
 import com.team9.virtualwallet.services.contracts.TransactionService;
 import com.team9.virtualwallet.services.contracts.WalletService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -46,8 +47,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getAll(User user) {
-        return repository.getAll(user);
+    public List<Transaction> getAll(User user, Pageable pageable) {
+        return repository.getAll(user, pageable);
     }
 
     @Override
@@ -152,10 +153,11 @@ public class TransactionServiceImpl implements TransactionService {
                                     Optional<Date> endDate,
                                     Optional<String> counterparty,
                                     Optional<SortAmount> amount,
-                                    Optional<SortDate> date) {
+                                    Optional<SortDate> date,
+                                    Pageable pageable) {
 
         Optional<Integer> counterpartyId = checkAndSetIfPresent(counterparty);
-        return repository.filter(user.getId(), direction, startDate, endDate, counterpartyId, amount, date);
+        return repository.filter(user.getId(), direction, startDate, endDate, counterpartyId, amount, date, pageable);
     }
 
     public List<Transaction> employeeFilter(User userExecuting,
@@ -165,13 +167,14 @@ public class TransactionServiceImpl implements TransactionService {
                                             Optional<Date> endDate,
                                             Optional<String> counterparty,
                                             Optional<SortAmount> amount,
-                                            Optional<SortDate> date) {
+                                            Optional<SortDate> date,
+                                            Pageable pageable) {
         if (!userExecuting.isEmployee()) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "remove", "employee"));
         }
         int userId = userRepository.getByField("username", username).getId();
         Optional<Integer> counterpartyId = checkAndSetIfPresent(counterparty);
-        return repository.filter(userId, direction, startDate, endDate, counterpartyId, amount, date);
+        return repository.filter(userId, direction, startDate, endDate, counterpartyId, amount, date, pageable);
     }
 
     private Optional<Integer> checkAndSetIfPresent(Optional<String> searchedPersonUsername) {

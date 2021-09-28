@@ -6,6 +6,8 @@ import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.services.contracts.UserService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +40,11 @@ public class UserMvcController {
     }
 
     @GetMapping
-    public String showUsersPage(HttpSession session, Model model) {
+    public String showUsersPage(HttpSession session, Model model,
+                                @PageableDefault(page = 1) Pageable pageable) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            List<User> users = service.getAll(user);
+            List<User> users = service.getAll(user, pageable);
             model.addAttribute("users", users);
             model.addAttribute("usersExist", !users.isEmpty());
             return "users";
@@ -109,11 +112,12 @@ public class UserMvcController {
                               Model model,
                               @RequestParam(name = "username", required = false) Optional<String> username,
                               @RequestParam(name = "phoneNumber", required = false) Optional<String> phoneNumber,
-                              @RequestParam(name = "email", required = false) Optional<String> email) {
+                              @RequestParam(name = "email", required = false) Optional<String> email,
+                              @PageableDefault(page = 1) Pageable pageable) {
         try {
             User user = authenticationHelper.tryGetUser(session);
 
-            List<User> filtered = service.filter(user, username, phoneNumber, email);
+            List<User> filtered = service.filter(user, username, phoneNumber, email, pageable);
             model.addAttribute("users", filtered);
             model.addAttribute("usersExist", !filtered.isEmpty());
             return "users";

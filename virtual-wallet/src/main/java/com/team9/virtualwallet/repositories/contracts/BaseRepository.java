@@ -1,9 +1,11 @@
 package com.team9.virtualwallet.repositories.contracts;
 
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 public interface BaseRepository<E> {
-    List<E> getAll();
+    List<E> getAll(Pageable pageable);
 
     E getById(int id);
 

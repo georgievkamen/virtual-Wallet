@@ -13,6 +13,8 @@ import com.team9.virtualwallet.models.dtos.TransactionDto;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.services.contracts.*;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,10 +70,10 @@ public class TransactionMvcController {
     }
 
     @GetMapping
-    public String showTransactionsPage(HttpSession session, Model model) {
+    public String showTransactionsPage(HttpSession session, Model model, @PageableDefault(page = 1) Pageable pageable) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            List<Transaction> transactions = service.getAll(user);
+            List<Transaction> transactions = service.getAll(user, pageable);
             model.addAttribute("transactions", transactions);
             model.addAttribute("transactionsExist", !transactions.isEmpty());
             model.addAttribute("cardService", cardService);
@@ -252,7 +254,8 @@ public class TransactionMvcController {
                                      @RequestParam(name = "direction") String direction,
                                      @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
                                      @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
-                                     @RequestParam(name = "counterparty", required = false) Optional<String> counterparty) {
+                                     @RequestParam(name = "counterparty", required = false) Optional<String> counterparty,
+                                     @PageableDefault(page = 1) Pageable pageable) {
 
         try {
             User user = authenticationHelper.tryGetUser(session);
@@ -263,7 +266,8 @@ public class TransactionMvcController {
                     endDate,
                     counterparty.isEmpty() ? counterparty : Optional.empty(),
                     Optional.empty(),
-                    Optional.empty());
+                    Optional.empty(),
+                    pageable);
             model.addAttribute("transactions", filtered);
             model.addAttribute("transactionsExist", !filtered.isEmpty());
             model.addAttribute("cardService", cardService);

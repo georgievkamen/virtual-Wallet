@@ -8,6 +8,8 @@ import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.services.contracts.TransactionService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,7 +58,8 @@ public class AdminTransactionMvcController {
                                             @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
                                             @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
                                             @RequestParam(name = "username", required = false) Optional<String> username,
-                                            @RequestParam(name = "counterparty", required = false) Optional<String> counterparty) {
+                                            @RequestParam(name = "counterparty", required = false) Optional<String> counterparty,
+                                            @PageableDefault(page = 1) Pageable pageable) {
         try {
             User user = authenticationHelper.tryGetUser(session);
             List<Transaction> filtered = new ArrayList<>();
@@ -72,7 +75,8 @@ public class AdminTransactionMvcController {
                         endDate,
                         counterparty.isEmpty() ? counterparty : Optional.empty(),
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        pageable);
                 model.addAttribute("transactions", filtered);
             }
             model.addAttribute("transactionsExist", !filtered.isEmpty());
