@@ -109,8 +109,8 @@
                                             <tr class="text-center" th:each="user : ${users}">
                                                 <td>[[${user.username}]]</td>
                                                 <td>[[${user.isDeleted}]]</td>
-                                                <td th:if="${!user.isBlocked}">
-                                                    <a th:href="@{/panel/admin/users/{id}/block(id=${user.id})}">
+                                                <td>
+                                                    <a th:if="${!user.isBlocked}" th:href="@{/panel/admin/users/{id}/block(id=${user.id})}">
                                                         <button type="button" class="btn btn-relief-danger">
                                                             Block
                                                         </button>
