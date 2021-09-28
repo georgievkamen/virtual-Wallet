@@ -13,11 +13,8 @@ import com.team9.virtualwallet.services.contracts.TransactionService;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -25,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.team9.virtualwallet.configs.RestResponseEntityExceptionHandler.checkFields;
+import static com.team9.virtualwallet.utils.DummyHelper.validateDummy;
 import static com.team9.virtualwallet.utils.PagingHelper.getPage;
 
 @RestController
@@ -90,12 +88,7 @@ public class TransactionRestController {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpStatus status = restTemplate.getForObject("http://localhost/api/dummy", HttpStatus.class);
-        if (status != null && status.isError()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Sorry your transfer is rejected");
-        }
-
+        validateDummy();
         Transaction transaction = modelMapper.fromExternalDepositDto(user, externalTransactionDto);
         service.createExternalDeposit(transaction);
 
@@ -108,12 +101,7 @@ public class TransactionRestController {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpStatus status = restTemplate.getForObject("http://localhost/api/dummy", HttpStatus.class);
-        if (status != null && status.isError()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Sorry your transfer is rejected");
-        }
-
+        validateDummy();
         Transaction transaction = modelMapper.fromExternalWithdrawDto(user, externalTransactionDto);
         service.createExternalWithdraw(transaction);
 
