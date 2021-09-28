@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.team9.virtualwallet.utils.DummyHelper.validateDummy;
+
 @Controller
 @RequestMapping("/panel/transactions")
 public class TransactionMvcController {
@@ -192,6 +194,7 @@ public class TransactionMvcController {
             if (result.hasErrors()) {
                 return "transaction-deposit-create";
             }
+            validateDummy();
             Transaction transaction = modelMapper.fromExternalDepositDto(user, externalTransactionDto);
             service.createExternalDeposit(transaction);
             return "redirect:/panel/transactions";
@@ -231,6 +234,7 @@ public class TransactionMvcController {
             if (result.hasErrors()) {
                 return "transaction-withdraw-create";
             }
+            validateDummy();
             Transaction transaction = modelMapper.fromExternalWithdrawDto(user, externalTransactionDto);
             service.createExternalWithdraw(transaction);
             return "redirect:/panel/transactions";
@@ -274,6 +278,7 @@ public class TransactionMvcController {
 
         }
     }
+
 }
 
 
