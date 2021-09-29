@@ -48,4 +48,6 @@ public interface UserService {
                        Optional<String> phoneNumber,
                        Optional<String> email,
                        Pageable pageable);
+
+    void verifyUserNotBlocked(User user);
 }

@@ -219,7 +219,14 @@ public class UserServiceImpl implements UserService {
         repository.update(user);
     }
 
-    public void verifyNotDuplicate(User user) {
+    @Override
+    public void verifyUserNotBlocked(User user) {
+        if (user.isBlocked()) {
+            throw new IllegalArgumentException("You are currently blocked, you cannot make transactions");
+        }
+    }
+
+    private void verifyNotDuplicate(User user) {
         List<User> usersByUserName = repository.getByFieldList("username", user.getUsername());
         List<User> usersByEmail = repository.getByFieldList("email", user.getEmail());
         List<User> usersByPhoneNumber = repository.getByFieldList("phoneNumber", user.getPhoneNumber());

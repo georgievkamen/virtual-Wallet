@@ -4,6 +4,7 @@ import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.InsufficientBalanceException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.PaymentMethod;
+import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Type;
@@ -108,6 +109,20 @@ public class WalletServiceImpl implements WalletService {
     public void setDefaultWallet(User user, Wallet wallet) {
         user.setDefaultWallet(wallet);
         userRepository.update(user);
+    }
+
+    @Override
+    public void verifyWalletOwnership(Transaction transaction, Wallet wallet) {
+        if (transaction.getSender().getId() != wallet.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this wallet!");
+        }
+    }
+
+    @Override
+    public void verifyWalletsOwnership(Transaction transaction, Wallet walletToMoveFrom, Wallet walletToMoveTo) {
+        if (transaction.getSender().getId() != walletToMoveFrom.getUser().getId() || transaction.getSender().getId() != walletToMoveTo.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of these wallets!");
+        }
     }
 
     //TODO Rename to verifyUnique

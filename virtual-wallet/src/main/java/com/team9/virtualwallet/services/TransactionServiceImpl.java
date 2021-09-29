@@ -9,9 +9,7 @@ import com.team9.virtualwallet.repositories.contracts.CardRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.repositories.contracts.WalletRepository;
-import com.team9.virtualwallet.services.contracts.CategoryService;
-import com.team9.virtualwallet.services.contracts.TransactionService;
-import com.team9.virtualwallet.services.contracts.WalletService;
+import com.team9.virtualwallet.services.contracts.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -28,18 +26,22 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
     private final WalletRepository walletRepository;
+    private final CardService cardService;
     private final CardRepository cardRepository;
     private final WalletService walletService;
     private final CategoryService categoryService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardRepository cardRepository, WalletService walletService, CategoryService categoryService, UserRepository userRepository) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardService cardService, CardRepository cardRepository, WalletService walletService, CategoryService categoryService, UserRepository userRepository, UserService userService) {
         this.repository = repository;
         this.walletRepository = walletRepository;
+        this.cardService = cardService;
         this.cardRepository = cardRepository;
         this.walletService = walletService;
         this.categoryService = categoryService;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -68,14 +70,13 @@ public class TransactionServiceImpl implements TransactionService {
         Wallet senderWallet = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
         Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
 
-        verifyWalletOwnership(transaction, senderWallet);
+        walletService.verifyWalletOwnership(transaction, senderWallet);
 
-        //TODO Fix this || Create a method for transfer from one wallet to another
         if (transaction.getSender().getId() == transaction.getRecipient().getId()) {
             throw new IllegalArgumentException("You can't send money to yourself!");
         }
 
-        verifyUserNotBlocked(transaction.getSender());
+        userService.verifyUserNotBlocked(transaction.getSender());
         walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
 
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
@@ -97,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
         Wallet walletToMoveFrom = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
         Wallet walletToMoveTo = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
-        verifyWalletsOwnership(transaction, walletToMoveFrom, walletToMoveTo);
+        walletService.verifyWalletsOwnership(transaction, walletToMoveFrom, walletToMoveTo);
 
         if (walletToMoveTo.getId() == walletToMoveFrom.getId()) {
             throw new IllegalArgumentException("You must select a different wallet!");
@@ -119,9 +120,9 @@ public class TransactionServiceImpl implements TransactionService {
         validateCardExpiryDate(cardToWithdraw);
         Wallet walletToDeposit = walletRepository.getById(transaction.getRecipientPaymentMethod().getId());
 
-        verifyWalletOwnership(transaction, walletToDeposit);
+        walletService.verifyWalletOwnership(transaction, walletToDeposit);
 
-        verifyCardOwnership(transaction, cardToWithdraw);
+        cardService.verifyCardOwnership(transaction, cardToWithdraw);
 
         walletToDeposit.depositBalance(transaction.getAmount());
         repository.createExternal(transaction, walletToDeposit);
@@ -133,8 +134,8 @@ public class TransactionServiceImpl implements TransactionService {
         Card cardToDeposit = cardRepository.getById(transaction.getRecipientPaymentMethod().getId());
         validateCardExpiryDate(cardToDeposit);
 
-        verifyWalletOwnership(transaction, walletToWithdraw);
-        verifyCardOwnership(transaction, cardToDeposit);
+        walletService.verifyWalletOwnership(transaction, walletToWithdraw);
+        cardService.verifyCardOwnership(transaction, cardToDeposit);
 
         walletService.verifyEnoughBalance(walletToWithdraw, transaction.getAmount());
 
@@ -179,32 +180,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Optional<Integer> checkAndSetIfPresent(Optional<String> searchedPersonUsername) {
         return searchedPersonUsername.map(s -> userRepository.getByField("username", s).getId());
-    }
-
-
-    //TODO Think about moving it in Wallet or UserService
-    private void verifyUserNotBlocked(User user) {
-        if (user.isBlocked()) {
-            throw new IllegalArgumentException("You are currently blocked, you cannot make transactions");
-        }
-    }
-
-    private void verifyWalletOwnership(Transaction transaction, Wallet wallet) {
-        if (transaction.getSender().getId() != wallet.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this wallet!");
-        }
-    }
-
-    private void verifyWalletsOwnership(Transaction transaction, Wallet walletToMoveFrom, Wallet walletToMoveTo) {
-        if (transaction.getSender().getId() != walletToMoveFrom.getUser().getId() || transaction.getSender().getId() != walletToMoveTo.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of these wallets!");
-        }
-    }
-
-    private void verifyCardOwnership(Transaction transaction, Card card) {
-        if (transaction.getRecipient().getId() != card.getUser().getId()) {
-            throw new IllegalArgumentException("You are not the owner of this card!");
-        }
     }
 
 }

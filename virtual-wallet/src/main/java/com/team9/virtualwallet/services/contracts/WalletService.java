@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.services.contracts;
 
+import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 
@@ -27,5 +28,9 @@ public interface WalletService {
     void verifyEnoughBalance(Wallet wallet, BigDecimal funds);
 
     void setDefaultWallet(User user, Wallet wallet);
+
+    void verifyWalletOwnership(Transaction transaction, Wallet wallet);
+
+    void verifyWalletsOwnership(Transaction transaction, Wallet walletToMoveFrom, Wallet walletToMoveTo);
 
 }

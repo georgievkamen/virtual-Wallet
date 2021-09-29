@@ -4,6 +4,7 @@ import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.Card;
 import com.team9.virtualwallet.models.PaymentMethod;
+import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.enums.Type;
 import com.team9.virtualwallet.repositories.contracts.CardRepository;
@@ -77,6 +78,13 @@ public class CardServiceImpl implements CardService {
         }
 
         repository.delete(card);
+    }
+
+    @Override
+    public void verifyCardOwnership(Transaction transaction, Card card) {
+        if (transaction.getRecipient().getId() != card.getUser().getId()) {
+            throw new IllegalArgumentException("You are not the owner of this card!");
+        }
     }
 
     private void verifyUnique(Card card) {
