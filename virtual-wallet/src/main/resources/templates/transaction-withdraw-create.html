@@ -113,8 +113,56 @@
                                      th:errors="*{description}"></div>
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary me-1 mt-1">Withdraw</button>
+                                <button type="button" class="btn btn-primary me-1 mt-1" data-bs-toggle="modal"
+                                        data-bs-target="#confirm">Withdraw</button>
                             </div>
+
+                            <!-- Modal -->
+                            <div class="modal fade text-start" id="confirm" tabindex="-1"
+                                 aria-labelledby="myModalLabel2" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="myModalLabel2">Confirm Withdrawal</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="mb-1">
+                                                <label class="form-label" for="modal-wallet">Wallet</label>
+                                                <input type="text" id="modal-wallet" class="form-control" disabled/>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <label class="form-label" for="modal-card">Card</label>
+                                                <input type="text" id="modal-card" class="form-control" disabled/>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <label class="form-label" for="modal-amount">Amount</label>
+                                                <input type="number" step=".01" class="form-control"
+                                                       id="modal-amount" disabled/>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <label class="form-label"
+                                                       for="modal-description">Description</label>
+                                                <input type="text" class="form-control" id="modal-description" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Edit
+                                            </button>
+                                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+                                                Confirm Withdrawal
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </form>
                         <!--/ form -->
                     </div>
@@ -163,7 +211,37 @@
                 height: 14
             });
         }
-    })
+    });
+
+    $(document).ready(function () {
+        const formCard = document.getElementById("selectedCard");
+        const formWallet = document.getElementById("selectedWalletId");
+        const formAmount = document.getElementById("amount");
+        const formDescription = document.getElementById("description");
+
+        const modalCard = document.getElementById("modal-card");
+        modalCard.value = formCard.options[formCard.selectedIndex].text;
+        const modalWallet = document.getElementById("modal-wallet");
+        modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
+        const modalAmount = document.getElementById("modal-amount");
+        const modalDescription = document.getElementById("modal-description");
+
+        formCard.onchange = function () {
+            modalCard.value = formCard.options[formCard.selectedIndex].text;
+        }
+
+        formWallet.onchange = function () {
+            modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
+        }
+
+        formAmount.onchange = function () {
+            modalAmount.value = formAmount.value;
+        }
+
+        formDescription.onchange = function () {
+            modalDescription.value = formDescription.value;
+        }
+    });
 </script>
 </body>
 

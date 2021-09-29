@@ -111,8 +111,55 @@
                                      th:errors="*{description}"></div>
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary me-1 mt-1">Move Balance</button>
+                                <button type="button" class="btn btn-primary me-1 mt-1" data-bs-toggle="modal"
+                                        data-bs-target="#confirm">Move Balance</button>
                             </div>
+
+                            <!-- Modal -->
+                            <div class="modal fade text-start" id="confirm" tabindex="-1"
+                                 aria-labelledby="myModalLabel2" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="myModalLabel2">Confirm Transaction</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-1">
+                                                <label class="form-label" for="modal-wallet-from">Wallet To Move From</label>
+                                                <input type="text" id="modal-wallet-from" class="form-control" disabled/>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <label class="form-label" for="modal-wallet-to">Wallet To Move To</label>
+                                                <input type="text" id="modal-wallet-to" class="form-control" disabled/>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <label class="form-label" for="modal-amount">Amount</label>
+                                                <input type="number" step=".01" class="form-control"
+                                                       id="modal-amount" disabled/>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <label class="form-label"
+                                                       for="modal-description">Description</label>
+                                                <input type="text" class="form-control" id="modal-description" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Edit
+                                            </button>
+                                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+                                                Confirm Transaction
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </form>
                         <!--/ form -->
                     </div>
@@ -161,7 +208,37 @@
                 height: 14
             });
         }
-    })
+    });
+
+    $(document).ready(function () {
+        const formWalletFrom = document.getElementById("selectedWalletId");
+        const formWalletTo = document.getElementById("walletToMoveTo");
+        const formAmount = document.getElementById("amount");
+        const formDescription = document.getElementById("description");
+
+        const modalWalletFrom = document.getElementById("modal-wallet-from");
+        modalWalletFrom.value = formWalletFrom.options[formWalletFrom.selectedIndex].text;
+        const modalWalletTo = document.getElementById("modal-wallet-to");
+        modalWalletTo.value = formWalletTo.options[formWalletTo.selectedIndex].text;
+        const modalAmount = document.getElementById("modal-amount");
+        const modalDescription = document.getElementById("modal-description");
+
+        formWalletFrom.onchange = function () {
+            modalWalletFrom.value = formWalletFrom.options[formWalletFrom.selectedIndex].text;
+        }
+
+        formWalletTo.onchange = function () {
+            modalWalletTo.value = formWalletTo.options[formWalletTo.selectedIndex].text;
+        }
+
+        formAmount.onchange = function () {
+            modalAmount.value = formAmount.value;
+        }
+
+        formDescription.onchange = function () {
+            modalDescription.value = formDescription.value;
+        }
+    });
 </script>
 </body>
 

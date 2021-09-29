@@ -187,8 +187,63 @@
                                     </select>
                                 </div>
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary me-1 mt-1">Create Transaction</button>
+                                    <button type="button" class="btn btn-primary me-1 mt-1" data-bs-toggle="modal"
+                                            data-bs-target="#confirm">Create Transaction
+                                    </button>
                                 </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade text-start" id="confirm" tabindex="-1"
+                                     aria-labelledby="myModalLabel2" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="myModalLabel2">Confirm Transaction</h4>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-1">
+                                                    <label class="form-label" for="modal-recipient">Recipient</label>
+                                                    <input type="text" id="modal-recipient" class="form-control"
+                                                           th:value="${user != null} ? ${user.username} : 'No Recipient'"
+                                                           disabled/>
+                                                </div>
+
+                                                <div class="mb-1">
+                                                    <label class="form-label" for="modal-wallet">Wallet</label>
+                                                    <input type="text" id="modal-wallet" class="form-control" disabled/>
+                                                </div>
+
+                                                <div class="mb-1">
+                                                    <label class="form-label" for="modal-amount">Amount</label>
+                                                    <input type="number" step=".01" class="form-control"
+                                                           id="modal-amount" disabled/>
+                                                </div>
+
+                                                <div class="mb-1">
+                                                    <label class="form-label"
+                                                           for="modal-description">Description</label>
+                                                    <input type="text" class="form-control" id="modal-description" disabled/>
+                                                </div>
+
+                                                <div th:if="${categoriesExist}" class="mb-1">
+                                                    <label class="form-label" for="modal-category">Category</label>
+                                                    <input type="text" class="form-control" id="modal-category" disabled/>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Edit
+                                                </button>
+                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+                                                    Confirm Transaction
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </form>
                         </div>
                     </div>
@@ -230,7 +285,7 @@
 <script th:src="@{/vendors/js/forms/select/form-select2.full.min.js}"></script>
 <!-- END: Page JS-->
 
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
     $(document).ready(function () {
             const searchForm = document.getElementById("search-form");
             const contactsDropdown = document.getElementById('contacts-dropdown');
@@ -243,6 +298,7 @@
             const emailRadio = document.getElementById("email");
             const phoneNumber = document.getElementById("phone-number");
             const contactsDropdownSelect = document.getElementById("contacts-dropdown-select");
+            const modalRecipient = document.getElementById("modal-recipient");
 
             const hideShowSearchFormIfContactsChecked = function () {
                 const hiddenClass = "hidden"
@@ -272,16 +328,50 @@
                     } else if (radioContacts.checked) {
                         document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
                         document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").val();
+                        modalRecipient.value = $("#contacts-dropdown-select option:selected").text();
                     }
                 }
             )
             $('#contacts-dropdown-select').change(function () {
                     document.getElementById("recipient-id").placeholder = $("#contacts-dropdown-select option:selected").text();
                     document.getElementById("recipient-id-contacts").value = $("#contacts-dropdown-select option:selected").val();
+                    modalRecipient.value = $("#contacts-dropdown-select option:selected").text();
                 }
             )
         }
     );
+
+    $(document).ready(function () {
+        const formWallet = document.getElementById("selectedWalletId");
+        const formAmount = document.getElementById("amount");
+        const formDescription = document.getElementById("description");
+        const modalWallet = document.getElementById("modal-wallet");
+        modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
+        const modalAmount = document.getElementById("modal-amount");
+        const modalDescription = document.getElementById("modal-description");
+        /*<![CDATA[*/
+        let categoryExists = /*[[${categoriesExist}]]*/ false;
+        if (categoryExists) {
+            const formCategory = document.getElementById("category");
+            const modalCategory = document.getElementById("modal-category");
+            modalCategory.value = formCategory.options[formCategory.selectedIndex].text;
+            formCategory.onchange = function () {
+                modalCategory.value = formCategory.options[formCategory.selectedIndex].text;
+            }
+        }/*]]>*/
+
+        formWallet.onchange = function () {
+            modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
+        }
+
+        formAmount.onchange = function () {
+            modalAmount.value = formAmount.value;
+        }
+
+        formDescription.onchange = function () {
+            modalDescription.value = formDescription.value;
+        }
+    });
 </script>
 </body>
 
