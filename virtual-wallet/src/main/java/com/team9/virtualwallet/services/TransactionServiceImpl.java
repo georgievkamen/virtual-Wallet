@@ -145,7 +145,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Pages<Transaction> filter(User user,
-                                     Direction direction,
+                                     Optional<Direction> direction,
                                      Optional<Date> startDate,
                                      Optional<Date> endDate,
                                      Optional<String> counterparty,
@@ -162,7 +162,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     public Pages<Transaction> employeeFilter(User userExecuting,
                                              String username,
-                                             Direction direction,
+                                             Optional<Direction> direction,
                                              Optional<Date> startDate,
                                              Optional<Date> endDate,
                                              Optional<String> counterparty,

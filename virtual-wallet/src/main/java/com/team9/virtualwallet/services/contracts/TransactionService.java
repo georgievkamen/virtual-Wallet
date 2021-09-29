@@ -29,21 +29,21 @@ public interface TransactionService {
     void createExternalWithdraw(Transaction transaction);
 
     Pages<Transaction> filter(User user,
-                             Direction direction,
-                             Optional<Date> startDate,
-                             Optional<Date> endDate,
-                             Optional<String> counterparty,
-                             Optional<SortAmount> amount,
-                             Optional<SortDate> date,
-                             Pageable pageable);
+                              Optional<Direction> direction,
+                              Optional<Date> startDate,
+                              Optional<Date> endDate,
+                              Optional<String> counterparty,
+                              Optional<SortAmount> amount,
+                              Optional<SortDate> date,
+                              Pageable pageable);
 
     Pages<Transaction> employeeFilter(User userExecuting,
-                                     String username,
-                                     Direction direction,
-                                     Optional<Date> startDate,
-                                     Optional<Date> endDate,
-                                     Optional<String> counterparty,
-                                     Optional<SortAmount> amount,
-                                     Optional<SortDate> date,
-                                     Pageable pageable);
+                                      String username,
+                                      Optional<Direction> direction,
+                                      Optional<Date> startDate,
+                                      Optional<Date> endDate,
+                                      Optional<String> counterparty,
+                                      Optional<SortAmount> amount,
+                                      Optional<SortDate> date,
+                                      Pageable pageable);
 }

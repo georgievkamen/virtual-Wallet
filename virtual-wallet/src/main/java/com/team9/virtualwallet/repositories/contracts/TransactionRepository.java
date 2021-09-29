@@ -24,11 +24,11 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
     void createExternal(Transaction transaction, Wallet wallet);
 
     Pages<Transaction> filter(int userId,
-                             Direction direction,
-                             Optional<Date> startDate,
-                             Optional<Date> endDate,
-                             Optional<Integer> searchedPersonId,
-                             Optional<SortAmount> amount,
-                             Optional<SortDate> date,
-                             Pageable pageable);
+                              Optional<Direction> direction,
+                              Optional<Date> startDate,
+                              Optional<Date> endDate,
+                              Optional<Integer> searchedPersonId,
+                              Optional<SortAmount> amount,
+                              Optional<SortDate> date,
+                              Pageable pageable);
 }

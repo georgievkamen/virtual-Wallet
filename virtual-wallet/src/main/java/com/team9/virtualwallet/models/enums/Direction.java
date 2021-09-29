@@ -5,9 +5,12 @@ import com.team9.virtualwallet.exceptions.EnumNotFoundException;
 public enum Direction {
 
     INCOMING("Incoming"),
-    OUTGOING("Outgoing");
+    OUTGOING("Outgoing"),
+    DEPOSIT("Deposit"),
+    WITHDRAW("Withdraw"),
+    WALLET_TO_WALLET("Wallet to Wallet");
 
-    public static final String INVALID_DIRECTION = "Direction should be INCOMING or OUTGOING";
+    public static final String INVALID_DIRECTION = "Direction should be INCOMING, OUTGOING, DEPOSIT, WITHDRAW or WALLET_TO_WALLET";
 
     private final String value;
 
@@ -26,6 +29,12 @@ public enum Direction {
                 return "Incoming";
             case OUTGOING:
                 return "Outgoing";
+            case DEPOSIT:
+                return "Deposit";
+            case WITHDRAW:
+                return "Withdraw";
+            case WALLET_TO_WALLET:
+                return "Wallet to Wallet";
             default:
                 throw new EnumNotFoundException(INVALID_DIRECTION);
         }

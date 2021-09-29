@@ -80,7 +80,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
 
     @Override
     public Pages<Transaction> filter(int userId,
-                                     Direction direction,
+                                     Optional<Direction> direction,
                                      Optional<Date> startDate,
                                      Optional<Date> endDate,
                                      Optional<Integer> searchedPersonId,
@@ -94,19 +94,40 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
             List<String> filters = new ArrayList<>();
             List<String> sortType = new ArrayList<>();
 
-            switch (direction.toString()) {
-                case "Incoming":
-                    if (searchedPersonId.isPresent()) {
-                        filters.add("sender.id = :searchedId");
-                    }
-                    filters.add("recipient.id = :userId");
-                    break;
-                case "Outgoing":
-                    if (searchedPersonId.isPresent()) {
-                        filters.add("recipient.id = :searchedId");
-                    }
-                    filters.add("sender.id = :userId");
-                    break;
+            if (direction.isPresent()) {
+                switch (direction.get().toString()) {
+                    case "Incoming":
+                        if (searchedPersonId.isPresent()) {
+                            filters.add("sender.id = :searchedId");
+                        }
+                        addToFiltersIfIncomingOrOutgoing(filters);
+                        filters.add("recipient.id = :userId");
+                        break;
+                    case "Outgoing":
+                        if (searchedPersonId.isPresent()) {
+                            filters.add("recipient.id = :searchedId");
+                        }
+                        addToFiltersIfIncomingOrOutgoing(filters);
+                        filters.add("sender.id = :userId");
+                        break;
+
+                    case "Deposit":
+                        filters.add("recipient.id = :userId");
+                        filters.add("transactionType = 'CARD_TO_WALLET'");
+                        break;
+
+                    case "Withdraw":
+                        filters.add("recipient.id = :userId");
+                        filters.add("transactionType = 'WALLET_TO_CARD'");
+                        break;
+
+                    case "Wallet to Wallet":
+                        filters.add("recipient.id = :userId");
+                        filters.add("transactionType = 'WALLET_TO_WALLET'");
+                        break;
+                }
+            } else {
+                filters.add("(sender.id = :userId or recipient.id = :userId)");
             }
 
             if (startDate.isPresent()) {
@@ -157,6 +178,11 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
 
             return new Pages<>(query.list(), countResults, pageable);
         }
+    }
 
+    private void addToFiltersIfIncomingOrOutgoing(List<String> filters) {
+        filters.add("transactionType != 'WALLET_TO_WALLET'");
+        filters.add("transactionType != 'CARD_TO_WALLET'");
+        filters.add("transactionType != 'WALLET_TO_CARD'");
     }
 }

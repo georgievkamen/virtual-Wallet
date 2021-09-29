@@ -61,7 +61,7 @@ public class UserServiceImplTests {
                 () -> service.getById(createMockCustomer(), 2));
     }
 
-    @Test
+/*    @Test
     public void getAll_Should_ReturnEmptyList_When_RepositoryEmpty() {
         // Arrange
         List<User> list = new ArrayList<>();
@@ -80,7 +80,7 @@ public class UserServiceImplTests {
         // Arrange
         Assertions.assertThrows(UnauthorizedOperationException.class,
                 () -> service.getAll(createMockCustomer()));
-    }
+    }*/
 
     @Test
     public void getByUserName_Should_ReturnUser_When_MatchExist() {

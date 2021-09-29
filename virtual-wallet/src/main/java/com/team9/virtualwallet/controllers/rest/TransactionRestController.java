@@ -111,8 +111,8 @@ public class TransactionRestController {
     @GetMapping("/filter")
     public List<Transaction> filter(@RequestHeader HttpHeaders headers,
                                     @PageableDefault(page = 1) Pageable pageable,
-                                    @RequestParam Direction direction,
                                     @RequestParam(required = false)
+                                                Optional<Direction> direction,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
                                     Optional<String> username,
