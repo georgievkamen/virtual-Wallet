@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.services.contracts;
 
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,7 +11,7 @@ import java.util.Optional;
 public interface UserService {
     User getById(User user, int id);
 
-    List<User> getAll(User user, Pageable pageable);
+    Pages<User> getAll(User user, Pageable pageable);
 
     User getByUsername(String username);
 
@@ -42,9 +43,9 @@ public interface UserService {
 
     void unblockUser(User userExecuting, int id);
 
-    List<User> filter(User user,
-                      Optional<String> userName,
-                      Optional<String> phoneNumber,
-                      Optional<String> email,
-                      Pageable pageable);
+    Pages<User> filter(User user,
+                       Optional<String> userName,
+                       Optional<String> phoneNumber,
+                       Optional<String> email,
+                       Pageable pageable);
 }

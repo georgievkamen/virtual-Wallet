@@ -4,6 +4,7 @@ import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.ConfirmationToken;
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.repositories.contracts.ConfirmationTokenRepository;
@@ -43,11 +44,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll(User user, Pageable pageable) {
+    public Pages<User> getAll(User user, Pageable pageable) {
         if (!user.isEmployee()) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "view all", "users"));
         }
-        return repository.getAll(pageable);
+        return repository.getAll(user, pageable);
     }
 
     @Override
@@ -80,7 +81,6 @@ public class UserServiceImpl implements UserService {
         if (!userExecuting.isEmployee() && userExecuting.getId() != id) {
             throw new UnauthorizedOperationException("Users can only modify their own credentials!");
         }
-        User userToUpdate = repository.getById(user.getId());
 
         verifyNotDuplicate(user);
         repository.update(user);
@@ -104,14 +104,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> filter(User user,
-                             Optional<String> userName,
-                             Optional<String> phoneNumber,
-                             Optional<String> email,
-                             Pageable pageable) {
+    public Pages<User> filter(User user,
+                              Optional<String> userName,
+                              Optional<String> phoneNumber,
+                              Optional<String> email,
+                              Pageable pageable) {
 
         if (!user.isEmployee()) {
-            throw new UnauthorizedOperationException("Only employees can filter all users");
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "filter", "users"));
         }
 
         return repository.filter(verifyOptionalNotEmpty(userName), verifyOptionalNotEmpty(phoneNumber), verifyOptionalNotEmpty(email), pageable);

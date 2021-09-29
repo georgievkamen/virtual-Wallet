@@ -31,7 +31,7 @@ public class UserRestController {
                              @PageableDefault(page = 1) Pageable pageable) {
         User userExecuting = authenticationHelper.tryGetUser(headers);
 
-        return service.getAll(userExecuting, pageable);
+        return service.getAll(userExecuting, pageable).getContent();
     }
 
     @DeleteMapping
@@ -60,7 +60,7 @@ public class UserRestController {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return service.filter(user, username, phoneNumber, email, pageable);
+        return service.filter(user, username, phoneNumber, email, pageable).getContent();
     }
 
     @GetMapping("/{id}/block")

@@ -4,6 +4,7 @@ import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.services.contracts.UserService;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -41,17 +41,29 @@ public class UserMvcController {
 
     @GetMapping
     public String showUsersPage(HttpSession session, Model model,
-                                @PageableDefault(page = 1) Pageable pageable) {
+                                @PageableDefault(page = 1) Pageable pageable,
+                                @RequestParam(name = "username", required = false) Optional<String> username,
+                                @RequestParam(name = "phoneNumber", required = false) Optional<String> phoneNumber,
+                                @RequestParam(name = "email", required = false) Optional<String> email) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            List<User> users = service.getAll(user, pageable);
-            model.addAttribute("users", users);
-            model.addAttribute("usersExist", !users.isEmpty());
+            Pages<User> users;
+            if (username.isEmpty() && phoneNumber.isEmpty() && email.isEmpty()) {
+                users = service.getAll(user, pageable);
+            } else {
+                users = service.filter(user, username, phoneNumber, email, pageable);
+            }
+            model.addAttribute("users", users.getContent());
+            model.addAttribute("usersExist", !users.getContent().isEmpty());
+            model.addAttribute("pagination", users);
             return "users";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "not-found";
         }
     }
 
@@ -102,30 +114,6 @@ public class UserMvcController {
             return "redirect:/panel/admin/users";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
-        } catch (UnauthorizedOperationException e) {
-            return "redirect:/panel";
-        }
-    }
-
-    @PostMapping("/filter")
-    public String filterUsers(HttpSession session,
-                              Model model,
-                              @RequestParam(name = "username", required = false) Optional<String> username,
-                              @RequestParam(name = "phoneNumber", required = false) Optional<String> phoneNumber,
-                              @RequestParam(name = "email", required = false) Optional<String> email,
-                              @PageableDefault(page = 1) Pageable pageable) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-
-            List<User> filtered = service.filter(user, username, phoneNumber, email, pageable);
-            model.addAttribute("users", filtered);
-            model.addAttribute("usersExist", !filtered.isEmpty());
-            return "users";
-        } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("error", e.getMessage());
-            return "not-found";
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         }

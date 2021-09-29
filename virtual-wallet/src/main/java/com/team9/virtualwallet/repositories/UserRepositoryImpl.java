@@ -2,6 +2,7 @@ package com.team9.virtualwallet.repositories;
 
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.FailedToUploadFileException;
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import org.hibernate.Session;
@@ -33,6 +34,20 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     public UserRepositoryImpl(SessionFactory sessionFactory) {
         super(sessionFactory, User.class);
         this.sessionFactory = sessionFactory;
+    }
+
+    @Override
+    public Pages<User> getAll(User user, Pageable pageable) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<User> query = session.createQuery("from User", User.class);
+            query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
+
+            Query countQuery = session.createQuery("select count (id) from User");
+            Long countResults = (Long) countQuery.uniqueResult();
+
+            return new Pages<>(query.list(), countResults, pageable);
+        }
     }
 
     @Override
@@ -85,41 +100,57 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
-    public List<User> filter(Optional<String> userName,
-                             Optional<String> phoneNumber,
-                             Optional<String> email,
-                             Pageable pageable) {
+    public Pages<User> filter(Optional<String> userName,
+                              Optional<String> phoneNumber,
+                              Optional<String> email,
+                              Pageable pageable) {
 
         try (Session session = sessionFactory.openSession()) {
-            var baseQuery = "select u from User u ";
+            var baseQuery = "from User ";
+            var countBaseQuery = "select count (id) ";
             List<String> filters = new ArrayList<>();
 
             if (userName.isPresent()) {
-                filters.add(" u.username like concat('%',:username,'%')");
+                filters.add(" username like concat('%',:username,'%')");
             }
 
             if (phoneNumber.isPresent()) {
-                filters.add(" u.phoneNumber like concat('%',:phoneNumber,'%')");
+                filters.add(" phoneNumber like concat('%',:phoneNumber,'%')");
             }
 
             if (email.isPresent()) {
-                filters.add(" u.email like concat('%',:email,'%')");
+                filters.add(" email like concat('%',:email,'%')");
             }
 
             if (!filters.isEmpty()) {
                 baseQuery += " where " + String.join(" and ", filters);
             }
 
-            Query<User> query = session.createQuery(baseQuery, User.class);
+            countBaseQuery += baseQuery;
 
-            userName.ifPresent(s -> query.setParameter("username", s));
-            phoneNumber.ifPresent(s -> query.setParameter("phoneNumber", s));
-            email.ifPresent(s -> query.setParameter("email", s));
+            Query<User> query = session.createQuery(baseQuery, User.class);
+            Query countQuery = session.createQuery(countBaseQuery);
+
+            userName.ifPresent(value -> {
+                query.setParameter("username", value);
+                countQuery.setParameter("username", value);
+            });
+
+            phoneNumber.ifPresent(value -> {
+                query.setParameter("phoneNumber", value);
+                countQuery.setParameter("phoneNumber", value);
+            });
+
+            email.ifPresent(value -> {
+                query.setParameter("email", value);
+                countQuery.setParameter("email", value);
+            });
 
             query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
             query.setMaxResults(pageable.getPageSize());
+            Long countResults = (Long) countQuery.uniqueResult();
 
-            return query.list();
+            return new Pages<>(query.list(), countResults, pageable);
         }
 
     }
