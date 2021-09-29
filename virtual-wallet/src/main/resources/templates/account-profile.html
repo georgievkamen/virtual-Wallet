@@ -205,7 +205,7 @@
                                     </label>
                                 </div>
                                 <div>
-                                    <button type="submit" class="btn btn-danger deactivate-account mt-1">Deactivate
+                                    <button type="button" class="btn btn-danger deactivate-account mt-1" disabled>Deactivate
                                         Account
                                     </button>
                                 </div>
@@ -247,10 +247,6 @@
 <script th:src="@{/js/core/app.js}"></script>
 <!-- END: Theme JS-->
 
-<!-- BEGIN: Page JS-->
-<script th:src="@{/js/scripts/pages/page-account-settings-account.js}"></script>
-<!-- END: Page JS-->
-
 <script>
     $(window).on('load', function () {
         if (feather) {
@@ -279,6 +275,73 @@
             reader.readAsDataURL(file);
         }
     });
+
+
+    deactivateAcc = document.querySelector('#formAccountDeactivation');
+    deactivateButton = deactivateAcc.querySelector('.deactivate-account');
+    const accountActivation = document.querySelector('#accountActivation');
+
+    if (deactivateAcc) {
+        $(document).on('click', '#accountActivation', function () {
+            if (accountActivation.checked == true) {
+                deactivateButton.removeAttribute('disabled');
+            } else {
+                deactivateButton.setAttribute('disabled', 'disabled');
+            }
+        });
+    }
+
+    // Alert With Functional Confirm Button
+    if (deactivateButton) {
+        deactivateButton.onclick = function () {
+            if (accountActivation.checked === true) {
+                Swal.fire({
+                    text: 'Are you sure you would like to delete your account?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    customClass: {
+                        confirmButton: 'btn btn-primary',
+                        cancelButton: 'btn btn-outline-danger ms-2'
+                    },
+                    buttonsStyling: false
+                }).then(function (result) {
+                    if (result.value) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Your account has been deleted.',
+                            customClass: {
+                                confirmButton: 'btn btn-success'
+                            }
+                        }).then(function () {
+                            post('/panel/account/delete')
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'You cancelled your account deletion!',
+                            icon: 'error',
+                            customClass: {
+                                confirmButton: 'btn btn-success'
+                            }
+                        });
+                    }
+                });
+            }
+        };
+    }
+    ;
+
+    function post(path, method='post') {
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = path;
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
 </script>
 
 </body>
