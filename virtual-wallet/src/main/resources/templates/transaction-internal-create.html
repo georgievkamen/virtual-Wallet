@@ -345,10 +345,15 @@
         const formWallet = document.getElementById("selectedWalletId");
         const formAmount = document.getElementById("amount");
         const formDescription = document.getElementById("description");
+
         const modalWallet = document.getElementById("modal-wallet");
-        modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
         const modalAmount = document.getElementById("modal-amount");
         const modalDescription = document.getElementById("modal-description");
+
+        modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
+        modalAmount.value = formAmount.value;
+        modalDescription.value = formDescription.value;
+
         /*<![CDATA[*/
         let categoryExists = /*[[${categoriesExist}]]*/ false;
         if (categoryExists) {

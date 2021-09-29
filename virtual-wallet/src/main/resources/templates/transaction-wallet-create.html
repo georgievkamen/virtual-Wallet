@@ -217,11 +217,14 @@
         const formDescription = document.getElementById("description");
 
         const modalWalletFrom = document.getElementById("modal-wallet-from");
-        modalWalletFrom.value = formWalletFrom.options[formWalletFrom.selectedIndex].text;
         const modalWalletTo = document.getElementById("modal-wallet-to");
-        modalWalletTo.value = formWalletTo.options[formWalletTo.selectedIndex].text;
         const modalAmount = document.getElementById("modal-amount");
         const modalDescription = document.getElementById("modal-description");
+
+        modalWalletFrom.value = formWalletFrom.options[formWalletFrom.selectedIndex].text;
+        modalWalletTo.value = formWalletTo.options[formWalletTo.selectedIndex].text;
+        modalAmount.value = formAmount.value;
+        modalDescription.value = formDescription.value;
 
         formWalletFrom.onchange = function () {
             modalWalletFrom.value = formWalletFrom.options[formWalletFrom.selectedIndex].text;

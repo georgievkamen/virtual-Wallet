@@ -220,11 +220,14 @@
         const formDescription = document.getElementById("description");
 
         const modalCard = document.getElementById("modal-card");
-        modalCard.value = formCard.options[formCard.selectedIndex].text;
         const modalWallet = document.getElementById("modal-wallet");
-        modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
         const modalAmount = document.getElementById("modal-amount");
         const modalDescription = document.getElementById("modal-description");
+
+        modalCard.value = formCard.options[formCard.selectedIndex].text;
+        modalWallet.value = formWallet.options[formWallet.selectedIndex].text;
+        modalAmount.value = formAmount.value;
+        modalDescription.value = formDescription.value;
 
         formCard.onchange = function () {
             modalCard.value = formCard.options[formCard.selectedIndex].text;

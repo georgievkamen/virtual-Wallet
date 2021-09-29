@@ -142,6 +142,9 @@ public class TransactionMvcController {
         try {
             User user = authenticationHelper.tryGetUser(session);
             model.addAttribute("userWallets", walletService.getAll(user));
+            List<Category> categories = categoryService.getAll(user);
+            model.addAttribute("categories", categories);
+            model.addAttribute("categoriesExist", !categories.isEmpty());
             if (result.hasErrors()) {
                 return "transaction-internal-create";
             }
