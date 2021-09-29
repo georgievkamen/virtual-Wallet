@@ -65,23 +65,23 @@
                     <div class="row" id="table-borderless">
                         <div class="col-12">
                             <div class="card">
-
-                                <div class="card-header row">
-                                    <div class="col-6 text-start">
-                                        <h4 class="card-title text-primary">Transactions</h4>
+                                <form method="get" th:action="@{/panel/transactions}">
+                                    <div class="card-header row">
+                                        <div class="col-6 text-start">
+                                            <h4 class="card-title text-primary">Transactions</h4>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <button type="submit" class="btn btn-relief-primary">Filter</button>
+                                            <a th:href="@{__${#httpServletRequest.requestURI}__/create/internal}">
+                                                <button type="button" class="btn btn-relief-success">
+                                                    Create Transaction
+                                                </button>
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="col-6 text-end">
-                                        <a th:href="@{__${#httpServletRequest.requestURI}__/create/internal}">
-                                            <button type="button" class="btn btn-relief-success">
-                                                Create Transaction
-                                            </button>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <form method="get" th:action="@{/panel/transactions}">
+                                    <div class="card-body">
                                         <div class="row pb-1">
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
                                                 <label class="form-label" for="counterparty">Counterparty</label>
                                                 <input type="text" class="form-control" id="counterparty"
                                                        name="counterparty"
@@ -101,7 +101,7 @@
                                                 <input type="date" class="form-control" id="endDate" name="endDate"/>
                                             </div>
 
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
                                                 <label class="form-label" for="direction">Direction</label>
                                                 <select class="form-select form-control" id="direction"
                                                         name="direction">
@@ -114,12 +114,34 @@
                                                 </select>
                                             </div>
 
-                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 mt-2 text-end">
-                                                <button type="submit" class="btn btn-relief-primary">Filter</button>
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                                <label class="form-label" for="sortAmount">Amount</label>
+                                                <select class="form-select form-control" id="sortAmount"
+                                                        name="sortAmount">
+                                                    <option value="-1" selected>Any Sort</option>
+                                                    <option th:each="sort : ${sort}"
+                                                            th:value="${sort}"
+                                                            th:text="${sort}">
+                                                        Amount
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                                <label class="form-label" for="sortDate">Date</label>
+                                                <select class="form-select form-control" id="sortDate"
+                                                        name="sortDate">
+                                                    <option value="-1" selected>Any Sort</option>
+                                                    <option th:each="sort : ${sort}"
+                                                            th:value="${sort}"
+                                                            th:text="${sort}">
+                                                        Date
+                                                    </option>
+                                                </select>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                                 <div class="card-body pt-1">
                                     <div th:if="${transactionsExist}" class="table-responsive">
                                         <table class="table table-borderless">

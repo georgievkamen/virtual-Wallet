@@ -159,12 +159,13 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.filter(user.getId(), direction, startDate, endDate, counterpartyId, amount, date, pageable);
     }
 
+    @Override
     public Pages<Transaction> employeeFilter(User userExecuting,
                                              String username,
+                                             Optional<String> counterparty,
                                              Optional<Direction> direction,
                                              Optional<Date> startDate,
                                              Optional<Date> endDate,
-                                             Optional<String> counterparty,
                                              Optional<Sort> amount,
                                              Optional<Sort> date,
                                              Pageable pageable) {

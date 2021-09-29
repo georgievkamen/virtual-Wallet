@@ -12,6 +12,7 @@ import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
 import com.team9.virtualwallet.models.dtos.MoveToWalletTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
 import com.team9.virtualwallet.models.enums.Direction;
+import com.team9.virtualwallet.models.enums.Sort;
 import com.team9.virtualwallet.services.contracts.*;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.data.domain.Pageable;
@@ -58,6 +59,11 @@ public class TransactionMvcController {
         return Arrays.asList(Direction.values());
     }
 
+    @ModelAttribute("sort")
+    public List<Sort> populateSort() {
+        return Arrays.asList(Sort.values());
+    }
+
     //TODO Think about moving this to BaseAuthenticationController
     @ModelAttribute("currentLoggedUser")
     public String populateCurrentLoggedUser(HttpSession session, Model model) {
@@ -75,20 +81,22 @@ public class TransactionMvcController {
                                        @RequestParam(name = "direction", required = false) Optional<String> direction,
                                        @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
                                        @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
+                                       @RequestParam(name = "sortAmount", required = false) Optional<String> sortAmount,
+                                       @RequestParam(name = "sortDate", required = false) Optional<String> sortDate,
                                        @RequestParam(name = "counterparty", required = false) Optional<String> counterparty) {
         try {
             User user = authenticationHelper.tryGetUser(session);
             Pages<Transaction> transactions;
-            if (direction.isEmpty()) {
+            if (direction.isEmpty() && startDate.isEmpty() && endDate.isEmpty() && counterparty.isEmpty()) {
                 transactions = service.getAll(user, pageable);
             } else {
                 transactions = service.filter(user,
-                        (direction.isPresent() && direction.get().equals("-1") ? Optional.empty() : direction),
+                        direction.filter(s -> !s.equals("-1")).map(Direction::getEnum),
                         startDate,
                         endDate,
-                        (counterparty.isPresent() && counterparty.get().isBlank() ? Optional.empty() : counterparty),
-                        Optional.empty(),
-                        Optional.empty(),
+                        counterparty.isPresent() && counterparty.get().isBlank() ? Optional.empty() : counterparty,
+                        sortAmount.filter(s -> !s.equals("-1")).map(Sort::getEnum),
+                        sortDate.filter(s -> !s.equals("-1")).map(Sort::getEnum),
                         pageable);
             }
             model.addAttribute("transactions", transactions.getContent());
