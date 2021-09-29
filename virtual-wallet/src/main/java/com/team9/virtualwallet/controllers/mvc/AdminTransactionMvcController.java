@@ -4,6 +4,7 @@ import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.enums.Direction;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -62,24 +62,24 @@ public class AdminTransactionMvcController {
                                             @PageableDefault(page = 1) Pageable pageable) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            List<Transaction> filtered = new ArrayList<>();
             if (username.isPresent()) {
                 if (username.get().isBlank()) {
                     model.addAttribute("error", "You must provide an username!");
                     return "transactions-admin";
                 }
-                filtered = service.employeeFilter(user,
-                        username.get(),
-                        Direction.getEnum(direction),
-                        startDate,
-                        endDate,
-                        counterparty.isEmpty() ? counterparty : Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        pageable);
-                model.addAttribute("transactions", filtered);
             }
-            model.addAttribute("transactionsExist", !filtered.isEmpty());
+            Pages<Transaction> filtered = service.employeeFilter(user,
+                    username.get(),
+                    Direction.getEnum(direction),
+                    startDate,
+                    endDate,
+                    counterparty.isEmpty() ? counterparty : Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    pageable);
+            model.addAttribute("transactions", filtered);
+            model.addAttribute("transactionsExist", !filtered.getContent().isEmpty());
+            model.addAttribute("pagination", filtered);
             return "transactions-admin";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";

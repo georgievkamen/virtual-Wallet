@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.services.contracts;
 
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.enums.Direction;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 public interface TransactionService {
 
-    List<Transaction> getAll(User user, Pageable pageable);
+    Pages<Transaction> getAll(User user, Pageable pageable);
 
     List<Transaction> getLastTransactions(User user, int count);
 
@@ -27,7 +28,7 @@ public interface TransactionService {
 
     void createExternalWithdraw(Transaction transaction);
 
-    List<Transaction> filter(User user,
+    Pages<Transaction> filter(User user,
                              Direction direction,
                              Optional<Date> startDate,
                              Optional<Date> endDate,
@@ -36,7 +37,7 @@ public interface TransactionService {
                              Optional<SortDate> date,
                              Pageable pageable);
 
-    List<Transaction> employeeFilter(User userExecuting,
+    Pages<Transaction> employeeFilter(User userExecuting,
                                      String username,
                                      Direction direction,
                                      Optional<Date> startDate,

@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.repositories;
 
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
@@ -31,16 +32,20 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     }
 
     @Override
-    public List<Transaction> getAll(User user, Pageable pageable) {
+    public Pages<Transaction> getAll(User user, Pageable pageable) {
         try (Session session = sessionFactory.openSession()) {
             Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id order by timestamp desc", Transaction.class);
             query.setParameter("id", user.getId());
             query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
             query.setMaxResults(pageable.getPageSize());
-            return query.list();
+
+            Query countQuery = session.createQuery("select count (id) from Transaction where sender.id = :id or recipient.id = :id");
+            countQuery.setParameter("id", user.getId());
+            Long countResults = (Long) countQuery.uniqueResult();
+
+            return new Pages<>(query.list(), countResults, pageable);
         }
     }
-
 
     @Override
     public List<Transaction> getLastTransactions(User user, int count) {
@@ -74,42 +79,42 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     }
 
     @Override
-    public List<Transaction> filter(int userId,
-                                    Direction direction,
-                                    Optional<Date> startDate,
-                                    Optional<Date> endDate,
-                                    Optional<Integer> searchedPersonId,
-                                    Optional<SortAmount> amount,
-                                    Optional<SortDate> date,
-                                    Pageable pageable) {
+    public Pages<Transaction> filter(int userId,
+                                     Direction direction,
+                                     Optional<Date> startDate,
+                                     Optional<Date> endDate,
+                                     Optional<Integer> searchedPersonId,
+                                     Optional<SortAmount> amount,
+                                     Optional<SortDate> date,
+                                     Pageable pageable) {
 
         try (Session session = sessionFactory.openSession()) {
-            var baseQuery = "select t from Transaction t";
+            var baseQuery = "from Transaction";
+            var countBaseQuery = "select count (id) ";
             List<String> filters = new ArrayList<>();
             List<String> sortType = new ArrayList<>();
-
 
             switch (direction.toString()) {
                 case "Incoming":
                     if (searchedPersonId.isPresent()) {
-                        filters.add("t.sender.id = :searchedId");
+                        filters.add("sender.id = :searchedId");
                     }
-                    filters.add("t.recipient.id = :userId");
+                    filters.add("recipient.id = :userId");
                     break;
                 case "Outgoing":
                     if (searchedPersonId.isPresent()) {
-                        filters.add("t.recipient.id = :searchedId");
+                        filters.add("recipient.id = :searchedId");
                     }
-                    filters.add("t.sender.id = :userId");
+                    filters.add("sender.id = :userId");
                     break;
             }
 
             if (startDate.isPresent()) {
-                filters.add(" t.timestamp > :startDate");
+                filters.add(" timestamp > :startDate");
             }
 
             if (endDate.isPresent()) {
-                filters.add(" t.timestamp < :endDate");
+                filters.add(" timestamp < :endDate");
             }
 
 
@@ -122,16 +127,35 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                 baseQuery += " order by " + String.join(" , ", sortType);
             }
 
-            Query<Transaction> query = session.createQuery(baseQuery, Transaction.class);
-            query.setParameter("userId", userId);
+            countBaseQuery += baseQuery;
 
-            startDate.ifPresent(value -> query.setParameter("startDate", value));
-            endDate.ifPresent(value -> query.setParameter("endDate", value));
-            searchedPersonId.ifPresent(integer -> query.setParameter("searchedId", integer));
+            Query<Transaction> query = session.createQuery(baseQuery, Transaction.class);
+            Query countQuery = session.createQuery(countBaseQuery);
+
+            query.setParameter("userId", userId);
+            countQuery.setParameter("userId", userId);
+
+            startDate.ifPresent(value -> {
+                query.setParameter("startDate", value);
+                countQuery.setParameter("startDate", value);
+            });
+
+            endDate.ifPresent(value -> {
+                query.setParameter("endDate", value);
+                countQuery.setParameter("endDate", value);
+            });
+
+            searchedPersonId.ifPresent(integer -> {
+                query.setParameter("searchedId", integer);
+                countQuery.setParameter("searchedId", integer);
+            });
+
+
             query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
             query.setMaxResults(pageable.getPageSize());
+            Long countResults = (Long) countQuery.uniqueResult();
 
-            return query.list();
+            return new Pages<>(query.list(), countResults, pageable);
         }
 
     }

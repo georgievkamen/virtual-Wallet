@@ -5,6 +5,7 @@ import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.InsufficientBalanceException;
 import com.team9.virtualwallet.models.Category;
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
@@ -70,18 +71,33 @@ public class TransactionMvcController {
     }
 
     @GetMapping
-    public String showTransactionsPage(HttpSession session, Model model, @PageableDefault(page = 1) Pageable pageable) {
+    public String showTransactionsPage(HttpSession session, Model model, @PageableDefault(page = 1) Pageable pageable,
+                                       @RequestParam(name = "direction", required = false) Optional<String> direction,
+                                       @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
+                                       @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
+                                       @RequestParam(name = "counterparty", required = false) Optional<String> counterparty) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            List<Transaction> transactions = service.getAll(user, pageable);
-            model.addAttribute("transactions", transactions);
-            model.addAttribute("transactionsExist", !transactions.isEmpty());
+            Pages<Transaction> transactions;
+            if (direction.isEmpty()) {
+                transactions = service.getAll(user, pageable);
+            } else {
+                transactions = service.filter(user, Direction.getEnum(direction.get()), startDate, endDate,
+                        (counterparty.isPresent() && counterparty.get().isBlank() ? Optional.empty() : counterparty),
+                        Optional.empty(), Optional.empty(), pageable);
+            }
+            model.addAttribute("transactions", transactions.getContent());
+            model.addAttribute("transactionsExist", !transactions.getContent().isEmpty());
+            model.addAttribute("pagination", transactions);
+            model.addAttribute("pages", transactions.getTotalPages());
             model.addAttribute("cardService", cardService);
             model.addAttribute("walletService", walletService);
-            model.addAttribute("filtered", false);
             return "transactions";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "transactions";
         }
     }
 
@@ -248,41 +264,4 @@ public class TransactionMvcController {
         }
     }
 
-    @PostMapping("/filter")
-    public String filterTransactions(HttpSession session,
-                                     Model model,
-                                     @RequestParam(name = "direction") String direction,
-                                     @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> startDate,
-                                     @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> endDate,
-                                     @RequestParam(name = "counterparty", required = false) Optional<String> counterparty,
-                                     @PageableDefault(page = 1) Pageable pageable) {
-
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-
-            List<Transaction> filtered = service.filter(user,
-                    Direction.getEnum(direction),
-                    startDate,
-                    endDate,
-                    counterparty.isEmpty() ? counterparty : Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    pageable);
-            model.addAttribute("transactions", filtered);
-            model.addAttribute("transactionsExist", !filtered.isEmpty());
-            model.addAttribute("cardService", cardService);
-            model.addAttribute("walletService", walletService);
-            model.addAttribute("filtered", true);
-            return "transactions";
-        } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("error", e.getMessage());
-            return "not-found";
-
-        }
-    }
-
 }
-
-

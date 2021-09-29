@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.repositories.contracts;
 
+import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 public interface TransactionRepository extends BaseRepository<Transaction> {
 
-    List<Transaction> getAll(User user, Pageable pageable);
+    Pages<Transaction> getAll(User user, Pageable pageable);
 
     List<Transaction> getLastTransactions(User user, int count);
 
@@ -22,7 +23,7 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
 
     void createExternal(Transaction transaction, Wallet wallet);
 
-    List<Transaction> filter(int userId,
+    Pages<Transaction> filter(int userId,
                              Direction direction,
                              Optional<Date> startDate,
                              Optional<Date> endDate,

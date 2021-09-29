@@ -79,11 +79,15 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <form method="post" th:action="@{/panel/transactions/filter}">
+                                    <form method="get" th:action="@{/panel/transactions}">
                                         <div class="row pb-1">
                                             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
                                                 <label class="form-label" for="counterparty">Counterparty</label>
-                                                <input type="text" class="form-control" id="counterparty" name="counterparty"/>
+                                                <input type="text" class="form-control" id="counterparty"
+                                                       name="counterparty"
+                                                       th:classappend="${error != null} ? 'is-invalid' : ''"/>
+                                                <div th:if="${error != null}" class="invalid-feedback"
+                                                     th:text="${error}"></div>
                                             </div>
 
                                             <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
@@ -228,6 +232,17 @@
                                             </tr>
                                             </tbody>
                                         </table>
+                                        <nav th:if="${pagination.getTotalPages() > 1}" aria-label="Page navigation">
+                                            <ul class="pagination justify-content-center mt-2">
+                                                <li th:each="i : ${#numbers.sequence(pagination.beginIndex, pagination.endIndex)}"
+                                                    class="page-item"
+                                                    th:classappend="${i == pagination.getNumber()} ? 'active'">
+                                                    <a class="page-link"
+                                                       th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}"
+                                                       th:href="${urlBuilder.replaceQueryParam('page', i).toUriString()}">[[${i}]]</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
                                     </div>
                                 </div>
                             </div>

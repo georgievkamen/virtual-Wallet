@@ -1,10 +1,7 @@
 package com.team9.virtualwallet.services;
 
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
-import com.team9.virtualwallet.models.Card;
-import com.team9.virtualwallet.models.Transaction;
-import com.team9.virtualwallet.models.User;
-import com.team9.virtualwallet.models.Wallet;
+import com.team9.virtualwallet.models.*;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.SortAmount;
 import com.team9.virtualwallet.models.enums.SortDate;
@@ -47,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getAll(User user, Pageable pageable) {
+    public Pages<Transaction> getAll(User user, Pageable pageable) {
         return repository.getAll(user, pageable);
     }
 
@@ -147,28 +144,31 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> filter(User user,
-                                    Direction direction,
-                                    Optional<Date> startDate,
-                                    Optional<Date> endDate,
-                                    Optional<String> counterparty,
-                                    Optional<SortAmount> amount,
-                                    Optional<SortDate> date,
-                                    Pageable pageable) {
+    public Pages<Transaction> filter(User user,
+                                     Direction direction,
+                                     Optional<Date> startDate,
+                                     Optional<Date> endDate,
+                                     Optional<String> counterparty,
+                                     Optional<SortAmount> amount,
+                                     Optional<SortDate> date,
+                                     Pageable pageable) {
 
-        Optional<Integer> counterpartyId = checkAndSetIfPresent(counterparty);
+        Optional<Integer> counterpartyId = Optional.empty();
+        if (counterparty.isPresent()) {
+            counterpartyId = checkAndSetIfPresent(counterparty);
+        }
         return repository.filter(user.getId(), direction, startDate, endDate, counterpartyId, amount, date, pageable);
     }
 
-    public List<Transaction> employeeFilter(User userExecuting,
-                                            String username,
-                                            Direction direction,
-                                            Optional<Date> startDate,
-                                            Optional<Date> endDate,
-                                            Optional<String> counterparty,
-                                            Optional<SortAmount> amount,
-                                            Optional<SortDate> date,
-                                            Pageable pageable) {
+    public Pages<Transaction> employeeFilter(User userExecuting,
+                                             String username,
+                                             Direction direction,
+                                             Optional<Date> startDate,
+                                             Optional<Date> endDate,
+                                             Optional<String> counterparty,
+                                             Optional<SortAmount> amount,
+                                             Optional<SortDate> date,
+                                             Pageable pageable) {
         if (!userExecuting.isEmployee()) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "remove", "employee"));
         }

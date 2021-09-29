@@ -47,7 +47,7 @@ public class TransactionRestController {
                                     @PageableDefault(page = 1) Pageable pageable) {
         User user = authenticationHelper.tryGetUser(headers);
 
-        return service.getAll(user, pageable);
+        return service.getAll(user, pageable).getContent();
     }
 
     @GetMapping("/{id}")
@@ -113,7 +113,7 @@ public class TransactionRestController {
                                     @PageableDefault(page = 1) Pageable pageable,
                                     @RequestParam Direction direction,
                                     @RequestParam(required = false)
-                                                Optional<Date> startDate,
+                                    Optional<Date> startDate,
                                     Optional<Date> endDate,
                                     Optional<String> username,
                                     Optional<SortAmount> amount,
@@ -121,7 +121,7 @@ public class TransactionRestController {
 
         User user = authenticationHelper.tryGetUser(headers);
 
-        return service.filter(user, direction, startDate, endDate, username, amount, date, pageable);
+        return service.filter(user, direction, startDate, endDate, username, amount, date, pageable).getContent();
     }
 
 }
