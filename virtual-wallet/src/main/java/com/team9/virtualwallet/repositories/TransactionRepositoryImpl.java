@@ -5,8 +5,7 @@ import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.SortAmount;
-import com.team9.virtualwallet.models.enums.SortDate;
+import com.team9.virtualwallet.models.enums.Sort;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -84,8 +83,8 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                                      Optional<Date> startDate,
                                      Optional<Date> endDate,
                                      Optional<Integer> searchedPersonId,
-                                     Optional<SortAmount> amount,
-                                     Optional<SortDate> date,
+                                     Optional<Sort> amount,
+                                     Optional<Sort> date,
                                      Pageable pageable) {
 
         try (Session session = sessionFactory.openSession()) {
@@ -139,8 +138,8 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
             }
 
 
-            amount.ifPresent(sortAmount -> sortType.add(String.format(" %s ", sortAmount)));
-            date.ifPresent(sortDate -> sortType.add(String.format(" %s ", sortDate.toString().replaceAll("Date", "timestamp"))));
+            amount.ifPresent(sortAmount -> sortType.add(String.format(" Amount %s ", sortAmount)));
+            date.ifPresent(sortDate -> sortType.add(String.format(" timestamp %s ", sortDate)));
 
             baseQuery += " where " + String.join(" and ", filters);
 

@@ -7,8 +7,7 @@ import com.team9.virtualwallet.models.dtos.ExternalTransactionDto;
 import com.team9.virtualwallet.models.dtos.MoveToWalletTransactionDto;
 import com.team9.virtualwallet.models.dtos.TransactionDto;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.SortAmount;
-import com.team9.virtualwallet.models.enums.SortDate;
+import com.team9.virtualwallet.models.enums.Sort;
 import com.team9.virtualwallet.services.contracts.TransactionService;
 import com.team9.virtualwallet.services.mappers.TransactionModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,12 +111,12 @@ public class TransactionRestController {
     public List<Transaction> filter(@RequestHeader HttpHeaders headers,
                                     @PageableDefault(page = 1) Pageable pageable,
                                     @RequestParam(required = false)
-                                                Optional<Direction> direction,
+                                            Optional<Direction> direction,
                                     Optional<Date> startDate,
                                     Optional<Date> endDate,
                                     Optional<String> username,
-                                    Optional<SortAmount> amount,
-                                    Optional<SortDate> date) {
+                                    Optional<Sort> amount,
+                                    Optional<Sort> date) {
 
         User user = authenticationHelper.tryGetUser(headers);
 

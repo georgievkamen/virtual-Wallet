@@ -5,8 +5,7 @@ import com.team9.virtualwallet.models.Transaction;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.SortAmount;
-import com.team9.virtualwallet.models.enums.SortDate;
+import com.team9.virtualwallet.models.enums.Sort;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
@@ -28,7 +27,7 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
                               Optional<Date> startDate,
                               Optional<Date> endDate,
                               Optional<Integer> searchedPersonId,
-                              Optional<SortAmount> amount,
-                              Optional<SortDate> date,
+                              Optional<Sort> amount,
+                              Optional<Sort> date,
                               Pageable pageable);
 }

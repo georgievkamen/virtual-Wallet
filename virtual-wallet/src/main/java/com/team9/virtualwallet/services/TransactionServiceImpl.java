@@ -3,8 +3,7 @@ package com.team9.virtualwallet.services;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.*;
 import com.team9.virtualwallet.models.enums.Direction;
-import com.team9.virtualwallet.models.enums.SortAmount;
-import com.team9.virtualwallet.models.enums.SortDate;
+import com.team9.virtualwallet.models.enums.Sort;
 import com.team9.virtualwallet.models.enums.TransactionType;
 import com.team9.virtualwallet.repositories.contracts.CardRepository;
 import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
@@ -149,8 +148,8 @@ public class TransactionServiceImpl implements TransactionService {
                                      Optional<Date> startDate,
                                      Optional<Date> endDate,
                                      Optional<String> counterparty,
-                                     Optional<SortAmount> amount,
-                                     Optional<SortDate> date,
+                                     Optional<Sort> amount,
+                                     Optional<Sort> date,
                                      Pageable pageable) {
 
         Optional<Integer> counterpartyId = Optional.empty();
@@ -166,8 +165,8 @@ public class TransactionServiceImpl implements TransactionService {
                                              Optional<Date> startDate,
                                              Optional<Date> endDate,
                                              Optional<String> counterparty,
-                                             Optional<SortAmount> amount,
-                                             Optional<SortDate> date,
+                                             Optional<Sort> amount,
+                                             Optional<Sort> date,
                                              Pageable pageable) {
         if (!userExecuting.isEmployee()) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "remove", "employee"));
