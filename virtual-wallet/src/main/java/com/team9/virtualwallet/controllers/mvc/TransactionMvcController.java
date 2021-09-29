@@ -82,9 +82,14 @@ public class TransactionMvcController {
             if (direction.isEmpty()) {
                 transactions = service.getAll(user, pageable);
             } else {
-                transactions = service.filter(user, Direction.getEnum(direction.get()), startDate, endDate,
+                transactions = service.filter(user,
+                        (direction.isPresent() && direction.get().equals("-1") ? Optional.empty() : direction),
+                        startDate,
+                        endDate,
                         (counterparty.isPresent() && counterparty.get().isBlank() ? Optional.empty() : counterparty),
-                        Optional.empty(), Optional.empty(), pageable);
+                        Optional.empty(),
+                        Optional.empty(),
+                        pageable);
             }
             model.addAttribute("transactions", transactions.getContent());
             model.addAttribute("transactionsExist", !transactions.getContent().isEmpty());

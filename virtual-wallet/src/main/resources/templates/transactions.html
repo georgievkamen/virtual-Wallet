@@ -105,6 +105,7 @@
                                                 <label class="form-label" for="direction">Direction</label>
                                                 <select class="form-select form-control" id="direction"
                                                         name="direction">
+                                                    <option value="-1" selected>Any Direction</option>
                                                     <option th:each="direction : ${direction}"
                                                             th:value="${direction}"
                                                             th:text="${direction}">
