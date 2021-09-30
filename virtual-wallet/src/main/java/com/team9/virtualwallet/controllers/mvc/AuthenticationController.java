@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
@@ -89,7 +90,7 @@ public class AuthenticationController {
 
         try {
             User user = mapper.fromRegisterDto(registerDto);
-            userService.create(user, Optional.ofNullable(invitationToken));
+            userService.create(user, Optional.ofNullable(invitationToken).filter(Predicate.not(String::isEmpty)));
             session.setAttribute(CURRENT_USER_SESSION_KEY, user.getUsername());
             model.addAttribute("email", user.getEmail());
             return "verify-email";
