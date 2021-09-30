@@ -1,7 +1,6 @@
 package com.team9.virtualwallet.repositories;
 
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
-import com.team9.virtualwallet.exceptions.FailedToUploadFileException;
 import com.team9.virtualwallet.models.Pages;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
@@ -14,16 +13,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.team9.virtualwallet.utils.FileUploadHelper.uploadFile;
 
 @Repository
 public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements UserRepository {
@@ -56,17 +53,10 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
         user.setUserPhoto(fileName);
         Path uploadPath = Paths.get("./images/users/" + user.getId());
 
-        try (InputStream inputStream = multipartFile.getInputStream()) {
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new FailedToUploadFileException(e.getMessage());
-        }
+        uploadFile(uploadPath, fileName, multipartFile);
         super.update(user);
     }
+
 
     @Override
     public void delete(User user) {

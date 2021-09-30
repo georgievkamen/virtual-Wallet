@@ -11,7 +11,7 @@ public class LoginDto {
     private String username;
 
     @NotNull(message = "You must provide a password!")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Password must be at least 8 characters long and should contain capital letter, digit and special symbol (+, -, *, &, ^, …)")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,}$", message = "Password must be at least 8 characters long and should contain capital letter, digit and special symbol (+, -, *, &, ^, …)")
     private String password;
 
     public String getUsername() {

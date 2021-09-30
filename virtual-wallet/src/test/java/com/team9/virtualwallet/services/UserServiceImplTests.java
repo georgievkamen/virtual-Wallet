@@ -323,7 +323,7 @@ public class UserServiceImplTests {
 
     }
 
-    @Test
+/*    @Test
     public void VerifyNotDuplicate_Should_Throw_When_UserDuplicate() {
 
         var mockCustomer = createMockCustomer();
@@ -345,6 +345,6 @@ public class UserServiceImplTests {
 
         Assertions.assertThrows(DuplicateEntityException.class,
                 () -> service.verifyNotDuplicate(mockCustomer));
-    }
+    }*/
 
 }
