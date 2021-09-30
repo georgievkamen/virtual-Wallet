@@ -71,9 +71,10 @@
                                         <h4 class="card-title text-primary">Wallets</h4>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <a th:href="@{/panel/transactions/create/wallet}">
+                                        <a th:if="${!currentLoggedUser.blocked}" th:href="@{/panel/transactions/create/wallet}">
                                             <button type="button" class="btn btn-relief-primary">Move Balance</button>
                                         </a>
+                                        <button th:if="${currentLoggedUser.blocked}" type="button" class="btn btn-relief-primary" onclick="showUserBlockedErrorModal()">Move Balance</button>
                                         <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
                                             <button type="button" class="btn btn-relief-success">Add Wallet</button>
                                         </a>
@@ -183,6 +184,20 @@
             icon: 'error',
             title: 'Error!',
             text: 'You can\'t delete your default wallet!',
+            type: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        })
+    };
+
+    const showUserBlockedErrorModal = function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'You are blocked and so you cannot make transactions!',
             type: 'error',
             confirmButtonText: 'OK',
             customClass: {

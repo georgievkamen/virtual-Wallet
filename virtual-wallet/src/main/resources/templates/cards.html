@@ -31,6 +31,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-sweet-alerts.css}">
     <!-- END: Page CSS-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
@@ -70,12 +71,14 @@
                                         <h4 class="card-title text-primary">Cards</h4>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <a th:href="@{/panel/transactions/create/deposit}">
+                                        <a th:if="${!currentLoggedUser.blocked}" th:href="@{/panel/transactions/create/deposit}">
                                             <button type="button" class="btn btn-relief-success">Deposit</button>
                                         </a>
-                                        <a th:href="@{/panel/transactions/create/withdraw}">
+                                        <button th:if="${currentLoggedUser.blocked}" type="button" class="btn btn-relief-success" onclick="showUserBlockedErrorModal()">Deposit</button>
+                                        <a th:if="${!currentLoggedUser.blocked}" th:href="@{/panel/transactions/create/withdraw}">
                                             <button type="button" class="btn btn-relief-danger">Withdraw</button>
                                         </a>
+                                        <button th:if="${currentLoggedUser.blocked}" type="button" class="btn btn-relief-danger" onclick="showUserBlockedErrorModal()">Withdraw</button>
                                         <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
                                             <button type="button" class="btn btn-relief-info">Add Card</button>
                                         </a>
@@ -152,6 +155,8 @@
 
 <!-- BEGIN: Page JS-->
 <script th:src="@{/js/scripts/pages/homepage.js}"></script>
+<script th:src="@{/vendors/js/extensions/sweetalert2.all.min.js}"></script>
+<script th:src="@{/js/scripts/extensions/ext-component-sweet-alerts.js}"></script>
 <!-- END: Page JS-->
 
 <script>
@@ -162,7 +167,21 @@
                 height: 14
             });
         }
-    })
+    });
+
+    const showUserBlockedErrorModal = function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'You are blocked and so you cannot make transactions!',
+            type: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        })
+    };
 </script>
 </body>
 

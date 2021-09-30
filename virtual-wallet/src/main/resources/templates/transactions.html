@@ -31,6 +31,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-sweet-alerts.css}">
     <!-- END: Page CSS-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
@@ -72,11 +73,16 @@
                                         </div>
                                         <div class="col-6 text-end">
                                             <button type="submit" class="btn btn-relief-primary">Filter</button>
-                                            <a th:href="@{__${#httpServletRequest.requestURI}__/create/internal}">
+                                            <a th:if="${!currentLoggedUser.blocked}" th:href="@{__${#httpServletRequest.requestURI}__/create/internal}">
                                                 <button type="button" class="btn btn-relief-success">
                                                     Create Transaction
                                                 </button>
                                             </a>
+                                            <button type="button"
+                                                    th:if="${currentLoggedUser.blocked}"
+                                                    class="btn btn-relief-success" onclick="showUserBlockedErrorModal()">
+                                                Create Transaction
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -306,6 +312,8 @@
 
 <!-- BEGIN: Page JS-->
 <script th:src="@{/js/scripts/pages/homepage.js}"></script>
+<script th:src="@{/vendors/js/extensions/sweetalert2.all.min.js}"></script>
+<script th:src="@{/js/scripts/extensions/ext-component-sweet-alerts.js}"></script>
 <!-- END: Page JS-->
 
 <script>
@@ -316,7 +324,21 @@
                 height: 14
             });
         }
-    })
+    });
+
+    const showUserBlockedErrorModal = function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'You are blocked and so you cannot make transactions!',
+            type: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        })
+    };
 </script>
 </body>
 

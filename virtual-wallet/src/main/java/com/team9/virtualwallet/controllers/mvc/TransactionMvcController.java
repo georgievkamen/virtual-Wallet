@@ -120,6 +120,9 @@ public class TransactionMvcController {
                                               @RequestParam(name = "search-field", required = false) String searchTerm) {
         try {
             User user = authenticationHelper.tryGetUser(session);
+            if (user.isBlocked()) {
+                return "redirect:/panel/transactions";
+            }
             List<Category> categories = categoryService.getAll(user);
             model.addAttribute("transaction", new TransactionDto());
             model.addAttribute("userWallets", walletService.getAll(user));
@@ -170,6 +173,9 @@ public class TransactionMvcController {
     public String showWalletToWalletTransactionPage(HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
+            if (user.isBlocked()) {
+                return "redirect:/panel/transactions";
+            }
             model.addAttribute("transaction", new MoveToWalletTransactionDto());
             model.addAttribute("userWallets", walletService.getAll(user));
             return "transaction-wallet-create";
@@ -207,6 +213,9 @@ public class TransactionMvcController {
     public String showDepositTransactionPage(HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
+            if (user.isBlocked()) {
+                return "redirect:/panel/transactions";
+            }
             model.addAttribute("transaction", new ExternalTransactionDto());
             model.addAttribute("userWallets", walletService.getAll(user));
             model.addAttribute("userCards", cardService.getAll(user));
@@ -244,6 +253,9 @@ public class TransactionMvcController {
     public String showWithdrawTransactionPage(HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
+            if (user.isBlocked()) {
+                return "redirect:/panel/transactions";
+            }
             model.addAttribute("transaction", new ExternalTransactionDto());
             model.addAttribute("userWallets", walletService.getAll(user));
             model.addAttribute("userCards", cardService.getAll(user));
