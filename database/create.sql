@@ -29,12 +29,8 @@ create table users
     id_verified       tinyint(1) default 0 not null,
     user_photo        varchar(500)         null,
     default_wallet_id int                  null,
-    constraint users_email_uindex
-        unique (email),
-    constraint users_phone_number_uindex
-        unique (phone_number),
-    constraint users_username_uindex
-        unique (username)
+    deleted           tinyint(1) default 0 not null,
+    invited_users     int                  not null
 );
 
 create table cards
@@ -59,7 +55,7 @@ create table categories
 (
     category_id int auto_increment
         primary key,
-    name        varchar(16) not null,
+    name        varchar(20) not null,
     user_id     int         not null,
     constraint categories_users_id_fk
         foreign key (user_id) references users (user_id)
@@ -86,18 +82,31 @@ create table contact_list
         foreign key (contact_id) references users (user_id)
 );
 
+create table invitation_tokens
+(
+    token_id         int auto_increment
+        primary key,
+    invitation_token varchar(255)                           not null,
+    expiration_date  timestamp  default current_timestamp() not null on update current_timestamp(),
+    inviting_user_id int                                    not null,
+    invited_email    varchar(50)                            not null,
+    used             tinyint(1) default 0                   not null,
+    constraint invitation_tokens_users_fk
+        foreign key (inviting_user_id) references users (user_id)
+);
+
 create table transactions
 (
     transaction_id              int auto_increment
         primary key,
-    timestamp                   timestamp default current_timestamp()                                               not null on update current_timestamp(),
-    sender_id                   int                                                                                 not null,
-    recipient_id                int                                                                                 not null,
-    amount                      decimal                                                                             not null,
-    sender_payment_method_id    int                                                                                 not null,
-    recipient_payment_method_id int                                                                                 not null,
-    description                 varchar(50)                                                                         not null,
-    transaction_type            enum ('CARD_TO_WALLET', 'WALLET_TO_CARD', 'SMALL_TRANSACTION', 'LARGE_TRANSACTION') not null,
+    timestamp                   timestamp default current_timestamp()                                                                   not null on update current_timestamp(),
+    sender_id                   int                                                                                                     not null,
+    recipient_id                int                                                                                                     not null,
+    amount                      decimal(19, 2)                                                                                          not null,
+    sender_payment_method_id    int                                                                                                     not null,
+    recipient_payment_method_id int                                                                                                     not null,
+    description                 varchar(50)                                                                                             not null,
+    transaction_type            enum ('CARD_TO_WALLET', 'WALLET_TO_CARD', 'WALLET_TO_WALLET', 'SMALL_TRANSACTION', 'LARGE_TRANSACTION') null,
     constraint transactions_payment_method_fk
         foreign key (sender_payment_method_id) references payment_methods (id),
     constraint transactions_recipient_payment_method_id_fk
@@ -133,7 +142,7 @@ create table wallets
     wallet_id int auto_increment
         primary key,
     name      varchar(100)         not null,
-    balance   decimal              not null,
+    balance   decimal(19, 2)       not null,
     user_id   int                  null,
     deleted   tinyint(1) default 0 not null,
     constraint wallets_payment_methods_fk
