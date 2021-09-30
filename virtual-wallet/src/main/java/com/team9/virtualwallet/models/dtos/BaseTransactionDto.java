@@ -1,5 +1,6 @@
 package com.team9.virtualwallet.models.dtos;
 
+import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,7 +12,8 @@ public abstract class BaseTransactionDto {
     private Integer selectedWalletId;
 
     @NotNull(message = "You must provide an amount!")
-    @DecimalMin(value = "0.1", message = "Amount must be more than 0.1!")
+    @DecimalMin(value = "0.01", message = "Amount must be more than 0.01!")
+    @DecimalMax(value = "1000000000000", message = "Amount must be less than 1 000 000 000 000!")
     private BigDecimal amount;
 
     @NotNull(message = "You must provide a description!")
