@@ -90,7 +90,7 @@
                             <h4 class="card-title mb-1">Next Generation Virtual Banking 🚀</h4>
                             <p class="card-title mb-1">Join the Future!</p>
 
-                            <form class="auth-register-form mt-2" action="/auth/register" th:object="${register}"
+                            <form class="auth-register-form mt-2" th:action="@{/auth/register(invitation-token=${invitationToken})}" th:object="${register}"
                                   method="POST">
 
                                 <div class="mb-1">

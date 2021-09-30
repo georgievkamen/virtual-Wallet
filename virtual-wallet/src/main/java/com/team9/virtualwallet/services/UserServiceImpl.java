@@ -3,11 +3,9 @@ package com.team9.virtualwallet.services;
 import com.team9.virtualwallet.exceptions.DuplicateEntityException;
 import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
-import com.team9.virtualwallet.models.ConfirmationToken;
-import com.team9.virtualwallet.models.Pages;
-import com.team9.virtualwallet.models.User;
-import com.team9.virtualwallet.models.Wallet;
+import com.team9.virtualwallet.models.*;
 import com.team9.virtualwallet.repositories.contracts.ConfirmationTokenRepository;
+import com.team9.virtualwallet.repositories.contracts.InvitationTokenRepository;
 import com.team9.virtualwallet.repositories.contracts.RoleRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.services.contracts.UserService;
@@ -19,10 +17,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.team9.virtualwallet.configs.ApplicationConstants.FREE_BONUS_AMOUNT;
+import static com.team9.virtualwallet.configs.ApplicationConstants.MAX_ALLOWED_REFERRALS;
 import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZED_ACTION;
 
 @Service
@@ -30,14 +32,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final InvitationTokenRepository invitationTokenRepository;
     private final WalletService walletService;
     private final RoleRepository roleRepository;
     private final SendEmailServiceImpl sendEmailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, WalletService walletService, RoleRepository roleRepository, SendEmailServiceImpl sendEmailService) {
+    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, InvitationTokenRepository invitationTokenRepository, WalletService walletService, RoleRepository roleRepository, SendEmailServiceImpl sendEmailService) {
         this.repository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
+        this.invitationTokenRepository = invitationTokenRepository;
         this.walletService = walletService;
         this.roleRepository = roleRepository;
         this.sendEmailService = sendEmailService;
@@ -65,15 +69,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(User user) {
+    public void create(User user, Optional<String> invitationTokenUUID) {
         verifyNotDuplicate(user);
-
-        ConfirmationToken confirmationToken = new ConfirmationToken(user);
-        sendEmailService.sendEmailConfirmation(user, confirmationToken);
-
         repository.create(user);
-        confirmationTokenRepository.create(confirmationToken);
-        createDefaultWallet(user);
+        Wallet wallet = walletService.createDefaultWallet(user);
+        user.setDefaultWallet(wallet);
+        repository.update(user);
+        sendEmailService.sendEmailConfirmation(user, invitationTokenUUID);
     }
 
     @Override
@@ -117,14 +119,6 @@ public class UserServiceImpl implements UserService {
         return repository.filter(verifyOptionalNotEmpty(userName), verifyOptionalNotEmpty(phoneNumber), verifyOptionalNotEmpty(email), pageable);
 
     }
-
-    private Optional<String> verifyOptionalNotEmpty(Optional<String> optional) {
-        if (optional.isPresent() && !optional.get().isEmpty()) {
-            return optional;
-        }
-        return Optional.empty();
-    }
-
     @Override
     public User getByField(User user, String fieldName, String searchTerm) {
 
@@ -163,16 +157,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void confirmUser(String confirmationToken) {
-        ConfirmationToken token = confirmationTokenRepository.getByField("confirmationToken", confirmationToken);
+    public void confirmUser(String confirmationTokenUUID, Optional<String> invitationTokenUUID) {
+        ConfirmationToken token = confirmationTokenRepository.getByField("confirmationToken", confirmationTokenUUID);
         User user = token.getUser();
 
         if (user.isEmailVerified()) {
             throw new IllegalArgumentException("You have already verified your Email!");
+        } else {
+            user.setEmailVerified(true);
+            repository.update(user);
+            if (invitationTokenUUID.isPresent()) {
+                InvitationToken invitationToken = invitationTokenRepository.getByField("invitationToken", invitationTokenUUID.get());
+                if (!invitationToken.isUsed() && Timestamp.valueOf(LocalDateTime.now()).before(invitationToken.getExpirationDate())) {
+                    invitationToken.setUsed(true);
+                    User invitingUser = invitationToken.getInvitingUser();
+                    invitingUser.setInvitedUsers(user.getInvitedUsers() + 1);
+                    if (invitingUser.getInvitedUsers() < MAX_ALLOWED_REFERRALS) {
+                        walletService.depositBalance(invitingUser.getDefaultWallet(), BigDecimal.valueOf(FREE_BONUS_AMOUNT));
+                        repository.update(invitingUser);
+                    }
+                    walletService.depositBalance(user.getDefaultWallet(), BigDecimal.valueOf(FREE_BONUS_AMOUNT));
+                }
+            }
         }
 
-        user.setEmailVerified(true);
-        repository.update(user);
     }
 
     @Override
@@ -226,6 +234,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void inviteFriend(User user, String email) {
+        verifyEmailNotRegistered(email);
+        sendEmailService.sendEmailInvitation(user, email);
+    }
+
+    private Optional<String> verifyOptionalNotEmpty(Optional<String> optional) {
+        if (optional.isPresent() && !optional.get().isEmpty()) {
+            return optional;
+        }
+        return Optional.empty();
+    }
+
+
     private void verifyNotDuplicate(User user) {
         List<User> usersByUserName = repository.getByFieldList("username", user.getUsername());
         List<User> usersByEmail = repository.getByFieldList("email", user.getEmail());
@@ -242,6 +264,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private void verifyEmailNotRegistered(String email) {
+        List<User> usersByEmail = repository.getByFieldList("email", email);
+
+        if (!usersByEmail.isEmpty()) {
+            throw new DuplicateEntityException("User", "email", email);
+        }
+    }
+
     private void verifyContactNotAdded(User userExecuting, User contactToAdd) {
         if (userExecuting.getContacts().stream().anyMatch(user -> user.getUsername().equals(contactToAdd.getUsername()))) {
             throw new DuplicateEntityException(String.format("User with username %s is already in your contact list", contactToAdd.getUsername()));
@@ -252,16 +282,6 @@ public class UserServiceImpl implements UserService {
         if (userExecuting.getContacts().stream().noneMatch(user -> user.getUsername().equals(contactToDelete.getUsername()))) {
             throw new EntityNotFoundException(String.format("Contact with username %s is not in your contact list", contactToDelete.getUsername()));
         }
-    }
-
-    private void createDefaultWallet(User user) {
-        Wallet defaultWallet = new Wallet();
-        defaultWallet.setName("Default Wallet");
-        defaultWallet.setBalance(BigDecimal.valueOf(0));
-        defaultWallet.setUser(user);
-        walletService.create(user, defaultWallet);
-        user.setDefaultWallet(defaultWallet);
-        repository.update(user);
     }
 
 }

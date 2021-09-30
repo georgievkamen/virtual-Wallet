@@ -33,4 +33,5 @@ public interface WalletService {
 
     void verifyWalletsOwnership(Transaction transaction, Wallet walletToMoveFrom, Wallet walletToMoveTo);
 
+    Wallet createDefaultWallet(User user);
 }

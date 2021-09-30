@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 import static com.team9.virtualwallet.configs.RestResponseEntityExceptionHandler.checkFields;
 
@@ -26,17 +27,17 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody @Valid RegisterDto registerDto, BindingResult result) {
+    public String register(@RequestBody @Valid RegisterDto registerDto, BindingResult result, @RequestParam(name = "invitationToken", required = false) String invitationToken) {
         checkFields(result);
 
         User user = modelMapper.fromRegisterDto(registerDto);
-        service.create(user);
+        service.create(user, Optional.ofNullable(invitationToken));
         return String.format("We have send an activation code to your E-Mail: %s!", user.getEmail());
     }
 
     @GetMapping("/verify-email")
-    public String confirmAccount(@RequestParam("token") String token) {
-        service.confirmUser(token);
+    public String confirmAccount(@RequestParam("token") String token, @RequestParam(name = "invitationToken", required = false) String invitationToken) {
+        service.confirmUser(token, Optional.ofNullable(invitationToken));
         return "Your account has been verified!";
     }
 

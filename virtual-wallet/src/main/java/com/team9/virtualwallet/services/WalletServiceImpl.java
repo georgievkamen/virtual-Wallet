@@ -125,6 +125,16 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
+    @Override
+    public Wallet createDefaultWallet(User user) {
+        Wallet defaultWallet = new Wallet();
+        defaultWallet.setName("Default Wallet");
+        defaultWallet.setBalance(BigDecimal.valueOf(0));
+        defaultWallet.setUser(user);
+        create(user, defaultWallet);
+        return defaultWallet;
+    }
+
     //TODO Rename to verifyUnique
     private void verifyNotDuplicate(User user, Wallet wallet) {
         if (repository.isDuplicate(user, wallet)) {

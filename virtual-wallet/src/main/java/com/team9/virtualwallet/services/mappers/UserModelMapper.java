@@ -1,6 +1,5 @@
 package com.team9.virtualwallet.services.mappers;
 
-import com.team9.virtualwallet.models.Role;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.RegisterDto;
 import com.team9.virtualwallet.models.dtos.UserDto;
@@ -8,8 +7,6 @@ import com.team9.virtualwallet.repositories.contracts.RoleRepository;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
 
 @Component
 public class UserModelMapper {
@@ -32,11 +29,7 @@ public class UserModelMapper {
         user.setPhoneNumber(registerDto.getPhoneNumber());
         user.setFirstName(registerDto.getFirstName());
         user.setLastName(registerDto.getLastName());
-        HashSet<Role> roles = new HashSet<>();
-        user.setRoles(roles);
         user.addRole(roleRepository.getById(1));
-        user.setEmailVerified(false);
-        user.setIdVerified(false);
 
         return user;
     }

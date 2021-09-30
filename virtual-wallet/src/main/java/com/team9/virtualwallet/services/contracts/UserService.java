@@ -17,7 +17,7 @@ public interface UserService {
 
     User getByField(User user, String fieldName, String searchTerm);
 
-    void create(User user);
+    void create(User user, Optional<String> invitationTokenUUID);
 
     void update(User userExecuting, User user, int id);
 
@@ -27,7 +27,7 @@ public interface UserService {
 
     void delete(User user);
 
-    void confirmUser(String confirmationToken);
+    void confirmUser(String confirmationTokenUUID, Optional<String> invitationTokenUUID);
 
     void addContact(User userExecuting, int contactId);
 
@@ -50,4 +50,6 @@ public interface UserService {
                        Pageable pageable);
 
     void verifyUserNotBlocked(User user);
+
+    void inviteFriend(User user, String email);
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
@@ -71,21 +72,24 @@ public class AuthenticationController {
     }
 
     @GetMapping("/register")
-    public String showRegisterPage(Model model) {
+    public String showRegisterPage(Model model, @RequestParam(name = "invitation-token", required = false) String invitationToken) {
         model.addAttribute("register", new RegisterDto());
+        model.addAttribute("invitationToken", invitationToken);
         return "register";
     }
 
     @PostMapping("/register")
     public String handleRegister(@Valid @ModelAttribute("register") RegisterDto registerDto,
-                                 BindingResult bindingResult, HttpSession session, Model model) {
+                                 BindingResult bindingResult, HttpSession session, Model model,
+                                 @RequestParam(name = "invitation-token", required = false) String invitationToken) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("invitationToken", invitationToken);
             return "register";
         }
 
         try {
             User user = mapper.fromRegisterDto(registerDto);
-            userService.create(user);
+            userService.create(user, Optional.ofNullable(invitationToken));
             session.setAttribute(CURRENT_USER_SESSION_KEY, user.getUsername());
             model.addAttribute("email", user.getEmail());
             return "verify-email";
@@ -108,9 +112,9 @@ public class AuthenticationController {
     }
 
     @GetMapping("/verify-email")
-    public String handleEmailVerification(@RequestParam("token") String token, HttpSession session, Model model) {
+    public String handleEmailVerification(@RequestParam("token") String token, @RequestParam(name = "invitation-token", required = false) String invitationToken) {
         try {
-            userService.confirmUser(token);
+            userService.confirmUser(token, Optional.ofNullable(invitationToken));
             return "redirect:/panel";
         } catch (IllegalArgumentException e) {
             return "redirect:/panel";

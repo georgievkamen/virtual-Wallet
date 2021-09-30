@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
+import static com.team9.virtualwallet.configs.ApplicationConstants.FREE_BONUS_AMOUNT;
 
 @Controller
 public class ProfileMvcController {
@@ -54,6 +55,7 @@ public class ProfileMvcController {
             UserDto userDto = modelMapper.toUserDto(user);
             model.addAttribute("user", userDto);
             model.addAttribute("userId", user.getId());
+            model.addAttribute("freeBonus", FREE_BONUS_AMOUNT);
             return "account-profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
@@ -150,6 +152,17 @@ public class ProfileMvcController {
             service.delete(user);
             session.removeAttribute(CURRENT_USER_SESSION_KEY);
             return "redirect:/";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @PostMapping("/panel/invite")
+    public String inviteFriend(HttpSession session, @RequestParam(name = "email") String email) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            service.inviteFriend(user, email);
+            return "redirect:/panel/account-profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         }
