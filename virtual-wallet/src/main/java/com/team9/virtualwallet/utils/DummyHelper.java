@@ -10,7 +10,7 @@ public class DummyHelper {
         RestTemplate restTemplate = new RestTemplate();
         HttpStatus status = restTemplate.getForObject("http://localhost/api/dummy", HttpStatus.class);
         if (status != null && status.isError()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Sorry your transfer is rejected");
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "Sorry your transfer is rejected");
         }
     }
 }
