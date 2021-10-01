@@ -22,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
-import static com.team9.virtualwallet.configs.ApplicationConstants.FREE_BONUS_AMOUNT;
 
 @Controller
 public class ProfileMvcController {
@@ -55,7 +54,6 @@ public class ProfileMvcController {
             UserDto userDto = modelMapper.toUserDto(user);
             model.addAttribute("user", userDto);
             model.addAttribute("userId", user.getId());
-            model.addAttribute("freeBonus", FREE_BONUS_AMOUNT);
             return "account-profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
@@ -120,7 +118,6 @@ public class ProfileMvcController {
         }
     }
 
-    //TODO FIX NOT WORKING
     @PostMapping("/panel/account-security")
     public String updateSecurity(@Valid @ModelAttribute("userPassword") PasswordDto passwordDto,
                                  BindingResult errors, HttpSession session) {
