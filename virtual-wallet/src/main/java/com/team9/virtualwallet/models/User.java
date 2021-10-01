@@ -288,4 +288,9 @@ public class User {
     public void setInvitedUsers(int invitedUsers) {
         this.invitedUsers = invitedUsers;
     }
+
+    public boolean isVerified() {
+        return this.isEmailVerified() && this.isIdVerified();
+    }
+
 }

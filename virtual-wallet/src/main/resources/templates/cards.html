@@ -71,14 +71,46 @@
                                         <h4 class="card-title text-primary">Cards</h4>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <a th:if="${!currentLoggedUser.blocked}" th:href="@{/panel/transactions/create/deposit}">
-                                            <button type="button" class="btn btn-relief-success">Deposit</button>
+                                        <a th:if="${!currentLoggedUser.isBlocked() and currentLoggedUser.isVerified()}" th:href="@{/panel/transactions/create/deposit}">
+                                            <button type="button" class="btn btn-relief-success">
+                                                Deposit
+                                            </button>
                                         </a>
-                                        <button th:if="${currentLoggedUser.blocked}" type="button" class="btn btn-relief-success" onclick="showUserBlockedErrorModal()">Deposit</button>
-                                        <a th:if="${!currentLoggedUser.blocked}" th:href="@{/panel/transactions/create/withdraw}">
-                                            <button type="button" class="btn btn-relief-danger">Withdraw</button>
+                                        <button type="button"
+                                                th:if="${!currentLoggedUser.blocked and !currentLoggedUser.isVerified()}"
+                                                class="btn btn-relief-success" onclick="showUserErrorModal(false)">
+                                            Deposit
+                                        </button>
+                                        <button type="button"
+                                                th:if="${currentLoggedUser.blocked and currentLoggedUser.isVerified()}"
+                                                class="btn btn-relief-success" onclick="showUserErrorModal(true)">
+                                            Deposit
+                                        </button>
+                                        <button type="button"
+                                                th:if="${currentLoggedUser.blocked and !currentLoggedUser.isVerified()}"
+                                                class="btn btn-relief-success" onclick="showUserErrorModal(true)">
+                                            Deposit
+                                        </button>
+                                        <a th:if="${!currentLoggedUser.isBlocked() and currentLoggedUser.isVerified()}" th:href="@{/panel/transactions/create/withdraw}">
+                                            <button type="button" class="btn btn-relief-danger">
+                                                Withdraw
+                                            </button>
                                         </a>
-                                        <button th:if="${currentLoggedUser.blocked}" type="button" class="btn btn-relief-danger" onclick="showUserBlockedErrorModal()">Withdraw</button>
+                                        <button type="button"
+                                                th:if="${!currentLoggedUser.blocked and !currentLoggedUser.isVerified()}"
+                                                class="btn btn-relief-danger" onclick="showUserErrorModal(false)">
+                                            Withdraw
+                                        </button>
+                                        <button type="button"
+                                                th:if="${currentLoggedUser.blocked and currentLoggedUser.isVerified()}"
+                                                class="btn btn-relief-danger" onclick="showUserErrorModal(true)">
+                                            Withdraw
+                                        </button>
+                                        <button type="button"
+                                                th:if="${currentLoggedUser.blocked and !currentLoggedUser.isVerified()}"
+                                                class="btn btn-relief-danger" onclick="showUserErrorModal(true)">
+                                            Withdraw
+                                        </button>
                                         <a th:href="@{__${#httpServletRequest.requestURI}__/add}">
                                             <button type="button" class="btn btn-relief-info">Add Card</button>
                                         </a>
@@ -169,11 +201,18 @@
         }
     });
 
-    const showUserBlockedErrorModal = function () {
+    const showUserErrorModal = function (blocked) {
+        let text;
+        if (blocked) {
+            text = 'You are blocked and so you cannot make transactions!';
+        } else {
+            text = 'You can\'t make transactions until you are verified!';
+        }
+
         Swal.fire({
             icon: 'error',
             title: 'Error!',
-            text: 'You are blocked and so you cannot make transactions!',
+            text: text,
             type: 'error',
             confirmButtonText: 'OK',
             customClass: {

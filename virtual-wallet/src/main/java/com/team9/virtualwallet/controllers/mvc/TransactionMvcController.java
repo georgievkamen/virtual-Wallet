@@ -120,7 +120,7 @@ public class TransactionMvcController {
                                               @RequestParam(name = "search-field", required = false) String searchTerm) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            if (user.isBlocked()) {
+            if (user.isBlocked() || !user.isVerified()) {
                 return "redirect:/panel/transactions";
             }
             List<Category> categories = categoryService.getAll(user);
@@ -173,7 +173,7 @@ public class TransactionMvcController {
     public String showWalletToWalletTransactionPage(HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            if (user.isBlocked()) {
+            if (user.isBlocked() || !user.isVerified()) {
                 return "redirect:/panel/transactions";
             }
             model.addAttribute("transaction", new MoveToWalletTransactionDto());
@@ -213,7 +213,7 @@ public class TransactionMvcController {
     public String showDepositTransactionPage(HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            if (user.isBlocked()) {
+            if (user.isBlocked() || !user.isVerified()) {
                 return "redirect:/panel/transactions";
             }
             model.addAttribute("transaction", new ExternalTransactionDto());
@@ -253,7 +253,7 @@ public class TransactionMvcController {
     public String showWithdrawTransactionPage(HttpSession session, Model model) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            if (user.isBlocked()) {
+            if (user.isBlocked() || !user.isVerified()) {
                 return "redirect:/panel/transactions";
             }
             model.addAttribute("transaction", new ExternalTransactionDto());
