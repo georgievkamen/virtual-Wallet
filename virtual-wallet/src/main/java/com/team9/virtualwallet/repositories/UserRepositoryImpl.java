@@ -50,11 +50,11 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     @Override
     public Pages<User> getAllUnverified(Pageable pageable) {
         try (Session session = sessionFactory.openSession()) {
-            Query<User> query = session.createQuery("from User where idVerified = false and isDeleted = false", User.class);
+            Query<User> query = session.createQuery("from User where idVerified = false and isDeleted = false and idPhoto != null and selfie !=null ", User.class);
             query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
             query.setMaxResults(pageable.getPageSize());
 
-            Query countQuery = session.createQuery("select count (id) from User where idVerified = false and isDeleted = false");
+            Query countQuery = session.createQuery("select count (id) from User where idVerified = false and isDeleted = false and idPhoto != null and selfie !=null ");
             Long countResults = (Long) countQuery.uniqueResult();
 
             return new Pages<>(query.list(), countResults, pageable);
