@@ -32,6 +32,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/pages/homepage.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/charts/chart-apex.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-toastr.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-sweet-alerts.css}">
     <!-- END: Page CSS-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
@@ -133,7 +134,7 @@
 
                             </form>
                             <form class="validate-form" th:action="@{/panel/transactions/create/internal}"
-                                  th:object="${transaction}" method="post">
+                                  th:object="${transaction}" method="post" onsubmit="return checkLargeTransaction(this)">
                                 <input type="hidden" th:value="${user?.id}" id="recipient-id-contacts"
                                        name="recipientId"/>
                                 <div class="mb-1">
@@ -224,12 +225,14 @@
                                                 <div class="mb-1">
                                                     <label class="form-label"
                                                            for="modal-description">Description</label>
-                                                    <input type="text" class="form-control" id="modal-description" disabled/>
+                                                    <input type="text" class="form-control" id="modal-description"
+                                                           disabled/>
                                                 </div>
 
                                                 <div th:if="${categoriesExist}" class="mb-1">
                                                     <label class="form-label" for="modal-category">Category</label>
-                                                    <input type="text" class="form-control" id="modal-category" disabled/>
+                                                    <input type="text" class="form-control" id="modal-category"
+                                                           disabled/>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -273,6 +276,7 @@
 <script th:src="@{/vendors/js/ui/jquery.sticky.js}"></script>
 <script th:src="@{/vendors/js/charts/apexcharts.min.js}"></script>
 <script th:src="@{/vendors/js/extensions/toastr.min.js}"></script>
+<script th:src="@{/vendors/js/extensions/sweetalert2.all.min.js}"></script>
 <!-- END: Page Vendor JS-->
 
 <!-- BEGIN: Theme JS-->
@@ -377,6 +381,36 @@
             modalDescription.value = formDescription.value;
         }
     });
+
+
+    //Check for Large Transaction
+
+    /*<![CDATA[*/
+    let largeTransactionAmount = /*[[${largeTransactionAmount}]]*/ 10000;/*]]>*/
+
+    function checkLargeTransaction() {
+        let x = document.getElementById("amount").value;
+        if (x >= largeTransactionAmount) {
+            showErrorModal('You must confirm this transaction by Email!');
+        } else {
+            return true;
+        }
+    }
+
+    const showErrorModal = function (text) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Warning!',
+            text: text,
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        }, function (isConfirm) {
+            if (isConfirm) return true;
+        })
+    };
 </script>
 </body>
 

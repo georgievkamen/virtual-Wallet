@@ -5,11 +5,9 @@ import com.team9.virtualwallet.models.*;
 import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.Sort;
 import com.team9.virtualwallet.models.enums.TransactionType;
-import com.team9.virtualwallet.repositories.contracts.CardRepository;
-import com.team9.virtualwallet.repositories.contracts.TransactionRepository;
-import com.team9.virtualwallet.repositories.contracts.UserRepository;
-import com.team9.virtualwallet.repositories.contracts.WalletRepository;
+import com.team9.virtualwallet.repositories.contracts.*;
 import com.team9.virtualwallet.services.contracts.*;
+import com.team9.virtualwallet.services.emails.SendEmailService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.team9.virtualwallet.configs.ApplicationConstants.LARGE_TRANSACTION_AMOUNT;
 import static com.team9.virtualwallet.services.utils.Helpers.validateCardExpiryDate;
 import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZED_ACTION;
 
@@ -32,8 +31,10 @@ public class TransactionServiceImpl implements TransactionService {
     private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final TransactionVerificationTokenRepository transactionVerificationTokenRepository;
+    private final SendEmailService sendEmailService;
 
-    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardService cardService, CardRepository cardRepository, WalletService walletService, CategoryService categoryService, UserRepository userRepository, UserService userService) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardService cardService, CardRepository cardRepository, WalletService walletService, CategoryService categoryService, UserRepository userRepository, UserService userService, TransactionVerificationTokenRepository transactionVerificationTokenRepository, SendEmailService sendEmailService) {
         this.repository = repository;
         this.walletRepository = walletRepository;
         this.cardService = cardService;
@@ -42,6 +43,8 @@ public class TransactionServiceImpl implements TransactionService {
         this.categoryService = categoryService;
         this.userRepository = userRepository;
         this.userService = userService;
+        this.transactionVerificationTokenRepository = transactionVerificationTokenRepository;
+        this.sendEmailService = sendEmailService;
     }
 
     @Override
@@ -81,16 +84,36 @@ public class TransactionServiceImpl implements TransactionService {
 
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
 
-        senderWallet.withdrawBalance(transaction.getAmount());
-        recipientWallet.depositBalance(transaction.getAmount());
-
-        if (transaction.getAmount().compareTo(BigDecimal.valueOf(100000)) >= 0) {
-            transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
+        if (transaction.getAmount().compareTo(BigDecimal.valueOf(LARGE_TRANSACTION_AMOUNT)) >= 0) {
+            transaction.setTransactionType(TransactionType.LARGE_UNVERIFIED);
+            repository.create(transaction, senderWallet, recipientWallet);
+            sendEmailService.sendEmailTransactionVerification(transaction);
         } else {
             transaction.setTransactionType(TransactionType.SMALL_TRANSACTION);
+            senderWallet.withdrawBalance(transaction.getAmount());
+            recipientWallet.depositBalance(transaction.getAmount());
+            repository.create(transaction, senderWallet, recipientWallet);
         }
 
-        repository.create(transaction, senderWallet, recipientWallet);
+    }
+
+    @Override
+    public void confirmLargeTransaction(User user, String transactionVerificationToken) {
+        TransactionVerificationToken token = transactionVerificationTokenRepository.getByField("verificationToken", transactionVerificationToken);
+
+        if (user.getId() != token.getTransaction().getSender().getId()) {
+            throw new UnauthorizedOperationException("You cannot verify transaction that is not yours!");
+        }
+
+        Transaction transaction = token.getTransaction();
+        verifyUserCanMakeTransactions(transaction.getSender());
+        Wallet senderWallet = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
+        walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
+        Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
+        senderWallet.withdrawBalance(transaction.getAmount());
+        recipientWallet.depositBalance(transaction.getAmount());
+        transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
+        repository.update(transaction, senderWallet, recipientWallet);
     }
 
     @Override

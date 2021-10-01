@@ -8,9 +8,10 @@ public enum TransactionType {
     WALLET_TO_CARD("Wallet to Card"),
     WALLET_TO_WALLET("Wallet to Wallet"),
     SMALL_TRANSACTION("Small Transaction"),
-    LARGE_TRANSACTION("Large Transaction");
+    LARGE_TRANSACTION("Large Transaction"),
+    LARGE_UNVERIFIED("Unverified Large Transaction");
 
-    public static final String INVALID_DIRECTION = "Transaction Type should be CARD_TO_WALLET, WALLET_TO_CARD, WALLET_TO_WALLET, SMALL_TRANSACTION or LARGE_TRANSACTION!";
+    public static final String INVALID_DIRECTION = "Transaction Type should be CARD_TO_WALLET, WALLET_TO_CARD, WALLET_TO_WALLET, SMALL_TRANSACTION, LARGE_TRANSACTION or LARGE_UNVERIFIED!";
 
     private final String value;
 
@@ -35,6 +36,8 @@ public enum TransactionType {
                 return "Small Transaction";
             case LARGE_TRANSACTION:
                 return "Large Transaction";
+            case LARGE_UNVERIFIED:
+                return "Unverified Large Transaction";
             default:
                 throw new EnumNotFoundException(INVALID_DIRECTION);
         }

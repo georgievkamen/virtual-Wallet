@@ -27,6 +27,8 @@ public interface TransactionService {
 
     void createExternalWithdraw(Transaction transaction);
 
+    void confirmLargeTransaction(User user, String transactionVerificationToken);
+
     Pages<Transaction> filter(User user,
                               Optional<Direction> direction,
                               Optional<Date> startDate,

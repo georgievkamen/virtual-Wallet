@@ -33,12 +33,12 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     @Override
     public Pages<Transaction> getAll(User user, Pageable pageable) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id order by timestamp desc", Transaction.class);
+            Query<Transaction> query = session.createQuery("from Transaction where (sender.id = :id or recipient.id = :id) and transactionType != 'LARGE_UNVERIFIED' order by timestamp desc", Transaction.class);
             query.setParameter("id", user.getId());
             query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
             query.setMaxResults(pageable.getPageSize());
 
-            Query countQuery = session.createQuery("select count (id) from Transaction where sender.id = :id or recipient.id = :id");
+            Query countQuery = session.createQuery("select count (id) from Transaction where (sender.id = :id or recipient.id = :id) and transactionType != 'LARGE_UNVERIFIED'");
             countQuery.setParameter("id", user.getId());
             Long countResults = (Long) countQuery.uniqueResult();
 
@@ -49,7 +49,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
     @Override
     public List<Transaction> getLastTransactions(User user, int count) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Transaction> query = session.createQuery("from Transaction where sender.id = :id or recipient.id = :id order by timestamp desc", Transaction.class);
+            Query<Transaction> query = session.createQuery("from Transaction where (sender.id = :id or recipient.id = :id) and transactionType != 'LARGE_UNVERIFIED' order by timestamp desc", Transaction.class);
             query.setParameter("id", user.getId());
             query.setMaxResults(count);
             return query.list();
@@ -73,6 +73,17 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
             session.beginTransaction();
             session.update(wallet);
             session.save(transaction);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public void update(Transaction transaction, Wallet walletToWithdraw, Wallet walletToDeposit) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.update(walletToDeposit);
+            session.update(walletToWithdraw);
+            session.update(transaction);
             session.getTransaction().commit();
         }
     }
@@ -128,6 +139,7 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
             } else {
                 filters.add("(sender.id = :userId or recipient.id = :userId)");
             }
+            filters.add("transactionType != 'LARGE_UNVERIFIED'");
 
             if (startDate.isPresent()) {
                 filters.add(" timestamp > :startDate");

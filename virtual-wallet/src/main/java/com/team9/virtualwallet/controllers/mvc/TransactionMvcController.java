@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.team9.virtualwallet.configs.ApplicationConstants.LARGE_TRANSACTION_AMOUNT;
 import static com.team9.virtualwallet.utils.DummyHelper.validateDummy;
 
 @Controller
@@ -62,6 +63,11 @@ public class TransactionMvcController {
     @ModelAttribute("sort")
     public List<Sort> populateSort() {
         return Arrays.asList(Sort.values());
+    }
+
+    @ModelAttribute("largeTransactionAmount")
+    public int populateLargeTransactionAmount() {
+        return LARGE_TRANSACTION_AMOUNT;
     }
 
     //TODO Think about moving this to BaseAuthenticationController
@@ -289,6 +295,17 @@ public class TransactionMvcController {
         } catch (InsufficientBalanceException e) {
             result.rejectValue("amount", "insufficient_balance", e.getMessage());
             return "transaction-withdraw-create";
+        }
+    }
+
+    @GetMapping("/verify-transaction")
+    public String verifyLargeTransaction(@RequestParam("token") String token, HttpSession session) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            service.confirmLargeTransaction(user, token);
+            return "redirect:/panel";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/panel";
         }
     }
 

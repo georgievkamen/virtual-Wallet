@@ -22,6 +22,8 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
 
     void createExternal(Transaction transaction, Wallet wallet);
 
+    void update(Transaction transaction, Wallet walletToWithdraw, Wallet walletToDeposit);
+
     Pages<Transaction> filter(int userId,
                               Optional<Direction> direction,
                               Optional<Date> startDate,
