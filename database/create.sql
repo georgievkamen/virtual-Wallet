@@ -28,6 +28,8 @@ create table users
     email_verified    tinyint(1) default 0 not null,
     id_verified       tinyint(1) default 0 not null,
     user_photo        varchar(500)         null,
+    id_photo          varchar(500)         null,
+    selfie_photo      varchar(500)         null,
     default_wallet_id int                  null,
     deleted           tinyint(1) default 0 not null,
     invited_users     int                  not null
@@ -99,14 +101,14 @@ create table transactions
 (
     transaction_id              int auto_increment
         primary key,
-    timestamp                   timestamp default current_timestamp()                                                                   not null on update current_timestamp(),
-    sender_id                   int                                                                                                     not null,
-    recipient_id                int                                                                                                     not null,
-    amount                      decimal(19, 2)                                                                                          not null,
-    sender_payment_method_id    int                                                                                                     not null,
-    recipient_payment_method_id int                                                                                                     not null,
-    description                 varchar(50)                                                                                             not null,
-    transaction_type            enum ('CARD_TO_WALLET', 'WALLET_TO_CARD', 'WALLET_TO_WALLET', 'SMALL_TRANSACTION', 'LARGE_TRANSACTION') null,
+    timestamp                   timestamp default current_timestamp()                                                                                       not null on update current_timestamp(),
+    sender_id                   int                                                                                                                         not null,
+    recipient_id                int                                                                                                                         not null,
+    amount                      decimal(19, 2)                                                                                                              not null,
+    sender_payment_method_id    int                                                                                                                         not null,
+    recipient_payment_method_id int                                                                                                                         not null,
+    description                 varchar(50)                                                                                                                 not null,
+    transaction_type            enum ('CARD_TO_WALLET', 'WALLET_TO_CARD', 'WALLET_TO_WALLET', 'SMALL_TRANSACTION', 'LARGE_TRANSACTION', 'LARGE_UNVERIFIED') null,
     constraint transactions_payment_method_fk
         foreign key (sender_payment_method_id) references payment_methods (id),
     constraint transactions_recipient_payment_method_id_fk
@@ -124,6 +126,17 @@ create table category_transactions
     constraint category_transactions_categories_fk
         foreign key (category_id) references categories (category_id),
     constraint category_transactions_id_fk
+        foreign key (transaction_id) references transactions (transaction_id)
+);
+
+create table transaction_verification_tokens
+(
+    token_id           int auto_increment
+        primary key,
+    verification_token varchar(500)                          not null,
+    expiration_date    timestamp default current_timestamp() not null on update current_timestamp(),
+    transaction_id     int                                   not null,
+    constraint transaction_verification_tokens_transactions_fk
         foreign key (transaction_id) references transactions (transaction_id)
 );
 
