@@ -75,8 +75,8 @@ public class TransactionServiceImpl implements TransactionService {
         if (transaction.getSender().getId() == transaction.getRecipient().getId()) {
             throw new IllegalArgumentException("You can't send money to yourself!");
         }
+        verifyUserCanMakeTransactions(transaction.getSender());
 
-        userService.verifyUserNotBlocked(transaction.getSender());
         walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
 
         categoryId.ifPresent(integer -> transaction.setCategory(categoryService.getById(transaction.getSender(), integer)));
@@ -180,6 +180,18 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Optional<Integer> checkAndSetIfPresent(Optional<String> searchedPersonUsername) {
         return searchedPersonUsername.map(s -> userRepository.getByField("username", s).getId());
+    }
+
+    private void verifyUserCanMakeTransactions(User user) {
+        if (!user.isEmailVerified()) {
+            throw new IllegalArgumentException("You should verify your email, in order to make transactions!");
+        }
+        if (!user.isIdVerified()) {
+            throw new IllegalArgumentException("You should verify your identity, in order to make transactions!");
+        }
+        if (user.isBlocked()) {
+            throw new IllegalArgumentException("You are currently blocked, you cannot make transactions!");
+        }
     }
 
 }

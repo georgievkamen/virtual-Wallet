@@ -170,13 +170,14 @@ public class UserServiceImpl implements UserService {
                 InvitationToken invitationToken = invitationTokenRepository.getByField("invitationToken", invitationTokenUUID.get());
                 if (!invitationToken.isUsed() && Timestamp.valueOf(LocalDateTime.now()).before(invitationToken.getExpirationDate())) {
                     invitationToken.setUsed(true);
+                    invitationTokenRepository.update(invitationToken);
                     User invitingUser = invitationToken.getInvitingUser();
                     invitingUser.setInvitedUsers(user.getInvitedUsers() + 1);
+                    repository.update(invitingUser);
                     if (invitingUser.getInvitedUsers() < MAX_ALLOWED_REFERRALS) {
                         walletService.depositBalance(invitingUser.getDefaultWallet(), BigDecimal.valueOf(FREE_BONUS_AMOUNT));
-                        repository.update(invitingUser);
+                        walletService.depositBalance(user.getDefaultWallet(), BigDecimal.valueOf(FREE_BONUS_AMOUNT));
                     }
-                    walletService.depositBalance(user.getDefaultWallet(), BigDecimal.valueOf(FREE_BONUS_AMOUNT));
                 }
             }
         }
@@ -225,13 +226,6 @@ public class UserServiceImpl implements UserService {
         user.setBlocked(false);
 
         repository.update(user);
-    }
-
-    @Override
-    public void verifyUserNotBlocked(User user) {
-        if (user.isBlocked()) {
-            throw new IllegalArgumentException("You are currently blocked, you cannot make transactions");
-        }
     }
 
     @Override

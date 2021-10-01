@@ -49,7 +49,5 @@ public interface UserService {
                        Optional<String> email,
                        Pageable pageable);
 
-    void verifyUserNotBlocked(User user);
-
     void inviteFriend(User user, String email);
 }
