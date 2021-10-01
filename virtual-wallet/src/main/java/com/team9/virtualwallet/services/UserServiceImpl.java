@@ -56,6 +56,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Pages<User> getAllUnverified(User user, Pageable pageable) {
+        if (!user.isEmployee()) {
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "view all", "users"));
+        }
+        return repository.getAllUnverified(pageable);
+    }
+
+    @Override
     public User getById(User user, int id) {
         if (!user.isEmployee() && user.getId() != id) {
             throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "view", "users"));
@@ -95,6 +103,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateIdAndSelfiePhoto(User user, MultipartFile idPhoto, MultipartFile selfiePhoto) {
+        repository.updateIdAndSelfiePhoto(user, idPhoto, selfiePhoto);
+    }
+
+    @Override
     public void removeProfilePhoto(User user) {
         user.setUserPhoto(null);
         repository.update(user);
@@ -119,6 +132,7 @@ public class UserServiceImpl implements UserService {
         return repository.filter(verifyOptionalNotEmpty(userName), verifyOptionalNotEmpty(phoneNumber), verifyOptionalNotEmpty(email), pageable);
 
     }
+
     @Override
     public User getByField(User user, String fieldName, String searchTerm) {
 

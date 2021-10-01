@@ -13,6 +13,8 @@ public interface UserService {
 
     Pages<User> getAll(User user, Pageable pageable);
 
+    Pages<User> getAllUnverified(User user, Pageable pageable);
+
     User getByUsername(String username);
 
     User getByField(User user, String fieldName, String searchTerm);
@@ -22,6 +24,8 @@ public interface UserService {
     void update(User userExecuting, User user, int id);
 
     void updateProfilePhoto(User user, MultipartFile multipartFile);
+
+    void updateIdAndSelfiePhoto(User user, MultipartFile idPhoto, MultipartFile selfiePhoto);
 
     void removeProfilePhoto(User user);
 

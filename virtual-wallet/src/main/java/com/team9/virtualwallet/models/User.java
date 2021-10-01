@@ -49,6 +49,12 @@ public class User {
     @Column(name = "user_photo")
     private String userPhoto;
 
+    @Column(name = "id_photo")
+    private String idPhoto;
+
+    @Column(name = "selfie_photo")
+    private String selfie;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "default_wallet_id")
     private Wallet defaultWallet;
@@ -173,6 +179,22 @@ public class User {
         this.userPhoto = userPhoto;
     }
 
+    public String getIdPhoto() {
+        return idPhoto;
+    }
+
+    public void setIdPhoto(String idPhoto) {
+        this.idPhoto = idPhoto;
+    }
+
+    public String getSelfie() {
+        return selfie;
+    }
+
+    public void setSelfie(String selfie) {
+        this.selfie = selfie;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -241,6 +263,22 @@ public class User {
             return DEFAULT_PHOTO_URL;
         }
         return "/images/users/" + getId() + "/" + getUserPhoto();
+    }
+
+    @Transient
+    public String getIdPhotoImage() {
+        if (idPhoto == null) {
+            return DEFAULT_PHOTO_URL;
+        }
+        return "/images/users/" + getId() + "/id/" + getIdPhoto();
+    }
+
+    @Transient
+    public String getSelfiePhotoImage() {
+        if (idPhoto == null) {
+            return DEFAULT_PHOTO_URL;
+        }
+        return "/images/users/" + getId() + "/id/" + getSelfie();
     }
 
     public int getInvitedUsers() {

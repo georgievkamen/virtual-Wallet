@@ -48,12 +48,41 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
     }
 
     @Override
+    public Pages<User> getAllUnverified(Pageable pageable) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<User> query = session.createQuery("from User where idVerified = false and isDeleted = false", User.class);
+            query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
+
+            Query countQuery = session.createQuery("select count (id) from User where idVerified = false and isDeleted = false");
+            Long countResults = (Long) countQuery.uniqueResult();
+
+            return new Pages<>(query.list(), countResults, pageable);
+        }
+    }
+
+    @Override
     public void updateProfilePhoto(User user, MultipartFile multipartFile) {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         user.setUserPhoto(fileName);
         Path uploadPath = Paths.get("./images/users/" + user.getId());
 
         uploadFile(uploadPath, fileName, multipartFile);
+        super.update(user);
+    }
+
+    @Override
+    public void updateIdAndSelfiePhoto(User user, MultipartFile idPhoto, MultipartFile selfiePhoto) {
+        String idPhotoFileName = StringUtils.cleanPath(Objects.requireNonNull(idPhoto.getOriginalFilename()));
+        user.setIdPhoto(idPhotoFileName);
+
+        String selfiePhotoFileName = StringUtils.cleanPath(Objects.requireNonNull(selfiePhoto.getOriginalFilename()));
+        user.setSelfie(selfiePhotoFileName);
+
+        Path uploadPath = Paths.get("./images/users/" + user.getId() + "/id/");
+
+        uploadFile(uploadPath, idPhotoFileName, idPhoto);
+        uploadFile(uploadPath, selfiePhotoFileName, selfiePhoto);
         super.update(user);
     }
 

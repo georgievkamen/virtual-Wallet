@@ -11,10 +11,14 @@ public interface UserRepository extends BaseRepository<User> {
 
     Pages<User> getAll(User user, Pageable pageable);
 
+    Pages<User> getAllUnverified(Pageable pageable);
+
     void updateProfilePhoto(User user, MultipartFile multipartFile);
 
     Pages<User> filter(Optional<String> userName, Optional<String> phoneNumber, Optional<String> email, Pageable pageable);
 
     User getByFieldNotDeleted(String fieldName, String searchTerm, int userId);
+
+    void updateIdAndSelfiePhoto(User user, MultipartFile multipartFile, MultipartFile selfiePhoto);
 
 }
