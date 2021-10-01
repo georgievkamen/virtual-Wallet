@@ -268,7 +268,7 @@ public class User {
     @Transient
     public String getIdPhotoImage() {
         if (idPhoto == null) {
-            return DEFAULT_PHOTO_URL;
+            return "https://upload.wikimedia.org/wikipedia/commons/8/83/Bulgarian_identity_card.png";
         }
         return "/images/users/" + getId() + "/id/" + getIdPhoto();
     }

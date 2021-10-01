@@ -72,8 +72,7 @@ public class UserMvcController {
                                      @PageableDefault(page = 1) Pageable pageable) {
         try {
             User user = authenticationHelper.tryGetUser(session);
-            Pages<User> users;
-            users = service.getAllUnverified(user, pageable);
+            Pages<User> users = service.getAllUnverified(user, pageable);
             model.addAttribute("users", users.getContent());
             model.addAttribute("usersExist", !users.getContent().isEmpty());
             model.addAttribute("pagination", users);
@@ -88,7 +87,7 @@ public class UserMvcController {
         }
     }
 
-    @GetMapping("unverified/{id}/verify")
+    @GetMapping("/{id}/verify")
     public String verifyUser(HttpSession session, @PathVariable int id) {
         try {
             User user = authenticationHelper.tryGetUser(session);

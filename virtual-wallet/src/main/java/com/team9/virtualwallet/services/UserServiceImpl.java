@@ -204,7 +204,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void verifyUser(User userExecuting, int userId) {
         if (!userExecuting.isEmployee()) {
-            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "make", "employee"));
+            throw new UnauthorizedOperationException(String.format(UNAUTHORIZED_ACTION, "employees", "verify", "users"));
         }
         User user = repository.getById(userId);
         user.setIdVerified(true);

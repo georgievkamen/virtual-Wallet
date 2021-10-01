@@ -108,8 +108,8 @@
                         </div>
                         <!--/ Medal Card -->
 
-                        <!-- Medal Card -->
-                        <div class="card">
+                        <!-- Status Card -->
+                        <div th:if="${!currentLoggedUser.isVerified()}" class="card">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-4">
@@ -129,10 +129,6 @@
                                          role="progressbar"
                                          th:style="${currentLoggedUser.isEmailVerified() == false} ? ${currentLoggedUser.isIdVerified() == false ? 'width: 0%' : 'width: 50%'} : ${currentLoggedUser.isIdVerified() == true ? 'width: 100%' : 'width: 50%'}"></div>
                                 </div>
-<!--                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"-->
-<!--                                        data-bs-target="#large">-->
-<!--                                    Upload ID-->
-<!--                                </button>-->
                             </div>
                         </div>
                     </div>

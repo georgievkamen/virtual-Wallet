@@ -71,8 +71,6 @@
                                         <h4 class="card-title text-primary">Unverified Users</h4>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                </div>
                                 <div th:if="${usersExist}" class="card-body pt-1">
                                     <div class="table-responsive">
                                         <table class="table table-borderless">
@@ -86,65 +84,15 @@
                                             <tr class="text-center" th:each="user : ${users}">
                                                 <td>[[${user.username}]]</td>
                                                 <td>
-                                                    <a>
-                                                        <button type="button" class="btn btn-primary me-1 mt-1"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#confirm">View ID
-                                                        </button>
-                                                    </a>
-
-                                                    <div class="modal fade text-start" id="confirm" tabindex="-1"
-                                                         aria-labelledby="myModalLabel2" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h4 class="modal-title" id="myModalLabel2">View
-                                                                        ID</h4>
-                                                                    <button type="button" class="btn-close"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-
-                                                                    <a href="#" class="me-25">
-                                                                        <img th:src="${user.getIdPhotoImage}"
-                                                                             id="thumbnail"
-                                                                             class="uploadedAvatar rounded me-50"
-                                                                             alt="profile image" height="100"
-                                                                             width="100"/>
-                                                                    </a>
-
-                                                                    <a href="#" class="me-25">
-                                                                        <img th:src="${user.getSelfiePhotoImage}"
-                                                                             id="thumbnail-2"
-                                                                             class="uploadedAvatar rounded me-50"
-                                                                             alt="profile image" height="100"
-                                                                             width="100"/>
-                                                                    </a>
-
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary"
-                                                                                data-bs-dismiss="modal">
-                                                                            Exit
-                                                                        </button>
-                                                                        <a th:href="@{/panel/admin/users/unverified/{id}/verify(id=${user.id})}">
-                                                                            <button type="button"
-                                                                                    class="btn btn-primary"
-                                                                                    data-bs-dismiss="modal">
-                                                                                Verify User
-                                                                            </button>
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
+                                                    <button type="button" class="btn btn-primary me-1 mt-1"
+                                                            data-bs-toggle="modal"
+                                                            th:data-bs-target="'#user'+${user.id}">
+                                                        View ID
+                                                    </button>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
-
-
                                         <nav th:if="${pagination.getTotalPages() > 1}" aria-label="Page navigation">
                                             <ul class="pagination justify-content-center mt-2">
                                                 <li th:each="i : ${#numbers.sequence(pagination.beginIndex, pagination.endIndex)}"
@@ -163,6 +111,39 @@
                     </div>
                 </div>
                 <!--/ Medal Card -->
+
+                <div th:each="user : ${users}" class="modal fade text-start" th:id="'user'+${user.id}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Previewing ID</h4>
+                                <button type="button" class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <h3 class="text-primary mb-50">Identification Card</h3>
+                                <img th:src="${user.getIdPhotoImage}" class="uploadedAvatar rounded mb-3"
+                                     alt="profile image" height="250" width="250"/><br>
+
+                                <h3 class="text-primary mb-50">Selfie</h3>
+                                <img th:src="${user.getSelfiePhotoImage}" class="uploadedAvatar rounded mb-2"
+                                     alt="profile image" height="250" width="250"/><br>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Exit
+                                    </button>
+                                    <a th:href="@{/panel/admin/users/{id}/verify(id=${user.id})}">
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                            Verify User
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 

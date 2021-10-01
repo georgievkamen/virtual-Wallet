@@ -66,39 +66,39 @@
                     <div class="row" id="table-borderless">
                         <div class="col-12">
                             <div class="card">
-                                <div class="card-header">
-                                    <div class="col-6 text-start">
-                                        <h4 class="card-title text-primary">Users</h4>
+                                <form method="get" th:action="@{/panel/admin/users}">
+                                    <div class="card-header">
+                                        <div class="col-6 text-start">
+                                            <h4 class="card-title text-primary">Users</h4>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <button type="submit" class="btn btn-relief-primary">Search</button>
+                                            <a th:href="@{/panel/admin/users/unverified}">
+                                                <button type="button" class="btn btn-relief-success">
+                                                    View Unverified
+                                                </button>
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card-body">
-                                    <form method="get" th:action="@{/panel/admin/users}">
+                                    <div class="card-body">
                                         <div class="row pb-1">
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
                                                 <label class="form-label">Username</label>
                                                 <input type="text" class="form-control" name="username"/>
                                             </div>
 
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
                                                 <label class="form-label">Phone Number</label>
                                                 <input type="text" class="form-control" name="phoneNumber"/>
                                             </div>
 
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
                                                 <label class="form-label">Email</label>
                                                 <input type="text" class="form-control" name="email"/>
                                             </div>
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 mt-2 text-end">
-                                                <button type="submit" class="btn btn-relief-primary">Search</button>
-                                            </div>
-                                            <a th:href="@{/panel/admin/users/unverified}"
-                                               class="col-xl-3 col-lg-3 col-md-12 col-sm-12 mt-2 text-end">
-                                                <button type="button" class="btn btn-relief-primary">View Unverified
-                                                </button>
-                                            </a>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                                 <div th:if="${usersExist}" class="card-body pt-1">
                                     <div class="table-responsive">
                                         <table class="table table-borderless">
