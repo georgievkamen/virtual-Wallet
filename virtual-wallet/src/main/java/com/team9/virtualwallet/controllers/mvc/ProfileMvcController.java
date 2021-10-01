@@ -47,7 +47,7 @@ public class ProfileMvcController {
         }
     }
 
-    @GetMapping("/panel/account-profile")
+    @GetMapping("/panel/account/profile")
     public String showUserProfile(Model model, HttpSession session) {
         try {
             User user = authenticationHelper.tryGetUser(session);
@@ -60,7 +60,7 @@ public class ProfileMvcController {
         }
     }
 
-    @PostMapping("/panel/account-profile")
+    @PostMapping("/panel/account/profile")
     public String updateProfile(@Valid @ModelAttribute("user") UserDto userDto,
                                 BindingResult result, HttpSession session) {
         if (result.hasErrors()) {
@@ -72,7 +72,7 @@ public class ProfileMvcController {
             User user = modelMapper.fromUserDto(userExecuting.getId(), userDto);
 
             service.update(userExecuting, user, user.getId());
-            return "redirect:/panel/account-profile";
+            return "redirect:/panel/account/profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (DuplicateEntityException e) {
@@ -90,7 +90,7 @@ public class ProfileMvcController {
         }
     }
 
-    @PostMapping("/panel/account-profile/image")
+    @PostMapping("/panel/account/profile/image")
     public String updateProfilePhoto(@RequestParam(value = "fileImage", required = false) MultipartFile multipartFile, HttpSession session) {
         try {
             User userExecuting = authenticationHelper.tryGetUser(session);
@@ -99,7 +99,7 @@ public class ProfileMvcController {
             } else {
                 service.updateProfilePhoto(userExecuting, multipartFile);
             }
-            return "redirect:/panel/account-profile";
+            return "redirect:/panel/account/profile";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (FailedToUploadFileException e) {
@@ -107,7 +107,7 @@ public class ProfileMvcController {
         }
     }
 
-    @GetMapping("/panel/account-security")
+    @GetMapping("/panel/account/security")
     public String showUserSecurity(Model model, HttpSession session) {
         try {
             authenticationHelper.tryGetUser(session);
@@ -118,7 +118,7 @@ public class ProfileMvcController {
         }
     }
 
-    @PostMapping("/panel/account-security")
+    @PostMapping("/panel/account/security")
     public String updateSecurity(@Valid @ModelAttribute("userPassword") PasswordDto passwordDto,
                                  BindingResult errors, HttpSession session) {
         if (errors.hasErrors()) {
@@ -141,6 +141,29 @@ public class ProfileMvcController {
         }
     }
 
+    @GetMapping("/panel/account/id-verification")
+    public String showUserIdVerification(HttpSession session) {
+        try {
+            authenticationHelper.tryGetUser(session);
+            return "account-id";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @PostMapping("/panel/account/id-verification")
+    public String uploadUserId(@RequestParam(value = "id") MultipartFile id, @RequestParam(value = "selfie") MultipartFile selfie, HttpSession session) {
+        try {
+            User userExecuting = authenticationHelper.tryGetUser(session);
+            service.updateIdAndSelfiePhoto(userExecuting, id, selfie);
+            return "redirect:/panel/account/profile";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        } catch (FailedToUploadFileException e) {
+            return "account-profile";
+        }
+    }
+
     @PostMapping("/panel/account/delete")
     public String deleteAccount(HttpSession session) {
         try {
@@ -159,7 +182,7 @@ public class ProfileMvcController {
         try {
             User user = authenticationHelper.tryGetUser(session);
             service.inviteFriend(user, email);
-            return "redirect:/panel/account-profile";
+            return "redirect:/panel";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         }

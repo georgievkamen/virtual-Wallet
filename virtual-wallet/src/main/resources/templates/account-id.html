@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="loading" lang="en">
+<!-- BEGIN: Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
+    <title>Virtual Wallet | Account Profile</title>
+    <link rel="shortcut icon" type="image/x-icon" th:src="@{/images/ico/favicon.ico}">
+    <script src="https://ajax.googLeapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
+          rel="stylesheet">
+
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/vendors.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/forms/select/select2.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/animate/animate.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendors/css/extensions/sweetalert2.min.css}">
+    <!-- END: Vendor CSS-->
+
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-extended.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/colors.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/components.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/dark-layout.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/bordered-layout.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/themes/semi-dark-layout.css}">
+
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/core/menu/menu-types/horizontal-menu.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/extensions/ext-component-sweet-alerts.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/plugins/forms/form-validation.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pages/modal-create-app.css}">
+    <!-- END: Page CSS-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+            crossorigin="anonymous"></script>
+
+</head>
+<!-- END: Head-->
+
+<!-- BEGIN: Body-->
+
+<body class="horizontal-layout horizontal-menu  navbar-floating footer-static  " data-open="hover"
+      data-menu="horizontal-menu" data-col="">
+
+<!--BEGIN: Header-->
+<nav th:replace="fragments :: header"></nav>
+<!--END: Header-->
+
+<!-- BEGIN: Main Menu-->
+<div th:replace="fragments :: menu"></div>
+<!-- END: Main Menu-->
+
+<!-- BEGIN: Content-->
+<div class="app-content content ">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper container-xxl p-0">
+        <div class="content-header row">
+            <div class="content-header-left col-md-9 col-12 mb-2">
+                <div class="row breadcrumbs-top">
+                    <div class="col-12">
+                        <h2 class="content-header-title float-start mb-0">Account</h2>
+                        <div class="breadcrumb-wrapper">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/panel">Home</a>
+                                </li>
+                                <li class="breadcrumb-item"><a href="#">Account Settings </a>
+                                </li>
+                                <li class="breadcrumb-item active"> ID Verification
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="nav nav-pills mb-2">
+                        <!-- account -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/panel/account/profile">
+                                <i class="far fa-user font-medium-3 me-50"></i>
+                                <span class="fw-bold">Account</span>
+                            </a>
+                        </li>
+                        <!-- security -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/panel/account/security">
+                                <i class="fas fa-lock font-medium-3 me-50"></i>
+                                <span class="fw-bold">Security</span>
+                            </a>
+                        </li>
+                        <!-- id verification -->
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/panel/account/id-verification">
+                                <i class="fas fa-id-card font-medium-3 me-50"></i>
+                                <span class="fw-bold">ID Verification</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- profile -->
+                    <div class="card">
+                        <div class="card-header border-bottom">
+                            <div class="col-6 text-start">
+                                <h4 class="card-title">ID Verification</h4>
+                            </div>
+
+                            <div class="col-6 text-end">
+                                    <span th:classappend="${currentLoggedUser.isIdVerified} ? 'bg-success' : 'bg-danger'"
+                                          class="badge rounded-pill"
+                                          th:text="${currentLoggedUser.isIdVerified} ? 'ID Verified' : 'ID Unverified'">ID</span>
+                            </div>
+                        </div>
+                        <div th:if="${currentLoggedUser.isIdVerified}" class="card-body py-2 my-25">
+                            <!-- header section -->
+
+                            <div class="row">
+
+                                <div class="col-6">
+                                    <div class="d-flex">
+                                        <a href="#" class="me-25">
+                                            <img th:src="${currentLoggedUser.getIdPhotoImage}"
+                                                 class="uploadedAvatar rounded me-50" alt="profile image" height="100"
+                                                 width="100"/>
+                                        </a>
+
+                                        <div class="d-flex align-items-center mt-75 ms-1">
+                                            <div>
+                                                <p class="mb-0 text-primary">Identity Card</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="d-flex">
+                                        <a href="#" class="me-25">
+                                            <img th:src="${currentLoggedUser.getSelfiePhotoImage}"
+                                                 class="uploadedAvatar rounded me-50" alt="profile image" height="100"
+                                                 width="100"/>
+                                        </a>
+
+                                        <div class="d-flex align-items-center mt-75 ms-1">
+                                            <div>
+                                                <p class="mb-0 text-primary">Selfie</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${!currentLoggedUser.isIdVerified}" class="card-body py-2 my-25">
+                            <!-- header section -->
+                            <form action="/panel/account/id-verification" method="post" enctype="multipart/form-data">
+
+                                <div class="row">
+
+                                    <div class="col-6">
+                                        <div class="d-flex">
+                                            <a href="#" class="me-25">
+                                                <img th:src="${currentLoggedUser.getIdPhotoImage}" id="selfie"
+                                                     class="uploadedAvatar rounded me-50"
+                                                     alt="profile image" height="100" width="100"/>
+                                            </a>
+
+                                            <div class="d-flex align-items-end mt-75 ms-1">
+                                                <div>
+                                                    <p class="mb-0 text-primary">Identity Card</p>
+                                                    <label for="selfie-image"
+                                                           class="btn btn-sm btn-outline-secondary mb-75 me-75">Upload</label>
+                                                    <input type="file" name="id" id="selfie-image" hidden
+                                                           accept="image/*"/>
+                                                    <p class="mb-0">Allowed file types: png, jpg, jpeg.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="d-flex">
+                                            <a href="#" class="me-25">
+                                                <img th:src="${currentLoggedUser.getSelfiePhotoImage}" id="id"
+                                                     class="uploadedAvatar rounded me-50"
+                                                     alt="profile image" height="100" width="100"/>
+                                            </a>
+
+                                            <div class="d-flex align-items-end mt-75 ms-1">
+                                                <div>
+                                                    <p class="mb-0 text-primary">Selfie</p>
+                                                    <label for="id-image"
+                                                           class="btn btn-sm btn-outline-secondary mb-75 me-75">Upload</label>
+                                                    <input type="file" name="selfie" id="id-image" hidden
+                                                           accept="image/*"/>
+                                                    <p class="mb-0">Allowed file types: png, jpg, jpeg.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary mt-1 me-1">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!--/ profile -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Content-->
+
+<div class="sidenav-overlay"></div>
+<div class="drag-target"></div>
+
+<!-- BEGIN: Footer-->
+<div th:replace="fragments :: footer"></div>
+<!-- END: Footer-->
+
+
+<!-- BEGIN: Vendor JS-->
+<script th:src="@{/vendors/js/vendors.min.js}"></script>
+<!-- BEGIN Vendor JS-->
+
+<!-- BEGIN: Page Vendor JS-->
+<script th:src="@{/vendors/js/ui/jquery.sticky.js}"></script>
+<script th:src="@{/vendors/js/forms/select/select2.full.min.js}"></script>
+<script th:src="@{/vendors/js/extensions/sweetalert2.all.min.js}"></script>
+<script th:src="@{/vendors/js/forms/validation/jquery.validate.min.js}"></script>
+<script th:src="@{/vendors/js/forms/cleave/cleave.min.js}"></script>
+<script th:src="@{/vendors/js/forms/cleave/addons/cleave-phone.us.js}"></script>
+<!-- END: Page Vendor JS-->
+
+<!-- BEGIN: Theme JS-->
+<script th:src="@{/js/core/app-menu.js}"></script>
+<script th:src="@{/js/core/app.js}"></script>
+<!-- END: Theme JS-->
+
+<script>
+    $(window).on('load', function () {
+        if (feather) {
+            feather.replace({
+                width: 14,
+                height: 14
+            });
+        }
+    })
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#id-image').change(function () {
+            showIdThumbnail(this);
+        });
+
+        function showIdThumbnail(fileInput) {
+            file = fileInput.files[0];
+            reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#id').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+
+        $('#selfie-image').change(function () {
+            showSelfieThumbnail(this);
+        });
+
+        function showSelfieThumbnail(fileInput) {
+            file = fileInput.files[0];
+            reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#selfie').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+</body>
+<!-- END: Body-->
+
+</html>

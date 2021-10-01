@@ -65,11 +65,13 @@
             <!-- Dashboard Ecommerce Starts -->
             <section id="dashboard-ecommerce">
                 <div class="row">
-                    <!-- Medal Card -->
-                    <div class="col-xl-4 col-md-4 col-12">
+                    <div class="col-lg-4 col-12">
+
+                        <!-- Medal Card -->
                         <div class="card">
                             <div class="card-body">
-                                <h5>Welcome, [[${currentLoggedUser.firstName}]] [[${currentLoggedUser.lastName}]]! 👋</h5>
+                                <h5>Welcome, [[${currentLoggedUser.firstName}]] [[${currentLoggedUser.lastName}]]!
+                                    👋</h5>
                                 <h3 class="mb-75 mt-2 pt-50">
                                     <a href="#">[[${totalBalance}]] BGN</a>
                                 </h3>
@@ -80,6 +82,8 @@
                                         data-bs-target="#large">
                                     I'm feeling down
                                 </button>
+                                <img th:if="${totalBalance > 1000000}" th:src="@{/images/illustration/badge.svg}"
+                                     class="congratulation-medal" alt="Medal Pic"/>
                                 <!-- Modal -->
                                 <div class="modal fade text-start" id="large" tabindex="-1"
                                      aria-labelledby="myModalLabel16" aria-hidden="true">
@@ -102,8 +106,36 @@
                                 </div>
                             </div>
                         </div>
+                        <!--/ Medal Card -->
+
+                        <!-- Medal Card -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h5>Account Status</h5>
+                                    </div>
+
+                                    <div class="col-8 text-end">
+                                        <span th:if="${currentLoggedUser.isEmailVerified() == false}"
+                                              class="badge rounded-pill bg-danger mb-25">Email Unconfirmed</span>
+                                        <span th:if="${currentLoggedUser.isIdVerified() == false}"
+                                              class="badge rounded-pill bg-danger">ID Unverified</span>
+                                    </div>
+                                </div>
+
+                                <div class="progress progress-bar-primary mt-2 mb-2">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                         role="progressbar"
+                                         th:style="${currentLoggedUser.isEmailVerified() == false} ? ${currentLoggedUser.isIdVerified() == false ? 'width: 0%' : 'width: 50%'} : ${currentLoggedUser.isIdVerified() == true ? 'width: 100%' : 'width: 50%'}"></div>
+                                </div>
+<!--                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"-->
+<!--                                        data-bs-target="#large">-->
+<!--                                    Upload ID-->
+<!--                                </button>-->
+                            </div>
+                        </div>
                     </div>
-                    <!--/ Medal Card -->
 
                     <!-- Transaction Card -->
                     <div class="col-xl-4 col-lg-4 col-md-4 col-12">
@@ -150,22 +182,23 @@
                                             <small th:if="${transaction.transactionType.name() == 'SMALL_TRANSACTION' or transaction.transactionType.name() == 'LARGE_TRANSACTION'}">Transfer</small>
                                             <small th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET'}">Deposit</small>
                                             <small th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD'}">Withdraw</small>
-                                            <small th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}">Wallet to Wallet</small>
+                                            <small th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}">Wallet
+                                                to Wallet</small>
                                         </div>
                                     </div>
 
                                     <div th:if="${transaction.transactionType.name() == 'WALLET_TO_CARD' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id != currentLoggedUser.id)}"
-                                        class="fw-bolder text-danger">
+                                         class="fw-bolder text-danger">
                                         -[[${transaction.amount}]]
                                     </div>
 
                                     <div th:if="${transaction.transactionType.name() == 'CARD_TO_WALLET' or (transaction.transactionType.name() == 'SMALL_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id) or (transaction.transactionType.name() == 'LARGE_TRANSACTION' and transaction.recipient.id == currentLoggedUser.id)}"
-                                        class="fw-bolder text-success">
+                                         class="fw-bolder text-success">
                                         +[[${transaction.amount}]]
                                     </div>
 
                                     <div th:if="${transaction.transactionType.name() == 'WALLET_TO_WALLET'}"
-                                        class="fw-bolder text-primary">
+                                         class="fw-bolder text-primary">
                                         [[${transaction.amount}]]
                                     </div>
                                 </div>
@@ -183,26 +216,27 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5>Say Hello to Referrals! 🚀</h5>
-                                <p class="card-text font-small-3">You can now invite friends to Virtual Wallet and you will both get [[${freeBonus}]] BGN Free Bonus!
-
-                                TEST</p>
+                                <p class="card-text font-small-3">You can now invite friends to Virtual Wallet and you
+                                    will both get [[${freeBonus}]] BGN Free Bonus! 💸</p>
                                 <button type="button" class="btn btn-info mt-1 me-1" data-bs-toggle="modal"
                                         data-bs-target="#referEarnModal">
                                     Invite Friend
                                 </button>
                                 <!-- refer and earn modal -->
-                                <div class="modal fade" id="referEarnModal" tabindex="-1" aria-labelledby="referEarnTitle" aria-hidden="true">
+                                <div class="modal fade" id="referEarnModal" tabindex="-1"
+                                     aria-labelledby="referEarnTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered modal-lg modal-refer-earn">
                                         <div class="modal-content">
                                             <div class="modal-header bg-transparent">
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body pb-5 px-sm-0">
                                                 <div class="px-sm-4 mx-50">
                                                     <h1 class="text-center mb-1" id="referEarnTitle">Refer & Earn</h1>
                                                     <p class="text-center mb-5">
                                                         Invite your friend to Virtual Wallet, if they sign up,
-                                                        <br />
+                                                        <br/>
                                                         you will both get [[${freeBonus}]] BGN Free Bonus!
                                                     </p>
 
@@ -243,19 +277,23 @@
                                                     </div>
                                                 </div>
 
-                                                <hr />
+                                                <hr/>
 
                                                 <div class="px-sm-5 mx-50">
                                                     <h4 class="fw-bolder mt-5 mb-1">Invite your friends</h4>
                                                     <form class="row g-1" method="post" action="/panel/invite">
                                                         <div class="col-lg-10">
                                                             <label class="form-label" for="modalRnFEmail">
-                                                                Enter your friend’s email address and invite them to join Virtual Wallet 😍
+                                                                Enter your friend’s email address and invite them to
+                                                                join Virtual Wallet 😍
                                                             </label>
-                                                            <input type="email" name="email" id="modalRnFEmail" class="form-control" placeholder="example@domain.com" aria-label="example@domain.com" />
+                                                            <input type="email" name="email" id="modalRnFEmail"
+                                                                   class="form-control" placeholder="example@domain.com"
+                                                                   aria-label="example@domain.com"/>
                                                         </div>
                                                         <div class="col-lg-2 d-flex align-items-end">
-                                                            <button type="submit" class="btn btn-primary w-100">Send</button>
+                                                            <button type="submit" class="btn btn-primary w-100">Send
+                                                            </button>
                                                         </div>
                                                     </form>
                                                 </div>
