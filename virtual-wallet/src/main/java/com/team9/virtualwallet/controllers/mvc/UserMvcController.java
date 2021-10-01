@@ -67,6 +67,40 @@ public class UserMvcController {
         }
     }
 
+    @GetMapping("/unverified")
+    public String showUnverifiedPage(HttpSession session, Model model,
+                                     @PageableDefault(page = 1) Pageable pageable) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            Pages<User> users;
+            users = service.getAllUnverified(user, pageable);
+            model.addAttribute("users", users.getContent());
+            model.addAttribute("usersExist", !users.getContent().isEmpty());
+            model.addAttribute("pagination", users);
+            return "unverified-users";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        } catch (UnauthorizedOperationException e) {
+            return "redirect:/panel";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "not-found";
+        }
+    }
+
+    @GetMapping("unverified/{id}/verify")
+    public String verifyUser(HttpSession session, @PathVariable int id) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            service.verifyUser(user, id);
+            return "redirect:/panel/admin/users/unverified";
+        } catch (UnauthorizedOperationException e) {
+            return "redirect:/panel";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
     @GetMapping("/{id}/employee")
     public String makeEmployee(HttpSession session, @PathVariable int id) {
         try {

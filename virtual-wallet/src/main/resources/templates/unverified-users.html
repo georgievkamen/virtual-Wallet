@@ -68,36 +68,10 @@
                             <div class="card">
                                 <div class="card-header">
                                     <div class="col-6 text-start">
-                                        <h4 class="card-title text-primary">Users</h4>
+                                        <h4 class="card-title text-primary">Unverified Users</h4>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <form method="get" th:action="@{/panel/admin/users}">
-                                        <div class="row pb-1">
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-                                                <label class="form-label">Username</label>
-                                                <input type="text" class="form-control" name="username"/>
-                                            </div>
-
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-                                                <label class="form-label">Phone Number</label>
-                                                <input type="text" class="form-control" name="phoneNumber"/>
-                                            </div>
-
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-                                                <label class="form-label">Email</label>
-                                                <input type="text" class="form-control" name="email"/>
-                                            </div>
-                                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 mt-2 text-end">
-                                                <button type="submit" class="btn btn-relief-primary">Search</button>
-                                            </div>
-                                            <a th:href="@{/panel/admin/users/unverified}"
-                                               class="col-xl-3 col-lg-3 col-md-12 col-sm-12 mt-2 text-end">
-                                                <button type="button" class="btn btn-relief-primary">View Unverified
-                                                </button>
-                                            </a>
-                                        </div>
-                                    </form>
                                 </div>
                                 <div th:if="${usersExist}" class="card-body pt-1">
                                     <div class="table-responsive">
@@ -105,45 +79,72 @@
                                             <thead>
                                             <tr class="text-center">
                                                 <th>Username</th>
-                                                <th>Profile Deleted</th>
                                                 <th>Actions</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr class="text-center" th:each="user : ${users}">
                                                 <td>[[${user.username}]]</td>
-                                                <td>[[${user.isDeleted}]]</td>
                                                 <td>
-                                                    <a th:if="${!user.isBlocked}"
-                                                       th:href="@{/panel/admin/users/{id}/block(id=${user.id})}">
-                                                        <button type="button" class="btn btn-relief-danger"
-                                                                style="padding-left: 30.781px; padding-right: 30.781px;">
-                                                            Block
+                                                    <a>
+                                                        <button type="button" class="btn btn-primary me-1 mt-1"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#confirm">View ID
                                                         </button>
                                                     </a>
-                                                    <a th:if="${user.isBlocked}"
-                                                       th:href="@{/panel/admin/users/{id}/unblock(id=${user.id})}">
-                                                        <button type="button" class="btn btn-relief-success">
-                                                            Unblock
-                                                        </button>
-                                                    </a>
-                                                    <a th:if="${!user.isEmployee}"
-                                                       th:href="@{/panel/admin/users/{id}/employee(id=${user.id})}">
-                                                        <button type="button" class="btn btn-relief-primary"
-                                                                style="padding-left: 30.9115px; padding-right: 30.9115px;">
-                                                            Make Employee
-                                                        </button>
-                                                    </a>
-                                                    <a th:if="${user.isEmployee}"
-                                                       th:href="@{/panel/admin/users/{id}/employee/remove(id=${user.id})}">
-                                                        <button type="button" class="btn btn-relief-danger">
-                                                            Remove Employee
-                                                        </button>
-                                                    </a>
+
+                                                    <div class="modal fade text-start" id="confirm" tabindex="-1"
+                                                         aria-labelledby="myModalLabel2" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title" id="myModalLabel2">View
+                                                                        ID</h4>
+                                                                    <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+
+                                                                    <a href="#" class="me-25">
+                                                                        <img th:src="${user.getIdPhotoImage}"
+                                                                             id="thumbnail"
+                                                                             class="uploadedAvatar rounded me-50"
+                                                                             alt="profile image" height="100"
+                                                                             width="100"/>
+                                                                    </a>
+
+                                                                    <a href="#" class="me-25">
+                                                                        <img th:src="${user.getSelfiePhotoImage}"
+                                                                             id="thumbnail-2"
+                                                                             class="uploadedAvatar rounded me-50"
+                                                                             alt="profile image" height="100"
+                                                                             width="100"/>
+                                                                    </a>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                                data-bs-dismiss="modal">
+                                                                            Exit
+                                                                        </button>
+                                                                        <a th:href="@{/panel/admin/users/unverified/{id}/verify(id=${user.id})}">
+                                                                            <button type="button"
+                                                                                    class="btn btn-primary"
+                                                                                    data-bs-dismiss="modal">
+                                                                                Verify User
+                                                                            </button>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
+
+
                                         <nav th:if="${pagination.getTotalPages() > 1}" aria-label="Page navigation">
                                             <ul class="pagination justify-content-center mt-2">
                                                 <li th:each="i : ${#numbers.sequence(pagination.beginIndex, pagination.endIndex)}"

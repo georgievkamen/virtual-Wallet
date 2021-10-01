@@ -31,6 +31,8 @@ public interface UserService {
 
     void delete(User user);
 
+    void verifyUser(User userExecuting, int userId);
+
     void confirmUser(String confirmationTokenUUID, Optional<String> invitationTokenUUID);
 
     void addContact(User userExecuting, int contactId);
