@@ -206,7 +206,7 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary mt-1 me-1">Save</button>
+                                    <button type="submit" class="btn btn-primary mt-1 me-1" onclick="return checkFiles()">Save</button>
                                 </div>
                             </form>
                         </div>
@@ -287,6 +287,29 @@
             reader.readAsDataURL(file);
         }
     });
+
+    function checkFiles() {
+        let idExists = document.getElementById("id-image").value !== '';
+        let selfieExists = document.getElementById("selfie-image").value !== '';
+        if (!idExists || !selfieExists) {
+            showErrorModal('You must upload images!');
+            return false;
+        }
+    }
+
+    const showErrorModal = function (text) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: text,
+            type: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        })
+    };
 </script>
 
 </body>

@@ -103,7 +103,7 @@ public class ProfileMvcController {
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (FailedToUploadFileException e) {
-            return "account-profile";
+            return "redirect:/panel/account/profile";
         }
     }
 
@@ -156,11 +156,11 @@ public class ProfileMvcController {
         try {
             User userExecuting = authenticationHelper.tryGetUser(session);
             service.updateIdAndSelfiePhoto(userExecuting, id, selfie);
-            return "redirect:/panel/account/profile";
+            return "redirect:/panel/account/id-verification";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (FailedToUploadFileException e) {
-            return "account-profile";
+            return "redirect:/panel/account/id-verification";
         }
     }
 
