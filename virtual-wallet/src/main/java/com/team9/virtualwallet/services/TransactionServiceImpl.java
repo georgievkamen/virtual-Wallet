@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -106,14 +108,16 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Transaction transaction = token.getTransaction();
-        verifyUserCanMakeTransactions(transaction.getSender());
-        Wallet senderWallet = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
-        walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
-        Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
-        senderWallet.withdrawBalance(transaction.getAmount());
-        recipientWallet.depositBalance(transaction.getAmount());
-        transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
-        repository.update(transaction, senderWallet, recipientWallet);
+        if (Timestamp.valueOf(LocalDateTime.now()).before(token.getExpirationDate())) {
+            verifyUserCanMakeTransactions(transaction.getSender());
+            Wallet senderWallet = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
+            walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
+            Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
+            senderWallet.withdrawBalance(transaction.getAmount());
+            recipientWallet.depositBalance(transaction.getAmount());
+            transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
+            repository.update(transaction, senderWallet, recipientWallet);
+        }
     }
 
     @Override
