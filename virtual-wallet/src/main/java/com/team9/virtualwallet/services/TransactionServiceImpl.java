@@ -107,17 +107,19 @@ public class TransactionServiceImpl implements TransactionService {
             throw new UnauthorizedOperationException("You cannot verify transaction that is not yours!");
         }
 
-        Transaction transaction = token.getTransaction();
-        if (Timestamp.valueOf(LocalDateTime.now()).before(token.getExpirationDate())) {
-            verifyUserCanMakeTransactions(transaction.getSender());
-            Wallet senderWallet = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
-            walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
-            Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
-            senderWallet.withdrawBalance(transaction.getAmount());
-            recipientWallet.depositBalance(transaction.getAmount());
-            transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
-            repository.update(transaction, senderWallet, recipientWallet);
+        if (Timestamp.valueOf(LocalDateTime.now()).after(token.getExpirationDate())) {
+            throw new IllegalArgumentException("The transaction verification token has expired!");
         }
+
+        Transaction transaction = token.getTransaction();
+        verifyUserCanMakeTransactions(transaction.getSender());
+        Wallet senderWallet = walletRepository.getById(transaction.getSenderPaymentMethod().getId());
+        walletService.verifyEnoughBalance(senderWallet, transaction.getAmount());
+        Wallet recipientWallet = transaction.getRecipient().getDefaultWallet();
+        senderWallet.withdrawBalance(transaction.getAmount());
+        recipientWallet.depositBalance(transaction.getAmount());
+        transaction.setTransactionType(TransactionType.LARGE_TRANSACTION);
+        repository.update(transaction, senderWallet, recipientWallet);
     }
 
     @Override
