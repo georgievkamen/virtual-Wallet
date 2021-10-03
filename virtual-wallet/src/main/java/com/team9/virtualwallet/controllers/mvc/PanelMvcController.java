@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpSession;
 
 import static com.team9.virtualwallet.configs.ApplicationConstants.FREE_BONUS_AMOUNT;
+import static com.team9.virtualwallet.configs.ApplicationConstants.PANEL_TRANSACTIONS_COUNT;
 
 @Controller
 @RequestMapping("/panel")
@@ -45,7 +46,8 @@ public class PanelMvcController {
         try {
             User user = authenticationHelper.tryGetUser(session);
             model.addAttribute("totalBalance", walletService.getTotalBalanceByUser(user));
-            model.addAttribute("lastTransactions", transactionService.getLastTransactions(user, 10));
+            model.addAttribute("transactionsCount", PANEL_TRANSACTIONS_COUNT);
+            model.addAttribute("lastTransactions", transactionService.getLastTransactions(user, PANEL_TRANSACTIONS_COUNT));
             model.addAttribute("freeBonus", FREE_BONUS_AMOUNT);
             return "panel";
         } catch (AuthenticationFailureException e) {
