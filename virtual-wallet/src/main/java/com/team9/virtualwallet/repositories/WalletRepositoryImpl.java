@@ -37,7 +37,7 @@ public class WalletRepositoryImpl extends BaseRepositoryImpl<Wallet> implements 
     public Wallet getById(int id) {
         try (Session session = sessionFactory.openSession()) {
             Wallet wallet = session.get(Wallet.class, id);
-            if (wallet == null || wallet.isDeleted()) {
+            if (wallet == null) {
                 throw new EntityNotFoundException("Wallet", id);
             }
             return wallet;
@@ -47,7 +47,6 @@ public class WalletRepositoryImpl extends BaseRepositoryImpl<Wallet> implements 
     @Override
     public void delete(Wallet wallet) {
         wallet.setDeleted(true);
-        wallet.setName("deleted");
         super.update(wallet);
     }
 
