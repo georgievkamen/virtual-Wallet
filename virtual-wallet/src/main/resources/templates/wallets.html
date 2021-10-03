@@ -117,7 +117,7 @@
                                                     </a>
                                                     <button type="button"
                                                             th:if="${wallet.id == currentLoggedUser.defaultWallet.id}"
-                                                            class="btn btn-relief-danger" onclick="showErrorModal()">
+                                                            class="btn btn-relief-danger" onclick="deleteDefaultWallet()">
                                                         Delete
                                                     </button>
                                                     <a th:if="${wallet.id != currentLoggedUser.defaultWallet.id}"
@@ -207,6 +207,20 @@
             icon: 'error',
             title: 'Error!',
             text: text,
+            type: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        })
+    };
+
+    const deleteDefaultWallet = function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'You can\'t delete your default wallet!',
             type: 'error',
             confirmButtonText: 'OK',
             customClass: {
