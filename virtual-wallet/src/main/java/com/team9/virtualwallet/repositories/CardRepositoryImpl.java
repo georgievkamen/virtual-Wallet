@@ -36,7 +36,7 @@ public class CardRepositoryImpl extends BaseRepositoryImpl<Card> implements Card
     public Card getById(int id) {
         try (Session session = sessionFactory.openSession()) {
             Card card = session.get(Card.class, id);
-            if (card == null || card.isDeleted()) {
+            if (card == null) {
                 throw new EntityNotFoundException("Card", id);
             }
             return card;
@@ -46,7 +46,6 @@ public class CardRepositoryImpl extends BaseRepositoryImpl<Card> implements Card
     @Override
     public void delete(Card card) {
         card.setDeleted(true);
-        card.setCardNumber("0");
         super.update(card);
     }
 
