@@ -81,7 +81,7 @@ public class AdminTransactionMvcController {
                 }
                 Pages<Transaction> filtered = service.employeeFilter(user,
                         username.get(),
-                        counterparty.isEmpty() ? counterparty : Optional.empty(),
+                        counterparty.isPresent() && counterparty.get().isBlank() ? Optional.empty() : counterparty,
                         direction.filter(s -> !s.equals("-1")).map(Direction::getEnum),
                         startDate,
                         endDate,

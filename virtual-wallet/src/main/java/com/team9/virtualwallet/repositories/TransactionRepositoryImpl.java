@@ -137,7 +137,11 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                         break;
                 }
             } else {
-                filters.add("(sender.id = :userId or recipient.id = :userId)");
+                if (searchedPersonId.isPresent()) {
+                    filters.add("((sender.id = :userId and recipient.id = :searchedId) or (sender.id = :searchedId and recipient.id = :userId))");
+                } else {
+                    filters.add("(sender.id = :userId or recipient.id = :userId)");
+                }
             }
             filters.add("transactionType != 'LARGE_UNVERIFIED'");
 
@@ -177,10 +181,19 @@ public class TransactionRepositoryImpl extends BaseRepositoryImpl<Transaction> i
                 countQuery.setParameter("endDate", value);
             });
 
-            searchedPersonId.ifPresent(integer -> {
-                query.setParameter("searchedId", integer);
-                countQuery.setParameter("searchedId", integer);
-            });
+            if (direction.isPresent()) {
+                if (direction.get().toString().equals("Incoming") || direction.get().toString().equals("Outgoing")) {
+                    searchedPersonId.ifPresent(integer -> {
+                        query.setParameter("searchedId", integer);
+                        countQuery.setParameter("searchedId", integer);
+                    });
+                }
+            } else {
+                searchedPersonId.ifPresent(integer -> {
+                    query.setParameter("searchedId", integer);
+                    countQuery.setParameter("searchedId", integer);
+                });
+            }
 
 
             query.setFirstResult((pageable.getPageSize() * pageable.getPageNumber()) - pageable.getPageSize());
