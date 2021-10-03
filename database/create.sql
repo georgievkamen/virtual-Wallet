@@ -167,4 +167,3 @@ create table wallets
 alter table users
     add constraint users_wallets_fk
         foreign key (default_wallet_id) references wallets (wallet_id);
-
