@@ -135,7 +135,6 @@ public class WalletServiceImpl implements WalletService {
         return defaultWallet;
     }
 
-    //TODO Rename to verifyUnique
     private void verifyNotDuplicate(User user, Wallet wallet) {
         if (repository.isDuplicate(user, wallet)) {
             throw new DuplicateEntityException("You already have a wallet with the same name!");

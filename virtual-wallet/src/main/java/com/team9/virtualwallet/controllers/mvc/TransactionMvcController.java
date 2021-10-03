@@ -35,7 +35,7 @@ import static com.team9.virtualwallet.utils.DummyHelper.validateDummy;
 
 @Controller
 @RequestMapping("/panel/transactions")
-public class TransactionMvcController {
+public class TransactionMvcController extends BaseAuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
     private final TransactionService service;
@@ -46,6 +46,7 @@ public class TransactionMvcController {
     private final CategoryService categoryService;
 
     public TransactionMvcController(AuthenticationHelper authenticationHelper, TransactionService service, TransactionModelMapper modelMapper, CardService cardService, WalletService walletService, UserService userService, CategoryService categoryService) {
+        super(authenticationHelper);
         this.authenticationHelper = authenticationHelper;
         this.service = service;
         this.modelMapper = modelMapper;
@@ -68,18 +69,6 @@ public class TransactionMvcController {
     @ModelAttribute("largeTransactionAmount")
     public int populateLargeTransactionAmount() {
         return LARGE_TRANSACTION_AMOUNT;
-    }
-
-    //TODO Think about moving this to BaseAuthenticationController
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "/auth/login";
-        }
     }
 
     @GetMapping

@@ -28,25 +28,15 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/panel/admin/transactions")
-public class AdminTransactionMvcController {
+public class AdminTransactionMvcController extends BaseAuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
     private final TransactionService service;
 
     public AdminTransactionMvcController(AuthenticationHelper authenticationHelper, TransactionService service) {
+        super(authenticationHelper);
         this.authenticationHelper = authenticationHelper;
         this.service = service;
-    }
-
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "/auth/login";
-        }
     }
 
     @ModelAttribute("direction")

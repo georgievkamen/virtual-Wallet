@@ -24,32 +24,19 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/panel/categories")
-public class CategoriesMvcController {
+public class CategoriesMvcController extends BaseAuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
-    private final UserService userService;
     private final CategoryService service;
     private final CategoryModelMapper modelMapper;
 
     public CategoriesMvcController(AuthenticationHelper authenticationHelper,
-                                   UserService userService,
                                    CategoryService service,
                                    CategoryModelMapper modelMapper) {
+        super(authenticationHelper);
         this.authenticationHelper = authenticationHelper;
-        this.userService = userService;
         this.service = service;
         this.modelMapper = modelMapper;
-    }
-
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "/auth/login";
-        }
     }
 
     @GetMapping

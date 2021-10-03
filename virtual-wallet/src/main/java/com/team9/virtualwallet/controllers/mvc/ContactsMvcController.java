@@ -15,26 +15,15 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/panel/contacts")
-public class ContactsMvcController {
+public class ContactsMvcController extends BaseAuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
     private final UserService service;
 
-    public ContactsMvcController(AuthenticationHelper authenticationHelper,
-                                 UserService service) {
+    public ContactsMvcController(AuthenticationHelper authenticationHelper, UserService service) {
+        super(authenticationHelper);
         this.authenticationHelper = authenticationHelper;
         this.service = service;
-    }
-
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "/auth/login";
-        }
     }
 
     @GetMapping

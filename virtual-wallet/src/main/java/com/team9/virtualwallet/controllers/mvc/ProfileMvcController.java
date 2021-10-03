@@ -24,27 +24,17 @@ import javax.validation.Valid;
 import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_SESSION_KEY;
 
 @Controller
-public class ProfileMvcController {
+public class ProfileMvcController extends BaseAuthenticationController {
 
     private final UserService service;
     private final UserModelMapper modelMapper;
     private final AuthenticationHelper authenticationHelper;
 
     public ProfileMvcController(UserService service, UserModelMapper modelMapper, AuthenticationHelper authenticationHelper) {
+        super(authenticationHelper);
         this.service = service;
         this.modelMapper = modelMapper;
         this.authenticationHelper = authenticationHelper;
-    }
-
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "";
-        }
     }
 
     @GetMapping("/panel/account/profile")

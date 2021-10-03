@@ -19,27 +19,17 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/panel/cards")
-public class CardMvcController {
+public class CardMvcController extends BaseAuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
     private final CardService service;
     private final CardModelMapper modelMapper;
 
     public CardMvcController(AuthenticationHelper authenticationHelper, CardService service, CardModelMapper modelMapper) {
+        super(authenticationHelper);
         this.authenticationHelper = authenticationHelper;
         this.service = service;
         this.modelMapper = modelMapper;
-    }
-
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "/auth/login";
-        }
     }
 
     @GetMapping

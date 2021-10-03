@@ -15,7 +15,6 @@ public interface CardService {
 
     void update(User user, Card card);
 
-    //TODO HANDLE SQL EXCEPTIONS
     void delete(User userExecuting, int id);
 
     void verifyCardOwnership(Transaction transaction, Card card);

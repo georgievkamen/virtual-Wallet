@@ -18,25 +18,15 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/panel/admin/users")
-public class UserMvcController {
+public class UserMvcController extends BaseAuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
     private final UserService service;
 
     public UserMvcController(AuthenticationHelper authenticationHelper, UserService service) {
+        super(authenticationHelper);
         this.authenticationHelper = authenticationHelper;
         this.service = service;
-    }
-
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "/auth/login";
-        }
     }
 
     @GetMapping

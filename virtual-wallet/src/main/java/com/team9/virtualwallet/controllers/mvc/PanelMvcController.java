@@ -18,27 +18,17 @@ import static com.team9.virtualwallet.configs.ApplicationConstants.PANEL_TRANSAC
 
 @Controller
 @RequestMapping("/panel")
-public class PanelMvcController {
+public class PanelMvcController extends BaseAuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
     private final WalletService walletService;
     private final TransactionService transactionService;
 
     public PanelMvcController(AuthenticationHelper authenticationHelper, WalletService walletService, TransactionService transactionService) {
+        super(authenticationHelper);
         this.authenticationHelper = authenticationHelper;
         this.walletService = walletService;
         this.transactionService = transactionService;
-    }
-
-    @ModelAttribute("currentLoggedUser")
-    public String populateCurrentLoggedUser(HttpSession session, Model model) {
-        try {
-            User user = authenticationHelper.tryGetUser(session);
-            model.addAttribute("currentLoggedUser", user);
-            return "";
-        } catch (AuthenticationFailureException e) {
-            return "/auth/login";
-        }
     }
 
     @GetMapping
