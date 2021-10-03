@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="p:domain_verify" content="5418c1f147b09c6e3f555b49b16e2f3d" />
+    <!-- Title -->
+    <title>Virtual Wallet | Next Generation Online Banking</title>
+    <!-- Favicon -->
+    <link rel="icon" th:href="@{/front-page/img/core-img/favicon.png}" />
+    <!-- Core Stylesheet -->
+    <link th:href="@{/front-page/base.css}" rel="stylesheet" />
+    <!-- Responsive CSS -->
+    <link th:href="@{/front-page/css/responsive.css}" rel="stylesheet" />
+    <link th:href="@{/front-page/css/style.css}" rel="stylesheet"/>
+    <!-- Modernize -->
+    <script th:src="@{/front-page/js/modernizr.js}"></script>
+    <!-- FontAwesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+            crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <!-- ***** Header Area Start ***** -->
+    <header class="header_area headroom">
+      <div class="container-fluid bg-color" style="width: 100% !important">
+        <div class="row align-items-center">
+          <!-- Menu Area Start -->
+          <div class="col-12">
+            <div class="menu_area">
+              <nav class="navbar navbar-expand-xl navbar-light px-1">
+                <!-- Logo -->
+                <a href="#home"><img th:src="@{/front-page/img/bg-img/logo.png}" class="img-fluid logo-width" alt="Brand Logo" /></a>
+                <h4 class="logo-font mt-2 ml-1" style="color: #655af3;">Virtual Wallet</h4>
+                <button
+                  class="navbar-toggler"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#ca-navbar"
+                  aria-controls="ca-navbar"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+                >
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- Menu Area -->
+                <div class="collapse navbar-collapse" id="ca-navbar">
+                  <ul class="navbar-nav ml-auto" id="nav">
+                    <li th:unless="${isAuthenticated}" class="nav-item">
+                      <a class="nav-link px-3" href="/auth/login">Login</a>
+                    </li>
+                    <li th:unless="${isAuthenticated}" class="nav-item buynow-btn">
+                      <a class="nav-link px-4" href="/auth/register">Register</a>
+                    </li>
+                    <li th:if="${isAuthenticated}" class="nav-item">
+                      <a class="nav-link px-3" href="/auth/logout">Logout</a>
+                    </li>
+                    <li th:if="${isAuthenticated}" class="nav-item buynow-btn">
+                      <a class="nav-link px-4" href="/panel">Panel</a>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- ***** Header Area End ***** -->
+    <!-- ***** Welcome Area Start ***** -->
+    <section class="wellcome_area" id="home">
+      <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+          <div class="col-lg-5 col-md w-m-100 order-2 order-xl-1">
+            <div class="wellcome-heading">
+              <h2 class="m-0">Virtual Wallet</h2>
+              <h2 class="mb-3">Next Generation Online Banking</h2>
+              <p class="text-bold sub-font-lg">
+                Web application that enables you to manage your budget. Every user can send and receive money and put money in his Virtual Wallet!
+              </p>
+              <h6>- Now supports <b>Spending Categories 🚀</b></h6>
+              <h6>- <b>Contact List</b> for faster transactions 🏎️</h6>
+              <h6>- <b>Security Oriented</b> 👮‍♂️</h6>
+              <h6>- <b>Cool Animations</b> 🤖</h6>
+              <h6>- <b>Light & Dark</b> Modes 🌓</h6>
+            </div>
+          </div>
+          <div class="col-lg-7 col-sm-12 order-1 order-xl-2 full-xl wow fadeInDown pr-0">
+            <div class="row">
+              <div class="col-12">
+                <figure class="cd-image-container float-r-lg">
+                  <img th:src="@{/front-page/img/bg-img/dark.png}" alt="Modified Image"/>
+                  <span class="cd-image-label" data-type="original"></span>
+                  <div class="cd-resize-img">
+                    <img th:src="@{/front-page/img/bg-img/light.png}" alt="Original Image"/>
+                    <span class="cd-image-label" data-type="modified"></span>
+                  </div>
+                  <span class="cd-handle" data-toggle="tooltip" data-placement="top" title="Drag me"></span>
+                </figure>
+                <!-- cd-image-container -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ***** Welcome Area End ***** -->
+    <!-- ***** Awesome Features Start ***** -->
+    <section class="awesome-feature-area bg-grey-darken section_padding_0_50 p-150 clearfix" id="features">
+      <div class="row d-flex justify-content-center">
+        <div class="col-8">
+        <div class="row">
+          <div class="col-12 text-center">
+            <div class="section-heading">
+              <h2>Unique Features</h2>
+            </div>
+          </div>
+        </div>
+        <div class="row bg-white mt-5 border-radius-15 shadow-1 py-4">
+          <div class="col-sm-12 col-md-6 col-lg-6 p-0">
+            <div class="single-feature px-4 pt-4">
+              <div class="row">
+                <div class="col-lg-3 col-12 text-right text-gradient">
+                  <span class="fas fa-wallet text-medium"></span>
+                </div>
+                <div class="col-lg-9 col-12">
+                  <h5>Virtual Wallets</h5>
+                  <p class="text-sm">
+                    We have provided our customers with option of creating virtual wallets for all their needs.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6 col-lg-6 p-0">
+            <div class="single-feature px-4 pt-4">
+              <div class="row">
+                <div class="col-lg-3 col-12 text-right text-gradient">
+                  <span class="far fa-credit-card text-medium"></span>
+                </div>
+                <div class="col-lg-9 col-12">
+                  <h5>Multiple Cards</h5>
+                  <p class="text-sm">
+                    Customers can deposit or withdraw their balance by adding their credit or debit cards.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6 col-lg-6 p-0">
+            <div class="single-feature px-4 pt-4">
+              <div class="row">
+                <div class="col-lg-3 col-12 text-right text-gradient">
+                  <span class="fas fa-tags text-medium"></span>
+                </div>
+                <div class="col-lg-9 col-12">
+                  <h5>Spending Categories</h5>
+                  <p class="text-sm">
+                    You can create categories and easily track your spendings by period.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6 col-lg-6 p-0">
+            <div class="single-feature px-4 pt-4">
+              <div class="row">
+                <div class="col-lg-3 col-12 text-right text-gradient">
+                  <span class="fas fa-user-friends text-medium"></span>
+                </div>
+                <div class="col-lg-9 col-12">
+                  <h5>Contacts</h5>
+                  <p class="text-sm">
+                    You can add other customers as contacts so you can make faster transactions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </section>
+    <!-- ***** Awesome Features End ***** -->
+    <!-- ***** Build Process ***** -->
+    <section class="cool-facts-area p-150" id="build-process">
+      <div class="section-heading-white text-center">
+        <img th:src="@{/front-page/img/scr-img/gitlab-icon.png}" class="git-bg" alt="GitLab" />
+        <h4 class="text-white mt-2">Gitlab</h4>
+        <p class="text-white mt-4">
+          You can view the source code, the history of commits and the process we went through while developing on GitLab!
+        </p>
+        <a
+          class="btn purchase-btn mt-3 px-4"
+          href="https://gitlab.com/telerik-team-9995/virtual-wallet"
+          target="_blank"
+          ><span>View Project</span></a
+        >
+      </div>
+    </section>
+    <!-- ***** Build Process End ***** -->
+    <!-- ***** Pricing Plane Area Start *****==== -->
+    <section class="pricing-plane-area bg-grey p-50 clearfix" id="pricing">
+      <div class="row d-flex justify-content-center">
+        <div class="col-12 col-lg-4 col-mg-4 full-xl wow fadeIn p-0">
+          <div class="container-fluid gradient-primary p-5 mb-4">
+            <h3 class="text-white">Kristiyan Dimitrov</h3>
+            <hr class="hr-width" />
+            <p class="text-offwhite m-1">
+              <span class="mr-1">📧</span>
+              kristiyanpd02@gmail.com
+            </p>
+            <p class="text-offwhite m-1">
+              <span class=" mr-1">📞</span>
+              +359 887 329 692
+            </p>
+            <a class="btn purchase-btn mt-3" href="https://www.linkedin.com/in/kristiyanpd/" target="_blank"
+              ><span>Contact Now</span></a
+            >
+          </div>
+        </div>
+        <div class="col-12 col-lg-4 col-mg-4 full-xl wow fadeIn p-0">
+          <div class="container-fluid gradient-primary p-5 mb-4">
+            <h3 class="text-white">Kamen Georgiev</h3>
+            <hr class="hr-width" />
+            <p class="text-offwhite m-1">
+              <span class="mr-1">📧</span>
+              georgiev.kameng@abv.bg
+            </p>
+            <p class="text-offwhite m-1">
+              <span class=" mr-1">📞</span>
+              +359 886 454 428
+            </p>
+            <a class="btn purchase-btn mt-3" href="https://www.linkedin.com/in/kamen-georgiev-776504174/" target="_blank"
+              ><span>Contact Now</span></a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ***** Pricing Plane Area End ***** -->
+    <!-- ***** Footer Area Start ***** -->
+    <footer class="text-center pt-3 clearfix">
+      <!-- Foooter Text-->
+      <div class="copyright-text">
+        <p>Copyright © 2021 Virtual Wallet Inc. All rights reserved.</p>
+      </div>
+    </footer>
+    <!-- ***** Footer Area End ***** -->
+    <!-- ***** App Screenshots Area End *****====== -->
+    <script>
+      !(function () {
+        var t
+        if (((t = window.driftt = window.drift = window.driftt || []), !t.init))
+          return t.invoked
+            ? void (window.console && console.error && console.error('Drift snippet included twice.'))
+            : ((t.invoked = !0),
+              (t.methods = [
+                'identify',
+                'config',
+                'track',
+                'reset',
+                'debug',
+                'show',
+                'ping',
+                'page',
+                'hide',
+                'off',
+                'on'
+              ]),
+              (t.factory = function (e) {
+                return function () {
+                  var n
+                  return (n = Array.prototype.slice.call(arguments)), n.unshift(e), t.push(n), t
+                }
+              }),
+              t.methods.forEach(function (e) {
+                t[e] = t.factory(e)
+              }),
+              (t.load = function (t) {
+                var e, n, o, i
+                ;(e = 3e5),
+                  (i = Math.ceil(new Date() / e) * e),
+                  (o = document.createElement('script')),
+                  (o.type = 'text/javascript'),
+                  (o.async = !0),
+                  (o.crossorigin = 'anonymous'),
+                  (o.src = 'https://js.driftt.com/include/' + i + '/' + t + '.js'),
+                  (n = document.getElementsByTagName('script')[0]),
+                  n.parentNode.insertBefore(o, n)
+              }))
+      })()
+      drift.SNIPPET_VERSION = '0.3.1'
+      drift.load('6ashbsefxhx7')
+    </script>
+    <!-- End of Async Drift Code -->
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-58d9fa1af7a79649"></script>
+    <!-- Jquery-2.2.4 JS -->
+    <script th:src="@{/front-page/js/jquery-2.2.4.min.js}"></script>
+    <!-- Headroom js -->
+    <script th:src="@{/front-page/js/headroom.js}"></script>
+    <!-- Popper js -->
+    <script th:src="@{/front-page/js/popper.min.js}"></script>
+    <!-- Bootstrap-4 Beta JS -->
+    <script th:src="@{/front-page/js/bootstrap.min.js}"></script>
+    <!-- All Plugins JS -->
+    <script th:src="@{/front-page/js/plugins.js}"></script>
+    <!-- Active JS -->
+    <script th:src="@{/front-page/js/active.js}"></script>
+    <script th:src="@{/front-page/js/jquery.mobile.custom.min.js}"></script>
+    <!-- Resource jQuery -->
+    <script th:src="@{/front-page/js/main.js}"></script>
+    <!-- Resource jQuery -->
+    <!-- Headroom -->
+    <script>
+      $(document).ready(function () {
+        // grab an element
+        var myElement = document.querySelector('header')
+        // construct an instance of Headroom, passing the element
+        var headroom = new Headroom(myElement)
+        // initialise
+        headroom.init()
+      })
+
+      $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+    </script>
+    <!-- End Headroom -->
+  </body>
+</html>
