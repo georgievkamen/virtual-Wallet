@@ -45,8 +45,6 @@ create table cards
     cvv             varchar(3)  default '' not null,
     user_id         int                    not null,
     deleted         tinyint(1)  default 0  not null,
-    constraint cards_number_uindex
-        unique (card_number),
     constraint cards_payment_methods_fk
         foreign key (card_id) references payment_methods (id),
     constraint cards_users_fk
@@ -167,3 +165,4 @@ create table wallets
 alter table users
     add constraint users_wallets_fk
         foreign key (default_wallet_id) references wallets (wallet_id);
+
