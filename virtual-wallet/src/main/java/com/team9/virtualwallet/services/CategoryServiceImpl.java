@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORISED_VIEW_OF_CATEGORY_MESSAGE;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -35,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = repository.getById(id);
 
         if (!user.isEmployee() && category.getUser().getId() != user.getId()) {
-            throw new UnauthorizedOperationException("You are not the owner of this category!");
+            throw new UnauthorizedOperationException(UNAUTHORISED_VIEW_OF_CATEGORY_MESSAGE);
         }
 
         return repository.getById(id);
@@ -70,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Object calculateSpendings(User user, Category category, Optional<Date> startDate, Optional<Date> endDate) {
-        verifyOwnership(user, category, "You can only view your own categories!");
+        verifyOwnership(user, category, UNAUTHORISED_VIEW_OF_CATEGORY_MESSAGE);
 
         return repository.calculateSpendings(category, startDate, endDate);
     }

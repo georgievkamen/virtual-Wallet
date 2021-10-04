@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.team9.virtualwallet.services.utils.MessageConstants.DUPLICATE_WALLET_NAME_MESSAGE;
+
 @Service
 public class WalletServiceImpl implements WalletService {
 
@@ -137,7 +139,7 @@ public class WalletServiceImpl implements WalletService {
 
     private void verifyNotDuplicate(User user, Wallet wallet) {
         if (repository.isDuplicate(user, wallet)) {
-            throw new DuplicateEntityException("You already have a wallet with the same name!");
+            throw new DuplicateEntityException(DUPLICATE_WALLET_NAME_MESSAGE);
         }
     }
 
@@ -145,7 +147,7 @@ public class WalletServiceImpl implements WalletService {
         Wallet walletToEdit = repository.getById(wallet.getId());
 
         if (repository.isDuplicate(user, wallet) && !wallet.getName().equals(walletToEdit.getName())) {
-            throw new DuplicateEntityException("You already have a wallet with the same name!");
+            throw new DuplicateEntityException(DUPLICATE_WALLET_NAME_MESSAGE);
         }
     }
 

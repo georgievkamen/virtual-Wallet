@@ -13,6 +13,7 @@ import static com.team9.virtualwallet.configs.ApplicationConstants.CURRENT_USER_
 
 public abstract class BaseAuthenticationController {
 
+    public static final String LOGIN_REDIRECT_CONSTANT = "redirect:/auth/login";
     private final AuthenticationHelper authenticationHelper;
 
     protected BaseAuthenticationController(AuthenticationHelper authenticationHelper) {

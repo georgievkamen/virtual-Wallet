@@ -102,7 +102,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             model.addAttribute("walletService", walletService);
             return "transactions";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (EntityNotFoundException e) {
             model.addAttribute("error", e.getMessage());
             return "transactions";
@@ -128,7 +128,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             }
             return "transaction-internal-create";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (EntityNotFoundException e) {
             model.addAttribute("notFound", "User not found!");
             return "transaction-internal-create";
@@ -154,7 +154,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             service.create(transaction, category);
             return "redirect:/panel/transactions";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (EntityNotFoundException e) {
             result.rejectValue("recipientId", "not_found", e.getMessage());
             return "transaction-internal-create";
@@ -175,7 +175,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             model.addAttribute("userWallets", walletService.getAll(user));
             return "transaction-wallet-create";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (EntityNotFoundException e) {
             model.addAttribute("notFound", "User not found!");
             return "transaction-wallet-create";
@@ -194,7 +194,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             service.createWalletToWallet(transaction);
             return "redirect:/panel/transactions";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (InsufficientBalanceException e) {
             result.rejectValue("amount", "insufficient_balance", e.getMessage());
             return "transaction-wallet-create";
@@ -216,7 +216,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             model.addAttribute("userCards", cardService.getAll(user));
             return "transaction-deposit-create";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (EntityNotFoundException e) {
             model.addAttribute("notFound", "User not found!");
             return "transaction-deposit-create";
@@ -237,7 +237,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             service.createExternalDeposit(transaction);
             return "redirect:/panel/transactions";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (InsufficientBalanceException e) {
             result.rejectValue("amount", "insufficient_balance", e.getMessage());
             return "transaction-deposit-create";
@@ -256,7 +256,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             model.addAttribute("userCards", cardService.getAll(user));
             return "transaction-withdraw-create";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (EntityNotFoundException e) {
             model.addAttribute("notFound", "User not found!");
             return "transaction-withdraw-create";
@@ -280,7 +280,7 @@ public class TransactionMvcController extends BaseAuthenticationController {
             service.createExternalWithdraw(transaction);
             return "redirect:/panel/transactions";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (InsufficientBalanceException e) {
             result.rejectValue("amount", "insufficient_balance", e.getMessage());
             return "transaction-withdraw-create";

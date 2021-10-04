@@ -42,7 +42,7 @@ public class WalletMvcController extends BaseAuthenticationController {
             model.addAttribute("walletsExist", !wallets.isEmpty());
             return "wallets";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -53,7 +53,7 @@ public class WalletMvcController extends BaseAuthenticationController {
             model.addAttribute("wallet", new WalletDto());
             return "wallet-add";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -69,7 +69,7 @@ public class WalletMvcController extends BaseAuthenticationController {
             service.create(user, wallet);
             return "redirect:/panel/wallets";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (DuplicateEntityException e) {
             result.rejectValue("name", "duplicate_name", e.getMessage());
             return "wallet-add";
@@ -86,7 +86,7 @@ public class WalletMvcController extends BaseAuthenticationController {
             model.addAttribute("wallet", walletDto);
             return "wallet-update";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel/wallets";
         }
@@ -105,7 +105,7 @@ public class WalletMvcController extends BaseAuthenticationController {
             service.update(user, wallet);
             return "redirect:/panel/wallets";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel/wallets";
         } catch (DuplicateEntityException e) {
@@ -121,7 +121,7 @@ public class WalletMvcController extends BaseAuthenticationController {
             service.delete(user, id);
             return "redirect:/panel/wallets";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel/wallets";
         }
@@ -135,7 +135,7 @@ public class WalletMvcController extends BaseAuthenticationController {
             service.setDefaultWallet(user, wallet);
             return "redirect:/panel/wallets";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel/wallets";
         }

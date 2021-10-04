@@ -46,7 +46,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             model.addAttribute("userId", user.getId());
             return "account-profile";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -64,7 +64,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             service.update(userExecuting, user, user.getId());
             return "redirect:/panel/account/profile";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (DuplicateEntityException e) {
             String field = e.getMessage().split(" ")[2];
             if (field.equalsIgnoreCase("username")) {
@@ -91,7 +91,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             }
             return "redirect:/panel/account/profile";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (FailedToUploadFileException e) {
             return "redirect:/panel/account/profile";
         }
@@ -104,7 +104,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             model.addAttribute("userPassword", new PasswordDto());
             return "account-security";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -127,7 +127,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             service.update(user, user, user.getId());
             return "account-security";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -137,7 +137,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             authenticationHelper.tryGetUser(session);
             return "account-id";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -148,7 +148,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             service.updateIdAndSelfiePhoto(userExecuting, id, selfie);
             return "redirect:/panel/account/id-verification";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (FailedToUploadFileException e) {
             return "redirect:/panel/account/id-verification";
         }
@@ -163,7 +163,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             session.removeAttribute(CURRENT_USER_SESSION_KEY);
             return "redirect:/";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -174,7 +174,7 @@ public class ProfileMvcController extends BaseAuthenticationController {
             service.inviteFriend(user, email);
             return "redirect:/panel";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 }

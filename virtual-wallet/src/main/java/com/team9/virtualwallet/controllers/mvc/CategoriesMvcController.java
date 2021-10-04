@@ -8,7 +8,6 @@ import com.team9.virtualwallet.models.Category;
 import com.team9.virtualwallet.models.User;
 import com.team9.virtualwallet.models.dtos.CategoryDto;
 import com.team9.virtualwallet.services.contracts.CategoryService;
-import com.team9.virtualwallet.services.contracts.UserService;
 import com.team9.virtualwallet.services.mappers.CategoryModelMapper;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -48,7 +47,7 @@ public class CategoriesMvcController extends BaseAuthenticationController {
             model.addAttribute("categoriesExist", !categories.isEmpty());
             return "categories";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -59,7 +58,7 @@ public class CategoriesMvcController extends BaseAuthenticationController {
             model.addAttribute("category", new CategoryDto());
             return "category-add";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -77,7 +76,7 @@ public class CategoriesMvcController extends BaseAuthenticationController {
             service.create(user, category);
             return "redirect:/panel/categories";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (DuplicateEntityException e) {
             result.rejectValue("name", "duplicate_name", e.getMessage());
             return "category-add";
@@ -94,7 +93,7 @@ public class CategoriesMvcController extends BaseAuthenticationController {
             model.addAttribute("category", categoryDto);
             return "category-update";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel/categories";
         }
@@ -116,7 +115,7 @@ public class CategoriesMvcController extends BaseAuthenticationController {
             service.update(user, category);
             return "redirect:/panel/categories";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel/categories";
         } catch (DuplicateEntityException e) {
@@ -132,7 +131,7 @@ public class CategoriesMvcController extends BaseAuthenticationController {
             service.delete(user, id);
             return "redirect:/panel/categories";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel/wallets";
         }
@@ -156,7 +155,7 @@ public class CategoriesMvcController extends BaseAuthenticationController {
             model.addAttribute("categoriesExist", !categories.isEmpty());
             return "categories-reports";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.team9.virtualwallet.services.utils.Helpers.validateCardExpiryDate;
+import static com.team9.virtualwallet.services.utils.MessageConstants.DUPLICATE_CARD_NUMBER_MESSAGE;
 import static com.team9.virtualwallet.services.utils.MessageConstants.UNAUTHORIZED_ACTION;
 
 @Service
@@ -89,7 +90,7 @@ public class CardServiceImpl implements CardService {
 
     private void verifyUnique(Card card) {
         if (repository.isDuplicate(card)) {
-            throw new DuplicateEntityException("Card with same card number already exists!");
+            throw new DuplicateEntityException(DUPLICATE_CARD_NUMBER_MESSAGE);
         }
     }
 
@@ -97,7 +98,7 @@ public class CardServiceImpl implements CardService {
         Card cardToEdit = repository.getById(card.getId());
 
         if (repository.isDuplicate(card) && !Objects.equals(card.getCardNumber(), cardToEdit.getCardNumber())) {
-            throw new DuplicateEntityException("Card with same card number already exists!");
+            throw new DuplicateEntityException(DUPLICATE_CARD_NUMBER_MESSAGE);
         }
     }
 

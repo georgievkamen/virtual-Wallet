@@ -8,7 +8,6 @@ import com.team9.virtualwallet.services.contracts.WalletService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
@@ -41,7 +40,7 @@ public class PanelMvcController extends BaseAuthenticationController {
             model.addAttribute("freeBonus", FREE_BONUS_AMOUNT);
             return "panel";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 

@@ -11,7 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
@@ -48,7 +51,7 @@ public class UserMvcController extends BaseAuthenticationController {
             model.addAttribute("pagination", users);
             return "users";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         } catch (EntityNotFoundException e) {
@@ -68,7 +71,7 @@ public class UserMvcController extends BaseAuthenticationController {
             model.addAttribute("pagination", users);
             return "unverified-users";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         } catch (EntityNotFoundException e) {
@@ -86,7 +89,7 @@ public class UserMvcController extends BaseAuthenticationController {
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -99,7 +102,7 @@ public class UserMvcController extends BaseAuthenticationController {
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -112,7 +115,7 @@ public class UserMvcController extends BaseAuthenticationController {
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         }
     }
 
@@ -123,7 +126,7 @@ public class UserMvcController extends BaseAuthenticationController {
             service.unblockUser(user, id);
             return "redirect:/panel/admin/users";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         }
@@ -136,7 +139,7 @@ public class UserMvcController extends BaseAuthenticationController {
             service.blockUser(user, id);
             return "redirect:/panel/admin/users";
         } catch (AuthenticationFailureException e) {
-            return "redirect:/auth/login";
+            return LOGIN_REDIRECT_CONSTANT;
         } catch (UnauthorizedOperationException e) {
             return "redirect:/panel";
         }
