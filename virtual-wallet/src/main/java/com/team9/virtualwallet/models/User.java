@@ -242,6 +242,7 @@ public class User {
                 .anyMatch(user -> user.getUsername().equals(username));
     }
 
+
     public boolean isEmployee() {
         return this
                 .getRoles()
@@ -255,6 +256,18 @@ public class User {
 
     public void setDefaultWallet(Wallet defaultWallet) {
         this.defaultWallet = defaultWallet;
+    }
+
+    public int getInvitedUsers() {
+        return invitedUsers;
+    }
+
+    public void setInvitedUsers(int invitedUsers) {
+        this.invitedUsers = invitedUsers;
+    }
+
+    public boolean isVerified() {
+        return this.isEmailVerified() && this.isIdVerified();
     }
 
     @Transient
@@ -279,18 +292,6 @@ public class User {
             return DEFAULT_PHOTO_URL;
         }
         return "/images/users/" + getId() + "/id/" + getSelfie();
-    }
-
-    public int getInvitedUsers() {
-        return invitedUsers;
-    }
-
-    public void setInvitedUsers(int invitedUsers) {
-        this.invitedUsers = invitedUsers;
-    }
-
-    public boolean isVerified() {
-        return this.isEmailVerified() && this.isIdVerified();
     }
 
 }
