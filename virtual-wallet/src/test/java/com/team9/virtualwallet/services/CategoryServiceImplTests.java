@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.team9.virtualwallet.Helpers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -183,6 +184,21 @@ public class CategoryServiceImplTests {
         // Assert
         Mockito.verify(mockRepository, Mockito.times(1))
                 .delete(Mockito.any(Category.class));
+
+    }
+
+    @Test
+    public void Category_Should_Call_Repository_When_CategoryValid() {
+
+        var mockUser = createMockEmployee();
+        var mockCategory = createMockCategory(mockUser);
+
+
+        service.calculateSpendings(mockUser, mockCategory, Optional.empty(), Optional.empty());
+
+        // Assert
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .calculateSpendings(mockCategory, Optional.empty(), Optional.empty());
 
     }
 }
