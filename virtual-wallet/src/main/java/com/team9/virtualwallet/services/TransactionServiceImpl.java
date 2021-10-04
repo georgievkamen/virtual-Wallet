@@ -6,7 +6,10 @@ import com.team9.virtualwallet.models.enums.Direction;
 import com.team9.virtualwallet.models.enums.Sort;
 import com.team9.virtualwallet.models.enums.TransactionType;
 import com.team9.virtualwallet.repositories.contracts.*;
-import com.team9.virtualwallet.services.contracts.*;
+import com.team9.virtualwallet.services.contracts.CardService;
+import com.team9.virtualwallet.services.contracts.CategoryService;
+import com.team9.virtualwallet.services.contracts.TransactionService;
+import com.team9.virtualwallet.services.contracts.WalletService;
 import com.team9.virtualwallet.services.emails.SendEmailService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,11 +35,10 @@ public class TransactionServiceImpl implements TransactionService {
     private final WalletService walletService;
     private final CategoryService categoryService;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final TransactionVerificationTokenRepository transactionVerificationTokenRepository;
     private final SendEmailService sendEmailService;
 
-    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardService cardService, CardRepository cardRepository, WalletService walletService, CategoryService categoryService, UserRepository userRepository, UserService userService, TransactionVerificationTokenRepository transactionVerificationTokenRepository, SendEmailService sendEmailService) {
+    public TransactionServiceImpl(TransactionRepository repository, WalletRepository walletRepository, CardService cardService, CardRepository cardRepository, WalletService walletService, CategoryService categoryService, UserRepository userRepository, TransactionVerificationTokenRepository transactionVerificationTokenRepository, SendEmailService sendEmailService) {
         this.repository = repository;
         this.walletRepository = walletRepository;
         this.cardService = cardService;
@@ -44,7 +46,6 @@ public class TransactionServiceImpl implements TransactionService {
         this.walletService = walletService;
         this.categoryService = categoryService;
         this.userRepository = userRepository;
-        this.userService = userService;
         this.transactionVerificationTokenRepository = transactionVerificationTokenRepository;
         this.sendEmailService = sendEmailService;
     }
