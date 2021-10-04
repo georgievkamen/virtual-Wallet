@@ -155,6 +155,18 @@ public class CardServiceImplTests {
     }
 
     @Test
+    public void VerifyCardOwnerShip_Should_Throw_When_UserNotOwner() {
+        var mockTransaction = createMockTransaction();
+        var mockRecipient = createMockCustomer();
+        mockRecipient.setId(5);
+        mockTransaction.setRecipient(mockRecipient);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> service.verifyCardOwnership(mockTransaction, createMockCard(createMockCustomer())));
+    }
+
+
+    @Test
     public void Update_Should_Call_Repository_When_CardValid() {
 
         var mockUser = createMockEmployee();

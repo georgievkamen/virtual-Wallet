@@ -1,6 +1,8 @@
 package com.team9.virtualwallet;
 
 import com.team9.virtualwallet.models.*;
+import com.team9.virtualwallet.models.enums.TransactionType;
+import com.team9.virtualwallet.models.enums.Type;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -20,6 +22,7 @@ public class Helpers {
         mockUser.setUsername("mockUser");
         mockUser.setPassword("1234mock1234");
         mockUser.setPhoneNumber("0888888888");
+        mockUser.setDeleted(false);
         mockUser.setBlocked(false);
         mockUser.setIdVerified(true);
         mockUser.setEmailVerified(true);
@@ -36,6 +39,7 @@ public class Helpers {
         mockUser.setUsername("mockUser");
         mockUser.setPassword("1234mock1234");
         mockUser.setPhoneNumber("0888888888");
+        mockUser.setDeleted(false);
         mockUser.setBlocked(false);
         mockUser.setIdVerified(true);
         mockUser.setEmailVerified(true);
@@ -47,10 +51,37 @@ public class Helpers {
     public static Wallet createMockWallet(User user) {
         var mockWallet = new Wallet();
         mockWallet.setId(1);
+        mockWallet.setDeleted(false);
         mockWallet.setBalance(BigDecimal.valueOf(0));
         mockWallet.setName("mockWallet");
         mockWallet.setUser(user);
         return mockWallet;
+    }
+
+    public static Transaction createMockTransaction() {
+        var mockCustomer = createMockCustomer();
+        mockCustomer.setId(2);
+        var mockRecipient = createMockCustomer();
+        var recipientPayment = new PaymentMethod();
+        recipientPayment.setId(1);
+        recipientPayment.setType(Type.WALLET);
+        var senderPayment = new PaymentMethod();
+        senderPayment.setId(2);
+        senderPayment.setType(Type.WALLET);
+        var mockTransaction = new Transaction();
+        mockTransaction.setId(1);
+        mockTransaction.setTransactionType(TransactionType.SMALL_TRANSACTION);
+        mockTransaction.setDescription("desk");
+        mockTransaction.setRecipient(mockRecipient);
+        mockTransaction.setSender(mockCustomer);
+        mockTransaction.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+        mockTransaction.setAmount(BigDecimal.valueOf(200));
+
+        mockTransaction.setRecipientPaymentMethod(recipientPayment);
+        mockTransaction.setSenderPaymentMethod(senderPayment);
+
+        return mockTransaction;
+
     }
 
     public static Set<Role> createMockCustomerRole() {
@@ -80,12 +111,34 @@ public class Helpers {
         return confirmationToken;
     }
 
+    public static TransactionVerificationToken createMockTransactionVerificationToken(Transaction transaction) {
+        var verificationToken = new TransactionVerificationToken();
+        verificationToken.setTokenId(1);
+        verificationToken.setTransaction(transaction);
+        verificationToken.setExpirationDate(Timestamp.valueOf(LocalDateTime.now().plusDays(2)));
+        verificationToken.setVerificationToken("123");
+        return verificationToken;
+    }
+
+    public static InvitationToken createMockInvitationToken(User user, String invitedEmail) {
+        var invitationToken = new InvitationToken();
+        invitationToken.setInvitationToken("123");
+        invitationToken.setTokenId(1);
+        invitationToken.setExpirationDate(Timestamp.valueOf(LocalDateTime.now().plusDays(2)));
+        invitationToken.setInvitedEmail(invitedEmail);
+        invitationToken.setUsed(false);
+        invitationToken.setInvitingUser(user);
+
+        return invitationToken;
+    }
+
     public static Card createMockCard(User user) {
         var mockCard = new Card();
         mockCard.setUser(user);
         mockCard.setCardHolder("MOCK USER");
         mockCard.setCardNumber("123456789999999");
         mockCard.setId(1);
+        mockCard.setDeleted(false);
         mockCard.setCvv("123");
         mockCard.setExpirationDate(LocalDate.now().plusDays(2));
 
