@@ -1,7 +1,15 @@
 package com.team9.virtualwallet.services;
 
+import com.team9.virtualwallet.exceptions.DuplicateEntityException;
+import com.team9.virtualwallet.exceptions.EntityNotFoundException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
+import com.team9.virtualwallet.models.InvitationToken;
+import com.team9.virtualwallet.models.Pages;
+import com.team9.virtualwallet.models.User;
+import com.team9.virtualwallet.models.Wallet;
 import com.team9.virtualwallet.repositories.ConfirmationTokenRepositoryImpl;
+import com.team9.virtualwallet.repositories.InvitationTokenRepositoryImpl;
+import com.team9.virtualwallet.repositories.RoleRepositoryImpl;
 import com.team9.virtualwallet.repositories.contracts.UserRepository;
 import com.team9.virtualwallet.services.emails.SendEmailServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -11,9 +19,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import static com.team9.virtualwallet.Helpers.createMockCustomer;
-import static com.team9.virtualwallet.Helpers.createMockEmployee;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+import static com.team9.virtualwallet.Helpers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -31,6 +46,12 @@ public class UserServiceImplTests {
 
     @Mock
     ConfirmationTokenRepositoryImpl confirmationTokenRepository;
+
+    @Mock
+    InvitationTokenRepositoryImpl invitationTokenRepository;
+
+    @Mock
+    RoleRepositoryImpl roleRepository;
 
     @InjectMocks
     UserServiceImpl service;
@@ -57,30 +78,57 @@ public class UserServiceImplTests {
                 () -> service.getById(createMockCustomer(), 2));
     }
 
-/*    @Test
+    @Test
     public void getAll_Should_ReturnEmptyList_When_RepositoryEmpty() {
+        var mockEmployee = createMockEmployee();
+        Pageable pageable = PageRequest.of(1, 1);
 
-        // Arrange
         List<User> users = new ArrayList<>();
-        Pages<User> list = new Pages<>(users, 5, Mockito.any(Pageable.class));
+        Pages<User> list = new Pages<>(users, 1, pageable);
 
-        Mockito.when(mockRepository.getAll(Mockito.any(User.class),Mockito.any(Pageable.class)))
+        Mockito.when(mockRepository.getAll(mockEmployee, pageable))
                 .thenReturn(list);
         // Act
-        Pages<User> result = service.getAll(Mockito.any(User.class),Mockito.any(Pageable.class));
+        Pages<User> result = service.getAll(mockEmployee, pageable);
 
         // Assert
-        Assertions.assertEquals(0, result.getTotal());
-    }*/
+        Assertions.assertEquals(1, result.getTotal());
+    }
 
-/*
 
     @Test
     public void getAll_Should_Throw_When_UnauthorizedUser() {
         // Arrange
+        Pageable pageable = PageRequest.of(1, 1);
         Assertions.assertThrows(UnauthorizedOperationException.class,
-                () -> service.getAll(createMockCustomer()));
-    }*/
+                () -> service.getAll(createMockCustomer(), pageable));
+    }
+
+    @Test
+    public void getAllUnverified_Should_ReturnEmptyList_When_RepositoryEmpty() {
+        var mockEmployee = createMockEmployee();
+        Pageable pageable = PageRequest.of(1, 1);
+
+        List<User> users = new ArrayList<>();
+        Pages<User> list = new Pages<>(users, 1, pageable);
+
+        Mockito.when(mockRepository.getAllUnverified(pageable))
+                .thenReturn(list);
+        // Act
+        Pages<User> result = service.getAllUnverified(mockEmployee, pageable);
+
+        // Assert
+        Assertions.assertEquals(1, result.getTotal());
+    }
+
+
+    @Test
+    public void getAllUnverified_Should_Throw_When_UnauthorizedUser() {
+        // Arrange
+        Pageable pageable = PageRequest.of(1, 1);
+        Assertions.assertThrows(UnauthorizedOperationException.class,
+                () -> service.getAllUnverified(createMockCustomer(), pageable));
+    }
 
     @Test
     public void getByUserName_Should_ReturnUser_When_MatchExist() {
@@ -98,7 +146,7 @@ public class UserServiceImplTests {
         Assertions.assertEquals(mockUser.getUsername(), result.getUsername());
     }
 
-/*    @Test
+    @Test
     public void Create_Should_Throw_When_DuplicateUser() {
 
         List<User> users = new ArrayList<>();
@@ -110,10 +158,10 @@ public class UserServiceImplTests {
                 .thenReturn(users);
 
         Assertions.assertThrows(DuplicateEntityException.class,
-                () -> service.create(createMockCustomer()));
-    }*/
+                () -> service.create(createMockCustomer(), Optional.empty()));
+    }
 
-/*    @Test
+    @Test
     public void Create_Should_Call_Repository_When_UserIsValid() {
 
         var user = createMockEmployee();
@@ -124,19 +172,14 @@ public class UserServiceImplTests {
         Mockito.when(mockRepository.getByFieldList(anyString(), anyString()))
                 .thenReturn(users);
 
-        Mockito.doNothing().when(sendEmailService).sendEmailConfirmation(Mockito.any(), Mockito.any());
-        Mockito.doNothing().when(confirmationTokenRepository).create(Mockito.any());
-        Mockito.doNothing().when(walletService).create(Mockito.any(), Mockito.any());
-
         // Act
-        service.create(user);
+        service.create(user, Optional.empty());
 
         // Assert
         Mockito.verify(mockRepository, Mockito.times(1))
-                .create(Mockito.any(User.class));
-    }*/
+                .update(Mockito.any(User.class));
+    }
 
-/*
     @Test
     public void Update_Should_Throw_When_UserNotEmployeeOrNotOwner() {
 
@@ -148,22 +191,8 @@ public class UserServiceImplTests {
                 () -> service.update(mockCustomer, mockEmployee, 3));
     }
 
+
     @Test
-    public void Update_Should_Throw_When_UserTryToChangeUsername() {
-
-        var mockCustomer = createMockCustomer();
-        var mockCustomer2 = createMockCustomer();
-
-        Mockito.when(mockRepository.getById(anyInt()))
-                .thenReturn(mockCustomer);
-        mockCustomer.setUsername("mocky");
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> service.update(mockCustomer, mockCustomer2, 1));
-    }
-*/
-
-/*    @Test
     public void Update_Should_Throw_When_DuplicateExits() {
 
         var mockCustomer = createMockCustomer();
@@ -174,9 +203,6 @@ public class UserServiceImplTests {
         mockCustomer.setId(2);
         users.add(mockCustomer1);
 
-        Mockito.when(mockRepository.getById(anyInt()))
-                .thenReturn(mockCustomer);
-
         Mockito.when(mockRepository.getByFieldList("username", "mockUser"))
                 .thenReturn(new ArrayList<>());
 
@@ -186,14 +212,34 @@ public class UserServiceImplTests {
         Mockito.when(mockRepository.getByFieldList("email", "mock@user.com"))
                 .thenReturn(users);
 
-        Mockito.when(mockRepository.getById(anyInt()))
-                .thenReturn(mockCustomer);
+        Assertions.assertThrows(DuplicateEntityException.class,
+                () -> service.update(mockEmployee, mockCustomer, 1));
+    }
+
+    @Test
+    public void Update_Should_Throw_When_DuplicateExitsPhoneNumber() {
+
+        var mockCustomer = createMockCustomer();
+        var mockEmployee = createMockEmployee();
+
+        List<User> users = new ArrayList<>();
+        var mockCustomer1 = createMockCustomer();
+        mockCustomer.setId(2);
+        users.add(mockCustomer1);
+
+        Mockito.when(mockRepository.getByFieldList("username", "mockUser"))
+                .thenReturn(new ArrayList<>());
+
+        Mockito.when(mockRepository.getByFieldList("phoneNumber", "0888888888"))
+                .thenReturn(users);
+
+        Mockito.when(mockRepository.getByFieldList("email", "mock@user.com"))
+                .thenReturn(new ArrayList<>());
 
         Assertions.assertThrows(DuplicateEntityException.class,
                 () -> service.update(mockEmployee, mockCustomer, 1));
-    }*/
+    }
 
-/*
     @Test
     public void Update_Should_Call_Repository_When_UserValid() {
 
@@ -203,52 +249,146 @@ public class UserServiceImplTests {
         Mockito.when(mockRepository.getByFieldList(anyString(), anyString()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(mockRepository.getById(anyInt()))
-                .thenReturn(mockCustomer);
 
         service.update(mockEmployee, mockCustomer, 1);
 
         Mockito.verify(mockRepository, Mockito.times(1))
                 .update(Mockito.any(User.class));
     }
-*/
 
-/*    @Test
-    public void Delete_Should_Throw_When_UserNotEmployee() {
-
-        Assertions.assertThrows(UnauthorizedOperationException.class,
-                () -> service.delete(createMockCustomer(), 1));
-    }
 
     @Test
     public void Delete_Should_Call_Repository_When_UserValid() {
 
         var user = createMockEmployee();
 
-        Mockito.when(mockRepository.getById(anyInt()))
-                .thenReturn(user);
-
-        service.delete(user, 1);
+        service.delete(user);
 
         // Assert
         Mockito.verify(mockRepository, Mockito.times(1))
                 .delete(Mockito.any(User.class));
 
-    }*/
+    }
 
-/*    @Test
+    @Test
+    public void UpdateProfilePhoto_Should_Call_Repository_When_UserValid() {
+
+        var user = createMockEmployee();
+        var mockFile = createMockFile();
+
+        service.updateProfilePhoto(user, mockFile);
+
+        // Assert
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .updateProfilePhoto(user, mockFile);
+
+    }
+
+    @Test
+    public void UpdateIdAndSelfie_Should_Call_Repository_When_UserValid() {
+
+        var user = createMockEmployee();
+        user.setIdVerified(false);
+        var mockId = createMockFile();
+        var mockSelfie = createMockFile();
+
+
+        service.updateIdAndSelfiePhoto(user, mockId, mockSelfie);
+
+        // Assert
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .updateIdAndSelfiePhoto(user, mockId, mockSelfie);
+
+    }
+
+    @Test
+    public void UpdateIdAndSelfie_Should_Call_Throw_When_UserVerified() {
+
+        var user = createMockEmployee();
+        var mockId = createMockFile();
+        var mockSelfie = createMockFile();
+
+        // Assert
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> service.updateIdAndSelfiePhoto(user, mockId, mockSelfie));
+
+    }
+
+    @Test
+    public void RemoveProfilePhoto_Should_Call_Repository_When_UserValid() {
+
+        var user = createMockEmployee();
+
+        service.removeProfilePhoto(user);
+
+        // Assert
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .update(user);
+
+    }
+
+    @Test
     public void Filter_Should_Call_Repository() {
 
         var mockEmployee = createMockEmployee();
+        Pageable pageable = PageRequest.of(1, 1);
 
-        service.filter(mockEmployee, Optional.empty(), Optional.empty(), Optional.empty());
+        service.filter(mockEmployee, Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         Mockito.verify(mockRepository, Mockito.times(1))
-                .filter(Optional.empty(), Optional.empty(), Optional.empty());
+                .filter(Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
-    }*/
+    }
 
-/*    @Test
+    @Test
+    public void Filter_Should_Call_Repository_With_Not_EmptyOptional() {
+
+        var mockEmployee = createMockEmployee();
+        Pageable pageable = PageRequest.of(1, 1);
+
+        service.filter(mockEmployee, Optional.of("username"), Optional.empty(), Optional.empty(), pageable);
+
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .filter(Optional.of("username"), Optional.empty(), Optional.empty(), pageable);
+
+    }
+
+    @Test
+    public void Filter_Should_Throw_WhenUserNotAuthorised() {
+
+        var mockCustomer = createMockCustomer();
+        Pageable pageable = PageRequest.of(1, 1);
+
+        Assertions.assertThrows(UnauthorizedOperationException.class,
+                () -> service.filter(mockCustomer, Optional.empty()
+                        , Optional.empty(), Optional.empty(), pageable));
+
+    }
+
+    @Test
+    public void GetByField_Should_Throw_WhenSearchTermEmpty() {
+
+        var mockCustomer = createMockCustomer();
+
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> service.getByField(mockCustomer, "field", ""));
+
+    }
+
+    @Test
+    public void GetByField_Should_Call_Repository_When_SearchTerm_Not_Empty() {
+
+        var mockCustomer = createMockCustomer();
+
+        service.getByField(mockCustomer, "field", "term");
+
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .getByFieldNotDeleted("field", "term", mockCustomer.getId());
+
+    }
+
+
+    @Test
     public void ConfirmUser_Should_Throw_When_UserEmailVerified() {
 
         var customer = createMockCustomer();
@@ -258,7 +398,7 @@ public class UserServiceImplTests {
                 .thenReturn(token);
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> service.confirmUser("12"));
+                () -> service.confirmUser("12", Optional.empty()));
     }
 
     @Test
@@ -271,11 +411,35 @@ public class UserServiceImplTests {
         Mockito.when(confirmationTokenRepository.getByField(anyString(), anyString()))
                 .thenReturn(token);
 
-        service.confirmUser("12");
+        service.confirmUser("12", Optional.empty());
 
         Mockito.verify(mockRepository, Mockito.times(1))
                 .update(customer);
-    }*/
+    }
+
+    @Test
+    public void ConfirmUser_Should_Call_Repository_When_UserEmailUnverified_InvitationTokenPresent() {
+
+        var customer = createMockCustomer();
+        customer.setEmailVerified(false);
+        var confirmationToken = createMockConfirmationToken(customer);
+        var invitationToken = createMockInvitationToken(customer, "email");
+
+        Mockito.when(invitationTokenRepository.getByField(anyString(), anyString()))
+                .thenReturn(invitationToken);
+
+        Mockito.doNothing().when(invitationTokenRepository).update(Mockito.any(InvitationToken.class));
+
+        Mockito.doNothing().when(walletService).depositBalance(Mockito.any(Wallet.class), Mockito.any(BigDecimal.class));
+
+        Mockito.when(confirmationTokenRepository.getByField(anyString(), anyString()))
+                .thenReturn(confirmationToken);
+
+        service.confirmUser("12", Optional.of("token"));
+
+        Mockito.verify(mockRepository, Mockito.times(2))
+                .update(customer);
+    }
 
     @Test
     public void BlockUser_Should_Throw_When_UserNotEmployee() {
@@ -323,28 +487,193 @@ public class UserServiceImplTests {
 
     }
 
-/*    @Test
-    public void VerifyNotDuplicate_Should_Throw_When_UserDuplicate() {
+    @Test
+    public void AddContact_Should_Throw_When_User_AddsHimself() {
+        var mockUser = createMockCustomer();
 
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> service.addContact(mockUser, mockUser.getId()));
+
+    }
+
+    @Test
+    public void AddContact_Should_Throw_When_User_AlreadyAdded() {
+        var mockUser = createMockCustomer();
+        var mockContact = createMockEmployee();
+        mockContact.setId(2);
+        mockUser.setContacts(new HashSet<>());
+        mockUser.addContact(mockContact);
+
+        Mockito.when(mockRepository.getById(2)).thenReturn(mockContact);
+
+        Assertions.assertThrows(DuplicateEntityException.class,
+                () -> service.addContact(mockUser, 2));
+
+    }
+
+    @Test
+    public void AddContact_Should_Call_Repository_When_Contact_NotAdded() {
+        var mockUser = createMockCustomer();
+        var mockContact = createMockEmployee();
+        mockContact.setId(2);
+        mockUser.setContacts(new HashSet<>());
+
+        Mockito.when(mockRepository.getById(2)).thenReturn(mockContact);
+
+        service.addContact(mockUser, 2);
+
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .update(mockUser);
+
+    }
+
+    @Test
+    public void RemoveContact_Should_Throw_When_Contact_NotExists() {
+        var mockUser = createMockCustomer();
+        var mockContact = createMockEmployee();
+        mockContact.setId(2);
+        mockUser.setContacts(new HashSet<>());
+
+        Mockito.when(mockRepository.getById(2)).thenReturn(mockContact);
+
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> service.removeContact(mockUser, 2));
+
+    }
+
+    @Test
+    public void RemoveContact_Should_Call_Repository_When_Contact_Exists() {
+        var mockUser = createMockCustomer();
+        var mockContact = createMockEmployee();
+        mockContact.setId(2);
+        mockUser.setContacts(new HashSet<>());
+        mockUser.addContact(mockContact);
+
+        Mockito.when(mockRepository.getById(2)).thenReturn(mockContact);
+
+        service.removeContact(mockUser, 2);
+
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .update(mockUser);
+
+    }
+
+    @Test
+    public void GetContacts_Should_Return_User_Contacts() {
+        var mockUser = createMockCustomer();
+        var mockContact = createMockEmployee();
+        mockContact.setId(2);
+        mockUser.setContacts(new HashSet<>());
+        mockUser.addContact(mockContact);
+
+        var result = service.getContacts(mockUser);
+
+        Assertions.assertEquals(result.get(0).getId(), mockContact.getId());
+    }
+
+    @Test
+    public void VerifyUser_Throws_When_User_Not_Employee() {
+        var mockCustomer = createMockCustomer();
+
+        Assertions.assertThrows(UnauthorizedOperationException.class,
+                () -> service.verifyUser(mockCustomer, 2));
+    }
+
+    @Test
+    public void VerifyUser_Should_Call_Repository_When_User_Unverified() {
+        var mockEmployee = createMockEmployee();
+        var mockCustomer = createMockCustomer();
+
+        Mockito.when(mockRepository.getById(anyInt()))
+                .thenReturn(mockCustomer);
+
+        service.verifyUser(mockEmployee, 1);
+
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .update(mockCustomer);
+
+    }
+
+    @Test
+    public void MakeEmployee_Throws_When_User_Not_Employee() {
+        var mockCustomer = createMockCustomer();
+
+        Assertions.assertThrows(UnauthorizedOperationException.class,
+                () -> service.makeEmployee(mockCustomer, 2));
+    }
+
+    @Test
+    public void MakeEmployee_Should_Call_Repository_When_User_Employee() {
+        var mockEmployee = createMockEmployee();
+        var mockCustomer = createMockCustomer();
+
+        Mockito.when(mockRepository.getById(anyInt()))
+                .thenReturn(mockCustomer);
+
+        Mockito.when(roleRepository.getById(anyInt()))
+                .thenReturn(createMockRole());
+
+        service.makeEmployee(mockEmployee, 1);
+
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .update(mockCustomer);
+
+    }
+
+    @Test
+    public void RemoveEmployee_Throws_When_User_Not_Employee() {
+        var mockCustomer = createMockCustomer();
+
+        Assertions.assertThrows(UnauthorizedOperationException.class,
+                () -> service.removeEmployee(mockCustomer, 2));
+    }
+
+    @Test
+    public void RemoveEmployee_Should_Call_Repository_When_User_Employee() {
+        var mockEmployee = createMockEmployee();
+        var mockCustomer = createMockCustomer();
+
+        Mockito.when(mockRepository.getById(anyInt()))
+                .thenReturn(mockCustomer);
+
+        Mockito.when(roleRepository.getById(anyInt()))
+                .thenReturn(createMockRole());
+
+        service.removeEmployee(mockEmployee, 1);
+
+        Mockito.verify(mockRepository, Mockito.times(1))
+                .update(mockCustomer);
+
+    }
+
+    @Test
+    public void InviteFriend_Throws_When_User_Registered() {
         var mockCustomer = createMockCustomer();
 
         List<User> users = new ArrayList<>();
-        var mockCustomer1 = createMockCustomer();
-        mockCustomer.setId(2);
-        users.add(mockCustomer1);
+        users.add(mockCustomer);
 
-        Mockito.when(mockRepository.getByFieldList("username", "mockUser"))
-                .thenReturn(new ArrayList<>());
-
-        Mockito.when(mockRepository.getByFieldList("email", "mock@user.com"))
-                .thenReturn(new ArrayList<>());
-
-        Mockito.when(mockRepository.getByFieldList("phoneNumber", "0888888888"))
+        Mockito.when(mockRepository.getByFieldList(anyString(), anyString()))
                 .thenReturn(users);
 
-
         Assertions.assertThrows(DuplicateEntityException.class,
-                () -> service.verifyNotDuplicate(mockCustomer));
-    }*/
+                () -> service.inviteFriend(mockCustomer, "email"));
+    }
+
+    @Test
+    public void InviteFriend_Should_Call_Repository_When_User_NotRegistered() {
+        var mockCustomer = createMockCustomer();
+
+        List<User> users = new ArrayList<>();
+
+        Mockito.when(mockRepository.getByFieldList(anyString(), anyString()))
+                .thenReturn(users);
+
+        service.inviteFriend(mockCustomer, "email");
+
+        Mockito.verify(sendEmailService, Mockito.times(1))
+                .sendEmailInvitation(mockCustomer, "email");
+
+    }
 
 }

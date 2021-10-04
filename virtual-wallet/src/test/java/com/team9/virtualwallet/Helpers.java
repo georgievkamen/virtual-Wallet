@@ -3,6 +3,8 @@ package com.team9.virtualwallet;
 import com.team9.virtualwallet.models.*;
 import com.team9.virtualwallet.models.enums.TransactionType;
 import com.team9.virtualwallet.models.enums.Type;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -82,6 +84,11 @@ public class Helpers {
 
         return mockTransaction;
 
+    }
+
+    public static MultipartFile createMockFile() {
+        var mockFile = new MockMultipartFile("name", "fileName".getBytes());
+        return mockFile;
     }
 
     public static Set<Role> createMockCustomerRole() {
