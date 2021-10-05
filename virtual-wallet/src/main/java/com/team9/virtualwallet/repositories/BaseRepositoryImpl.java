@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public class BaseRepositoryImpl<E> implements BaseRepository<E> {
+public abstract class BaseRepositoryImpl<E> implements BaseRepository<E> {
 
     private final SessionFactory sessionFactory;
     private final Class<E> clazz;
