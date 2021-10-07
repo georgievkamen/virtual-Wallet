@@ -9,7 +9,7 @@ public class Helpers {
 
     public static void validateCardExpiryDate(Card card) {
         if (card.getExpirationDate().isBefore(LocalDate.now())) {
-            throw new CardExpiredException(card.getCardNumber(), card.getExpirationDate());
+            throw new CardExpiredException(card.getCardNumber());
         }
     }
 }

@@ -25,7 +25,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         response.sendError(HttpStatus.NOT_FOUND.value());
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class, DuplicateEntityException.class})
+    @ExceptionHandler(value = {IllegalArgumentException.class, DuplicateEntityException.class, CardExpiredException.class})
     public void conflict(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.CONFLICT.value());
     }
