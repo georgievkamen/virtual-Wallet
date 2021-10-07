@@ -2,6 +2,7 @@ package com.team9.virtualwallet.controllers.mvc;
 
 import com.team9.virtualwallet.controllers.AuthenticationHelper;
 import com.team9.virtualwallet.exceptions.AuthenticationFailureException;
+import com.team9.virtualwallet.exceptions.CardExpiredException;
 import com.team9.virtualwallet.exceptions.UnauthorizedOperationException;
 import com.team9.virtualwallet.models.Card;
 import com.team9.virtualwallet.models.User;
@@ -69,6 +70,9 @@ public class CardMvcController extends BaseAuthenticationController {
             return "redirect:/panel/cards";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
+        } catch (CardExpiredException e) {
+            result.rejectValue("expirationDate", "expired_card", e.getMessage());
+            return "card-add";
         }
     }
 
